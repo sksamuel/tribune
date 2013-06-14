@@ -1,4 +1,6 @@
 *.class
+.idea
+elasticsearch-river-redis.iml
 
 # Package Files #
 *.jar
