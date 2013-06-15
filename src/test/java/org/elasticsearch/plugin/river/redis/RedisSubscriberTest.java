@@ -29,8 +29,20 @@ public class RedisSubscriberTest {
     }
 
     @Test
+    public void indexerThreadIsShutdownWhenPUnsubscribed() {
+        subscriber.onPUnsubscribe(null, 0);
+        verify(indexer).shutdown();
+    }
+
+    @Test
     public void indexerIsInvokedWhenMessageReceived() {
         subscriber.onMessage("channel4", "supermsg");
+        verify(indexer).index("channel4", "supermsg");
+    }
+
+    @Test
+    public void indexerIsInvokedWhenPMessageReceived() {
+        subscriber.onPMessage(null, "channel4", "supermsg");
         verify(indexer).index("channel4", "supermsg");
     }
 }

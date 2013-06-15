@@ -31,6 +31,8 @@ public class RedisSubscriber extends JedisPubSub {
 
     @Override
     public void onPMessage(String pattern, String channel, String message) {
+        logger.debug("Message received [channel={} msg={}]", channel, message);
+        indexer.index(channel, message);
     }
 
     @Override
@@ -44,6 +46,7 @@ public class RedisSubscriber extends JedisPubSub {
 
     @Override
     public void onPUnsubscribe(String pattern, int subscribedChannels) {
+        indexer.shutdown();
     }
 
     @Override

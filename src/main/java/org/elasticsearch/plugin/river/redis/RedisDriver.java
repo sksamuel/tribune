@@ -202,7 +202,7 @@ class RedisSubscriptionTask implements Runnable {
             logger.debug("Subscribe completed; closing down");
             pool.returnResource(jedis);
         } catch (Exception e) {
-            logger.debug(">>> OH NOES Sub - " + e.getMessage());
+            logger.warn("Error running subscriber task {}", e);
         }
     }
 }
