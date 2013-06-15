@@ -37,6 +37,8 @@ public class RedisDriver extends AbstractRiverComponent implements River {
     private final int port;
     private final int database;
     private final String messageField;
+    private final boolean json;
+    private final RedisIndexer indexer;
 
     final RiverSettings settings;
     final String riverIndexName;
@@ -58,6 +60,7 @@ public class RedisDriver extends AbstractRiverComponent implements River {
             database = XContentMapValues.nodeIntegerValue(redisSettings.get("database"), 0);
             password = XContentMapValues.nodeStringValue(redisSettings.get("password"), null);
             messageField = XContentMapValues.nodeStringValue(redisSettings.get("messageField"), DEFAULT_REDIS_MESSAGE_FIELD);
+            json = XContentMapValues.nodeBooleanValue(redisSettings.get("json"), false);
         } else {
             hostname = DEFAULT_REDIS_HOSTNAME;
             port = DEFAULT_REDIS_PORT;
@@ -65,6 +68,7 @@ public class RedisDriver extends AbstractRiverComponent implements River {
             database = 0;
             password = null;
             messageField = DEFAULT_REDIS_MESSAGE_FIELD;
+            json = false;
         }
 
         logger.debug("Redis settings [hostname={}, port={}, channels={}, database={}]", new Object[]{hostname,
@@ -72,6 +76,7 @@ public class RedisDriver extends AbstractRiverComponent implements River {
                 channels,
                 database});
 
+        indexer = new RedisIndexer(client, riverIndexName, json, messageField);
     }
 
     @Override
@@ -87,7 +92,7 @@ public class RedisDriver extends AbstractRiverComponent implements River {
 
         try {
 
-            subscriber = new RedisSubscriber(settings, client, riverIndexName, messageField);
+            subscriber = new RedisSubscriber(settings, indexer);
             startSubscriberThread(subscriber);
 
         } catch (Exception e) {
@@ -152,6 +157,10 @@ public class RedisDriver extends AbstractRiverComponent implements River {
 
     public String getRiverIndexName() {
         return riverIndexName;
+    }
+
+    public boolean isJson() {
+        return json;
     }
 }
 

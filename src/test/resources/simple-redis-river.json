@@ -1,0 +1,13 @@
+{
+    "type": "redis",
+    "redis": {
+        "hostname": "localhost",
+        "port": 12345,
+        "channels": "*",
+        "messageField": "content",
+        "json": false
+    },
+    "index": {
+        "name": "int-test"
+    }
+}

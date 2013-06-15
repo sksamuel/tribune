@@ -18,11 +18,6 @@ public class RedisSubscriber extends JedisPubSub {
     private static Logger logger = LoggerFactory.getLogger(RedisSubscriber.class);
     final RedisIndexer indexer;
 
-    public RedisSubscriber(RiverSettings settings, Client client, String index, String messageField) {
-        indexer = new RedisIndexer(client, index, messageField);
-        EsExecutors.daemonThreadFactory(settings.globalSettings(), "redis_indexer").newThread(indexer);
-    }
-
     public RedisSubscriber(RiverSettings settings, RedisIndexer indexer) {
         this.indexer = indexer;
         EsExecutors.daemonThreadFactory(settings.globalSettings(), "redis_indexer").newThread(indexer);
@@ -63,12 +58,14 @@ class RedisIndexer implements Runnable {
 
     private final Client client;
     private final String index;
+    private final boolean json;
     private final String messageField;
     private BlockingQueue<String[]> queue = new LinkedBlockingQueue<String[]>();
 
-    public RedisIndexer(Client client, String index, String messageField) {
+    public RedisIndexer(Client client, String index, boolean json, String messageField) {
         this.client = client;
         this.index = index;
+        this.json = json;
         this.messageField = messageField;
     }
 
@@ -88,13 +85,20 @@ class RedisIndexer implements Runnable {
                 if (msg == POISON)
                     return;
                 try {
-                    String json = String.format("{\"%s\" : \"%s\"}", messageField, msg[1]);
-                    client.prepareIndex(index, msg[0]).setSource(json).execute().actionGet();
+                    String source = getSource(msg[1]);
+                    client.prepareIndex(index, msg[0]).setSource(source).execute().actionGet();
                 } catch (Exception e) {
                     logger.warn("{}", e);
                 }
             } catch (InterruptedException ignored) {
             }
         }
+    }
+
+    String getSource(String msg) {
+        if (json)
+            return msg;
+        else
+            return String.format("{\"%s\" : \"%s\"}", messageField, msg);
     }
 }

@@ -19,7 +19,7 @@ public class RedisIndexerTest {
     @Test
     public void messageIsIndexedUsingTheChannelAndMessageBody() throws InterruptedException {
 
-        RedisIndexer indexer = new RedisIndexer(client, "myindex", "mf");
+        RedisIndexer indexer = new RedisIndexer(client, "myindex", false, "mf");
 
         IndexRequestBuilder builder = mock(IndexRequestBuilder.class);
         Mockito.when(client.prepareIndex("myindex", "chan4")).thenReturn(builder);
@@ -36,8 +36,27 @@ public class RedisIndexerTest {
     }
 
     @Test
+    public void messageIsIndexedAsJsonWhenSpecified() throws InterruptedException {
+
+        RedisIndexer indexer = new RedisIndexer(client, "myindex", true, "mf");
+
+        IndexRequestBuilder builder = mock(IndexRequestBuilder.class);
+        Mockito.when(client.prepareIndex("myindex", "chan4")).thenReturn(builder);
+        Mockito.when(builder.setSource(Matchers.anyString())).thenReturn(builder);
+
+        Thread thread = new Thread(indexer);
+        thread.start();
+        indexer.index("chan4", "{ some raw message }");
+        indexer.shutdown();
+        thread.join();
+
+        verify(client).prepareIndex("myindex", "chan4");
+        verify(builder).setSource("{ some raw message }");
+    }
+
+    @Test
     public void shutdownKillsThread() throws InterruptedException {
-        RedisIndexer indexer = new RedisIndexer(client, "myindex", "mf");
+        RedisIndexer indexer = new RedisIndexer(client, "myindex", false, "mf");
         Thread thread = new Thread(indexer);
         thread.start();
         indexer.shutdown();

@@ -42,6 +42,7 @@ public class RedisDriverTest {
         redis.put("messageField", "mf");
         redis.put("password", "letmein");
         redis.put("database", "3");
+        redis.put("json", "true");
         RiverSettings settings = new RiverSettings(mock(Settings.class), map);
         RedisDriver driver = new RedisDriver(name, settings, "myindex", client);
         assertEquals("myhost", driver.getHostname());
@@ -50,6 +51,7 @@ public class RedisDriverTest {
         assertEquals("mf", driver.getMessageField());
         assertEquals("letmein", driver.getPassword());
         assertEquals(3, driver.getDatabase());
+        assertEquals(true, driver.isJson());
     }
 
     @Test
@@ -63,6 +65,7 @@ public class RedisDriverTest {
         assertArrayEquals(RedisDriver.DEFAULT_REDIS_CHANNELS, driver.getChannels());
         assertEquals("myindex", driver.getRiverIndexName());
         assertEquals(0, driver.getDatabase());
+        assertEquals(false, driver.isJson());
     }
 
     @Test
