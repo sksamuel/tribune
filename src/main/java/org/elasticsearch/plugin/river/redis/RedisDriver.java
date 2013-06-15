@@ -2,6 +2,7 @@ package org.elasticsearch.plugin.river.redis;
 
 import org.elasticsearch.ExceptionsHelper;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.util.concurrent.EsExecutors;
 import org.elasticsearch.common.xcontent.support.XContentMapValues;
 import org.elasticsearch.indices.IndexAlreadyExistsException;
@@ -24,15 +25,16 @@ import java.util.Map;
 public class RedisDriver extends AbstractRiverComponent implements River {
 
     static final int DEFAULT_REDIS_PORT = 6379;
-    static final String DEFAULT_REDIS_INDEX = "redisindex";
+    static final String DEFAULT_REDIS_INDEX = "redis-index";
     static final String DEFAULT_REDIS_MESSAGE_FIELD = "message";
-    static final String[] DEFAULT_REDIS_CHANNELS = {"*"};
+    static final String DEFAULT_REDIS_CHANNELS = "elasticsearch";
     static final String DEFAULT_REDIS_HOSTNAME = "localhost";
 
     private static Logger logger = LoggerFactory.getLogger(RedisSubscriber.class);
 
     private final String hostname;
     private final String password;
+    private final String index;
     private final String[] channels;
     private final int port;
     private final int database;
@@ -41,42 +43,47 @@ public class RedisDriver extends AbstractRiverComponent implements River {
     private final RedisIndexer indexer;
 
     final RiverSettings settings;
-    final String riverIndexName;
     final Client client;
     RedisSubscriber subscriber;
     Thread thread;
 
+    @Inject
     public RedisDriver(RiverName riverName, RiverSettings settings, @RiverIndexName final String riverIndexName, final Client client) {
         super(riverName, settings);
         this.settings = settings;
-        this.riverIndexName = riverIndexName;
         this.client = client;
 
         if (settings.settings().containsKey("redis")) {
             Map<String, Object> redisSettings = (Map<String, Object>) settings.settings().get("redis");
             hostname = XContentMapValues.nodeStringValue(redisSettings.get("hostname"), DEFAULT_REDIS_HOSTNAME);
             port = XContentMapValues.nodeIntegerValue(redisSettings.get("port"), DEFAULT_REDIS_PORT);
-            channels = XContentMapValues.nodeStringValue(redisSettings.get("channels"), "*").split(",");
+            channels = XContentMapValues.nodeStringValue(redisSettings.get("channels"), DEFAULT_REDIS_CHANNELS).split(",");
             database = XContentMapValues.nodeIntegerValue(redisSettings.get("database"), 0);
             password = XContentMapValues.nodeStringValue(redisSettings.get("password"), null);
             messageField = XContentMapValues.nodeStringValue(redisSettings.get("messageField"), DEFAULT_REDIS_MESSAGE_FIELD);
             json = XContentMapValues.nodeBooleanValue(redisSettings.get("json"), false);
+            index = XContentMapValues.nodeStringValue(redisSettings.get("index"), DEFAULT_REDIS_INDEX);
         } else {
             hostname = DEFAULT_REDIS_HOSTNAME;
             port = DEFAULT_REDIS_PORT;
-            channels = DEFAULT_REDIS_CHANNELS;
+            channels = new String[]{DEFAULT_REDIS_CHANNELS};
             database = 0;
             password = null;
             messageField = DEFAULT_REDIS_MESSAGE_FIELD;
             json = false;
+            index = DEFAULT_REDIS_INDEX;
         }
 
         logger.debug("Redis settings [hostname={}, port={}, channels={}, database={}]", new Object[]{hostname,
                 port,
                 channels,
                 database});
+        logger.debug("River settings [indexName={}, channels={}, messageField={}, json={}]", new Object[]{index,
+                channels,
+                messageField,
+                json});
 
-        indexer = new RedisIndexer(client, riverIndexName, json, messageField);
+        indexer = new RedisIndexer(client, index, json, messageField);
     }
 
     @Override
@@ -114,12 +121,15 @@ public class RedisDriver extends AbstractRiverComponent implements River {
 
     void ensureIndexCreated() {
         try {
-            client.admin().indices().prepareCreate(riverIndexName).execute().actionGet();
+            logger.debug("Creating index [{}]...", index);
+            client.admin().indices().prepareCreate(index).execute().actionGet();
+            logger.error("... created");
         } catch (Exception e) {
             //noinspection ThrowableResultOfMethodCallIgnored,StatementWithEmptyBody
             if (ExceptionsHelper.unwrapCause(e) instanceof IndexAlreadyExistsException) {
-                // lucky us
+                logger.debug("... index already exists");
             } else {
+                logger.error("... error {}", e);
                 throw e;
             }
         }
@@ -155,8 +165,8 @@ public class RedisDriver extends AbstractRiverComponent implements River {
         return channels;
     }
 
-    public String getRiverIndexName() {
-        return riverIndexName;
+    public String getIndex() {
+        return index;
     }
 
     public boolean isJson() {

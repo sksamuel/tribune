@@ -20,12 +20,12 @@ public class RedisSubscriber extends JedisPubSub {
 
     public RedisSubscriber(RiverSettings settings, RedisIndexer indexer) {
         this.indexer = indexer;
-        EsExecutors.daemonThreadFactory(settings.globalSettings(), "redis_indexer").newThread(indexer);
+        EsExecutors.daemonThreadFactory(settings.globalSettings(), "redis_indexer").newThread(indexer).start();
     }
 
     @Override
     public void onMessage(String channel, String message) {
-        logger.debug("Message - [channel {} msg: {}]", channel, message);
+        logger.debug("Message received [channel={} msg={}]", channel, message);
         indexer.index(channel, message);
     }
 
@@ -70,7 +70,9 @@ class RedisIndexer implements Runnable {
     }
 
     public void index(String channel, String message) {
+        logger.debug("Queuing... [channel={}, message={}]", channel, message);
         queue.offer(new String[]{channel, message}); // pragmatically we're not bounded
+        logger.debug("... {} now queued", queue.size());
     }
 
     public void shutdown() {
@@ -79,14 +81,21 @@ class RedisIndexer implements Runnable {
 
     @Override
     public void run() {
+        logger.debug("Starting indexer");
         while (true) {
             try {
                 String[] msg = queue.take();
-                if (msg == POISON)
+                if (msg == POISON) {
+                    logger.info("Poison pill eaten - shutting down subscriber thread");
+                    logger.debug("Indexer shutdown");
                     return;
+                }
                 try {
+                    String type = msg[0];
                     String source = getSource(msg[1]);
-                    client.prepareIndex(index, msg[0]).setSource(source).execute().actionGet();
+                    logger.debug("Preparing index... [index={}, type={}, source={}]", new String[]{index, type, source});
+                    client.prepareIndex(index, type).setSource(source).execute().actionGet();
+                    logger.debug("...indexed");
                 } catch (Exception e) {
                     logger.warn("{}", e);
                 }

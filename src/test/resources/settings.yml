@@ -1,0 +1,22 @@
+# Note, that for development on a local machine, with small indices, it usually
+# makes sense to "disable" the distributed features:
+#
+node:
+	local: true
+
+path:
+	data: target/data
+	plugins: target/plugins
+	logs: target/log
+	conf: target/conf
+
+index:
+	number_of_shards: 1
+	number_of_replicas: 0
+	store:
+		type: memory
+	gateway:
+		type: none
+
+cluster:
+	name: es-test-cluster

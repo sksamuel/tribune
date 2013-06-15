@@ -38,17 +38,18 @@ public class RedisDriverTest {
         redis.put("hostname", "myhost");
         redis.put("port", "12345");
         redis.put("channels", "a,b,c");
-        redis.put("index", "superindex");
+        redis.put("index", "myindex");
         redis.put("messageField", "mf");
         redis.put("password", "letmein");
         redis.put("database", "3");
         redis.put("json", "true");
         RiverSettings settings = new RiverSettings(mock(Settings.class), map);
-        RedisDriver driver = new RedisDriver(name, settings, "myindex", client);
+        RedisDriver driver = new RedisDriver(name, settings, "_river", client);
         assertEquals("myhost", driver.getHostname());
         assertEquals(12345, driver.getPort());
-        assertEquals("myindex", driver.getRiverIndexName());
+        assertEquals("myindex", driver.getIndex());
         assertEquals("mf", driver.getMessageField());
+        assertArrayEquals(new String[]{"a", "b", "c"}, driver.getChannels());
         assertEquals("letmein", driver.getPassword());
         assertEquals(3, driver.getDatabase());
         assertEquals(true, driver.isJson());
@@ -62,8 +63,8 @@ public class RedisDriverTest {
         assertEquals(RedisDriver.DEFAULT_REDIS_HOSTNAME, driver.getHostname());
         assertEquals(RedisDriver.DEFAULT_REDIS_PORT, driver.getPort());
         assertEquals(RedisDriver.DEFAULT_REDIS_MESSAGE_FIELD, driver.getMessageField());
-        assertArrayEquals(RedisDriver.DEFAULT_REDIS_CHANNELS, driver.getChannels());
-        assertEquals("myindex", driver.getRiverIndexName());
+        assertArrayEquals(new String[]{RedisDriver.DEFAULT_REDIS_CHANNELS}, driver.getChannels());
+        assertEquals(RedisDriver.DEFAULT_REDIS_INDEX, driver.getIndex());
         assertEquals(0, driver.getDatabase());
         assertEquals(false, driver.isJson());
     }
@@ -89,7 +90,7 @@ public class RedisDriverTest {
         IndicesAdminClient indices = mock(IndicesAdminClient.class);
         when(adminClient.indices()).thenReturn(indices);
         driver.start();
-        Mockito.verify(indices).prepareCreate("myindex");
+        Mockito.verify(indices).prepareCreate("redis-index");
     }
 
     @Test
@@ -107,7 +108,7 @@ public class RedisDriverTest {
         IndicesAdminClient indices = mock(IndicesAdminClient.class);
         when(adminClient.indices()).thenReturn(indices);
         CreateIndexRequestBuilder builder = mock(CreateIndexRequestBuilder.class);
-        when(indices.prepareCreate("myindex")).thenReturn(builder);
+        when(indices.prepareCreate("redis-index")).thenReturn(builder);
         ListenableActionFuture future = mock(ListenableActionFuture.class);
         when(builder.execute()).thenReturn(future);
 

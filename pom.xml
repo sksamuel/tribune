@@ -12,7 +12,7 @@
 
     <groupId>com.sksamuel.elasticsearch</groupId>
     <artifactId>elasticsearch-river-redis</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <version>1.0.6</version>
     <name>elasticsearch-river-redis</name>
     <description>A river plugin for elastic search that offers an easy way to index redis data.</description>
@@ -75,92 +75,29 @@
         <compiler.version.source>1.7</compiler.version.source>
         <compiler.version.target>1.7</compiler.version.target>
 
-        <maven.plugin.war.version>2.3</maven.plugin.war.version>
         <maven.plugin.resources.version>2.6</maven.plugin.resources.version>
         <maven.plugin.compiler.version>3.1</maven.plugin.compiler.version>
-        <maven.plugin.cargo.version>1.4.0</maven.plugin.cargo.version>
         <maven.plugin.dependency.version>2.7</maven.plugin.dependency.version>
         <maven.plugin.gpg.version>1.4</maven.plugin.gpg.version>
         <maven.plugin.jar.version>2.4</maven.plugin.jar.version>
         <maven.plugin.javadoc.version>2.9</maven.plugin.javadoc.version>
         <maven.plugin.release.version>2.3.2</maven.plugin.release.version>
-        <maven.plugin.autoinc.version>2.0-SNAPSHOT</maven.plugin.autoinc.version>
         <maven.plugin.surefire.version>2.14.1</maven.plugin.surefire.version>
         <maven.plugin.source.version>2.2.1</maven.plugin.source.version>
 
-        <activemq.version>5.7.0</activemq.version>
-        <aws.sdk.version>1.3.25</aws.sdk.version>
-
-        <camel.version>2.11.0</camel.version>
-        <cglib.version>2.2.2</cglib.version>
-
-        <commons.httpcore.version>4.2.1</commons.httpcore.version>
-        <commons.httpclient.version>4.2.2</commons.httpclient.version>
         <commons.lang.version>2.6</commons.lang.version>
-        <commons.dbcp.version>1.4</commons.dbcp.version>
-        <commons.pool.version>1.6</commons.pool.version>
-        <commons.validator.version>1.4.0</commons.validator.version>
         <commons.io.version>2.4</commons.io.version>
         <commons.collections.version>3.2.1</commons.collections.version>
         <commons.logging.version>1.1.2</commons.logging.version>
         <commons.beanutils.version>1.8.3</commons.beanutils.version>
-        <commons.fileupload.version>1.3</commons.fileupload.version>
-        <commons.sanselan.version>0.97-incubator</commons.sanselan.version>
-        <commons.codec.version>1.8</commons.codec.version>
-        <commons.compress.version>1.5</commons.compress.version>
 
-        <ehcache.version>2.6.6</ehcache.version>
-        <edtftpj.version>1.5.3</edtftpj.version>
-
-        <googledao.version>1.1.0</googledao.version>
-        <google.protobuf.version>2.4.1</google.protobuf.version>
-        <google.guava.version>14.0.1</google.guava.version>
-
-        <hibernate.core.version>3.6.7.Final</hibernate.core.version>
-        <hibernate.validator.version>4.3.0.Final</hibernate.validator.version>
-        <hibernate.jpa.version>1.0.1.Final</hibernate.jpa.version>
-
-        <itext.version>5.2.0</itext.version>
-
-        <javax.servlet.version>2.5</javax.servlet.version>
-        <javax.jsp.version>2.1</javax.jsp.version>
-        <javax.mail.version>1.4.5</javax.mail.version>
-        <javax.jaxb.version>2.2.7</javax.jaxb.version>
-        <javax.validation.version>1.1.0.Final</javax.validation.version>
-        <javax.jms.version>1.1</javax.jms.version>
-
-        <jackson.version>1.9.11</jackson.version>
-        <jackson2.version>2.1.0</jackson2.version>
-        <jaxen.version>1.1.4</jaxen.version>
-        <jersey.version>1.17.1</jersey.version>
-        <jodatime.version>2.2</jodatime.version>
-        <jsoup.version>1.7.2</jsoup.version>
         <junit.version>4.11</junit.version>
-        <jdom2.version>2.0.5</jdom2.version>
 
         <log4j.version>1.2.17</log4j.version>
 
-        <mongo.driver.version>2.11.1</mongo.driver.version>
-        <mysql.version>5.1.25</mysql.version>
         <mockito.version>1.9.5</mockito.version>
 
-        <saxon.version>9.4.0.7</saxon.version>
         <slf4j.version>1.6.6</slf4j.version>
-        <solrj.version>4.3.0</solrj.version>
-
-        <spring.version>3.2.2.RELEASE</spring.version>
-        <spring.security.version>3.1.3.RELEASE</spring.security.version>
-        <spring.social.version>1.0.2.RELEASE</spring.social.version>
-        <spring.social.facebook.version>1.0.1.RELEASE</spring.social.facebook.version>
-        <spring.social.twitter.version>1.0.2.RELEASE</spring.social.twitter.version>
-        <spring.data.mongo.version>1.1.1.RELEASE</spring.data.mongo.version>
-
-        <twitter4j.version>3.0.3</twitter4j.version>
-
-        <velocity.version>1.7</velocity.version>
-        <velocity.tools.version>2.0</velocity.tools.version>
-
-        <xmlunit.version>1.3</xmlunit.version>
     </properties>
 
     <dependencyManagement>
@@ -204,13 +141,6 @@
                 <artifactId>elasticsearch</artifactId>
                 <version>0.90.1</version>
             </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>${mockito.version}</version>
-                <scope>test</scope>
-            </dependency>
-
         </dependencies>
     </dependencyManagement>
 
@@ -251,11 +181,6 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.codehaus.cargo</groupId>
-                    <artifactId>cargo-maven2-plugin</artifactId>
-                    <version>${maven.plugin.cargo.version}</version>
-                </plugin>
-                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>${maven.plugin.jar.version}</version>
@@ -281,42 +206,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
                     <version>${maven.plugin.dependency.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${maven.plugin.surefire.version}</version>
-                    <configuration>
-                        <skip>true</skip>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>unit-tests</id>
-                            <phase>test</phase>
-                            <goals>
-                                <goal>test</goal>
-                            </goals>
-                            <configuration>
-                                <skip>false</skip>
-                                <excludes>
-                                    <exclude>**/*Test.java</exclude>
-                                </excludes>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>integration-tests</id>
-                            <phase>integration-test</phase>
-                            <goals>
-                                <goal>test</goal>
-                            </goals>
-                            <configuration>
-                                <skip>false</skip>
-                                <includes>
-                                    <include>**/*IntTest.java</include>
-                                </includes>
-                            </configuration>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -364,6 +253,41 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>unit-tests</id>
+                            <phase>test</phase>
+                            <goals>
+                                <goal>test</goal>
+                            </goals>
+                            <configuration>
+                                <skip>false</skip>
+                                <excludes>
+                                    <exclude>**/*IntTest.java</exclude>
+                                </excludes>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>integration-tests</id>
+                            <phase>integration-test</phase>
+                            <goals>
+                                <goal>test</goal>
+                            </goals>
+                            <configuration>
+                                <skip>false</skip>
+                                <includes>
+                                    <include>**/*IntTest.java</include>
+                                </includes>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -378,6 +302,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
