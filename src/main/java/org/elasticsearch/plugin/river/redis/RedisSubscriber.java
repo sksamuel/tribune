@@ -13,17 +13,17 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * @author Stephen Samuel
  */
-public class ElasticRedisSubscriber extends JedisPubSub {
+public class RedisSubscriber extends JedisPubSub {
 
-    private static Logger logger = LoggerFactory.getLogger(ElasticRedisSubscriber.class);
+    private static Logger logger = LoggerFactory.getLogger(RedisSubscriber.class);
     final RedisIndexer indexer;
 
-    public ElasticRedisSubscriber(RiverSettings settings, Client client, String index, String messageField) {
+    public RedisSubscriber(RiverSettings settings, Client client, String index, String messageField) {
         indexer = new RedisIndexer(client, index, messageField);
         EsExecutors.daemonThreadFactory(settings.globalSettings(), "redis_indexer").newThread(indexer);
     }
 
-    public ElasticRedisSubscriber(RiverSettings settings, RedisIndexer indexer) {
+    public RedisSubscriber(RiverSettings settings, RedisIndexer indexer) {
         this.indexer = indexer;
         EsExecutors.daemonThreadFactory(settings.globalSettings(), "redis_indexer").newThread(indexer);
     }

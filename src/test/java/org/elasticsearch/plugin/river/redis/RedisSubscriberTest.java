@@ -14,13 +14,13 @@ import static org.mockito.Mockito.verify;
 /**
  * @author Stephen Samuel
  */
-public class ElasticRedisSubscriberTest {
+public class RedisSubscriberTest {
 
     Client client = mock(Client.class);
     Map<String, Object> map = new HashMap<String, Object>();
     RiverSettings settings = new RiverSettings(mock(Settings.class), map);
     RedisIndexer indexer = mock(RedisIndexer.class);
-    ElasticRedisSubscriber subscriber = new ElasticRedisSubscriber(settings, indexer);
+    RedisSubscriber subscriber = new RedisSubscriber(settings, indexer);
 
     @Test
     public void indexerThreadIsShutdownWhenUnsubscribed() {

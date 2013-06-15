@@ -29,18 +29,20 @@ public class RedisDriver extends AbstractRiverComponent implements River {
     static final String[] DEFAULT_REDIS_CHANNELS = {"*"};
     static final String DEFAULT_REDIS_HOSTNAME = "localhost";
 
-    private static Logger logger = LoggerFactory.getLogger(ElasticRedisSubscriber.class);
+    private static Logger logger = LoggerFactory.getLogger(RedisSubscriber.class);
 
-    final String hostname;
-    final String password;
-    final String[] channels;
-    final int port;
-    final int database;
-    final String messageField;
+    private final String hostname;
+    private final String password;
+    private final String[] channels;
+    private final int port;
+    private final int database;
+    private final String messageField;
+
     final RiverSettings settings;
     final String riverIndexName;
-    Client client;
-    ElasticRedisSubscriber subscriber;
+    final Client client;
+    RedisSubscriber subscriber;
+    Thread thread;
 
     public RedisDriver(RiverName riverName, RiverSettings settings, @RiverIndexName final String riverIndexName, final Client client) {
         super(riverName, settings);
@@ -69,6 +71,7 @@ public class RedisDriver extends AbstractRiverComponent implements River {
                 port,
                 channels,
                 database});
+
     }
 
     @Override
@@ -84,15 +87,20 @@ public class RedisDriver extends AbstractRiverComponent implements River {
 
         try {
 
-            final JedisPool pool = getJedisPool();
-            subscriber = new ElasticRedisSubscriber(settings, client, riverIndexName, messageField);
-            final RedisSubscriptionThread subscriptionThread = new RedisSubscriptionThread(pool, subscriber, channels);
-            Thread thread = EsExecutors.daemonThreadFactory(settings.globalSettings(), "redis_subscription").newThread(subscriptionThread);
-            thread.start();
+            subscriber = new RedisSubscriber(settings, client, riverIndexName, messageField);
+            startSubscriberThread(subscriber);
 
         } catch (Exception e) {
             logger.debug("Could not create redis pool. Disabling river");
         }
+    }
+
+    void startSubscriberThread(RedisSubscriber subscriber) {
+        // this has to run on a separate thread because redis subscription method blocks
+        final JedisPool pool = getJedisPool();
+        final RedisSubscriptionTask task = new RedisSubscriptionTask(pool, subscriber, channels);
+        thread = EsExecutors.daemonThreadFactory(settings.globalSettings(), "redis_subscription").newThread(task);
+        thread.start();
     }
 
     JedisPool getJedisPool() {
@@ -117,17 +125,45 @@ public class RedisDriver extends AbstractRiverComponent implements River {
         if (subscriber != null && subscriber.isSubscribed())
             subscriber.unsubscribe();
     }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public int getDatabase() {
+        return database;
+    }
+
+    public String getMessageField() {
+        return messageField;
+    }
+
+    public String[] getChannels() {
+        return channels;
+    }
+
+    public String getRiverIndexName() {
+        return riverIndexName;
+    }
 }
 
-class RedisSubscriptionThread implements Runnable {
+class RedisSubscriptionTask implements Runnable {
 
-    private static Logger logger = LoggerFactory.getLogger(RedisSubscriptionThread.class);
+    private static Logger logger = LoggerFactory.getLogger(RedisSubscriptionTask.class);
 
-    private final ElasticRedisSubscriber subscriber;
+    private final RedisSubscriber subscriber;
     private final JedisPool pool;
     private final String[] channels;
 
-    public RedisSubscriptionThread(JedisPool pool, ElasticRedisSubscriber subscriber, String[] channels) {
+    public RedisSubscriptionTask(JedisPool pool, RedisSubscriber subscriber, String[] channels) {
         this.pool = pool;
         this.subscriber = subscriber;
         this.channels = channels;

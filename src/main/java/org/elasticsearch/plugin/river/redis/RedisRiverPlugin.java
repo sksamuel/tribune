@@ -15,15 +15,15 @@ public class RedisRiverPlugin extends AbstractPlugin {
 
     @Override
     public String name() {
-        return "river-rabbitmq";
+        return "river-redis";
     }
 
     @Override
     public String description() {
-        return "River RabbitMQ Plugin";
+        return "River Redis Plugin";
     }
 
     public void onModule(RiversModule module) {
-        module.registerRiver("rabbitmq", RedisRiverModule.class);
+        module.registerRiver("redis", RedisRiverModule.class);
     }
 }
