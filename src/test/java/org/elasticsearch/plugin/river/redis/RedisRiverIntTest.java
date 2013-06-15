@@ -34,8 +34,8 @@ public class RedisRiverIntTest {
 
     private Node node;
     private String river = "redis-river-" + System.currentTimeMillis();
-    private String index = "redis-index"; // needs to match settings in json
-    private String channel = "int-test-channel"; // must match the settings in json
+    String index;
+    String channel;
     private Jedis jedis;
 
     public void shutdown() {
@@ -53,6 +53,9 @@ public class RedisRiverIntTest {
         Settings globalSettings = settingsBuilder().loadFromClasspath("settings.yml").build();
         String json = copyToStringFromClasspath("/simple-redis-river.json");
         Settings riverSettings = settingsBuilder().loadFromSource(json).build();
+
+        index = riverSettings.get("index.name");
+        channel = riverSettings.get("redis.channels").split(",")[0];
 
         String hostname = riverSettings.get("redis.hostname");
         int port = riverSettings.getAsInt("redis.port", 6379);
@@ -94,29 +97,40 @@ public class RedisRiverIntTest {
 
         Thread.sleep(1000);
 
-        logger.debug("Publishing message [channel={}]", channel);
-        jedis.publish(channel, "my name is sammy");
+        String field = "content";
+        String msg = "sammy";
+
+        logger.debug("Publishing message [channel={}, msg={}]", channel, msg);
+        jedis.publish(channel, msg);
 
         Thread.sleep(1000);
+        refreshIndex();
 
+        logger.debug("Counting [index={}, type={}, field={}, msg={}]", new Object[]{index, channel, field, msg});
         CountResponse resp =
-                node.client().count(countRequest(index).types(channel).query(fieldQuery("content", "sammy"))).actionGet();
-        logger.debug("Count response: {}", resp.getCount());
-        assertEquals(resp.getCount(), 1);
+                node.client().count(countRequest(index).types(channel).query(fieldQuery(field, msg))).actionGet();
+        assertEquals(1, resp.getCount());
 
-        resp = node.client().count(countRequest(index).types(channel).query(fieldQuery("content", "coldplay"))).actionGet();
-        logger.debug("Count response: {}", resp.getCount());
-        assertEquals(resp.getCount(), 0);
+        msg = "coldplay";
+
+        logger.debug("Counting [index={}, type={}, field={}, msg={}]", new Object[]{index, channel, field, msg});
+        resp = node.client().count(countRequest(index).types(channel).query(fieldQuery(field, msg))).actionGet();
+        assertEquals(0, resp.getCount());
 
         logger.debug("Publishing message [channel={}]", channel);
-        jedis.publish(channel, "watching coldplay live");
+        jedis.publish(channel, msg);
 
         Thread.sleep(1000);
+        refreshIndex();
 
-        resp = node.client().count(countRequest(index).types(channel).query(fieldQuery("content", "coldplay"))).actionGet();
-        logger.debug("Count response: {}", resp.getCount());
-        assertEquals(resp.getCount(), 1);
+        logger.debug("Counting [index={}, type={}, field={}, msg={}]", new Object[]{index, channel, field, msg});
+        resp = node.client().count(countRequest(index).types(channel).query(fieldQuery(field, msg))).actionGet();
+        assertEquals(1, resp.getCount());
 
         shutdown();
+    }
+
+    private void refreshIndex() {
+        node.client().admin().indices().prepareRefresh(index).execute().actionGet();
     }
 }

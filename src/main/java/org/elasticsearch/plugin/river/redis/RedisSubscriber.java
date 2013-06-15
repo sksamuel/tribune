@@ -93,7 +93,7 @@ class RedisIndexer implements Runnable {
                 try {
                     String type = msg[0];
                     String source = getSource(msg[1]);
-                    logger.debug("Preparing index... [index={}, type={}, source={}]", new String[]{index, type, source});
+                    logger.debug("Indexing... [index={}, type={}, source={}]", new String[]{index, type, source});
                     client.prepareIndex(index, type).setSource(source).execute().actionGet();
                     logger.debug("...indexed");
                 } catch (Exception e) {

@@ -62,7 +62,6 @@ public class RedisDriver extends AbstractRiverComponent implements River {
             password = XContentMapValues.nodeStringValue(redisSettings.get("password"), null);
             messageField = XContentMapValues.nodeStringValue(redisSettings.get("messageField"), DEFAULT_REDIS_MESSAGE_FIELD);
             json = XContentMapValues.nodeBooleanValue(redisSettings.get("json"), false);
-            index = XContentMapValues.nodeStringValue(redisSettings.get("index"), DEFAULT_REDIS_INDEX);
         } else {
             hostname = DEFAULT_REDIS_HOSTNAME;
             port = DEFAULT_REDIS_PORT;
@@ -71,6 +70,12 @@ public class RedisDriver extends AbstractRiverComponent implements River {
             password = null;
             messageField = DEFAULT_REDIS_MESSAGE_FIELD;
             json = false;
+        }
+
+        if (settings.settings().containsKey("index")) {
+            Map<String, Object> redisSettings = (Map<String, Object>) settings.settings().get("index");
+            index = XContentMapValues.nodeStringValue(redisSettings.get("name"), DEFAULT_REDIS_INDEX);
+        } else {
             index = DEFAULT_REDIS_INDEX;
         }
 

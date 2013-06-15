@@ -32,17 +32,25 @@ public class RedisDriverTest {
 
     @Test
     public void settingsAreTakenFromSettingsRedisJsonObjectIfSet() {
+
         Map<String, Object> map = new HashMap<String, Object>();
+
         Map<String, Object> redis = new HashMap<String, Object>();
         map.put("redis", redis);
+
         redis.put("hostname", "myhost");
         redis.put("port", "12345");
         redis.put("channels", "a,b,c");
-        redis.put("index", "myindex");
         redis.put("messageField", "mf");
         redis.put("password", "letmein");
         redis.put("database", "3");
         redis.put("json", "true");
+
+        Map<String, Object> index = new HashMap<String, Object>();
+        map.put("index", index);
+
+        index.put("name", "myindex");
+
         RiverSettings settings = new RiverSettings(mock(Settings.class), map);
         RedisDriver driver = new RedisDriver(name, settings, "_river", client);
         assertEquals("myhost", driver.getHostname());

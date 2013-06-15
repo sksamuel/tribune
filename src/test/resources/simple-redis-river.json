@@ -8,6 +8,6 @@
         "json": false
     },
     "index": {
-        "name": "river-index"
+        "name": "redis-index"
     }
 }
