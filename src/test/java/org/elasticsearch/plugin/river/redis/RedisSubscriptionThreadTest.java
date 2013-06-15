@@ -1,4 +1,4 @@
-package com.elasticsearch.plugin.river.redis;
+package org.elasticsearch.plugin.river.redis;
 
 import org.junit.Test;
 
