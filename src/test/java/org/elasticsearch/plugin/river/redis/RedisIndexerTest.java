@@ -3,9 +3,11 @@ package org.elasticsearch.plugin.river.redis;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -32,7 +34,9 @@ public class RedisIndexerTest {
         thread.join();
 
         verify(client).prepareIndex("myindex", "chan4");
-        verify(builder).setSource("{\"mf\" : \"msg\"}");
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        verify(builder).setSource(captor.capture());
+        assertTrue(captor.getValue().matches("\\{\"mf\":\"msg\",\"timestamp\":\\d+\\}"));
     }
 
     @Test

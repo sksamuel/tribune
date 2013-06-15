@@ -2,11 +2,13 @@ package org.elasticsearch.plugin.river.redis;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.util.concurrent.EsExecutors;
+import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.river.RiverSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.JedisPubSub;
 
+import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -107,10 +109,11 @@ class RedisIndexer implements Runnable {
         }
     }
 
-    String getSource(String msg) {
+    String getSource(String msg) throws IOException {
         if (json)
             return msg;
         else
-            return String.format("{\"%s\" : \"%s\"}", messageField, msg);
+            return XContentFactory.jsonBuilder().startObject().field(messageField, msg).field("timestamp",
+                    System.currentTimeMillis()).endObject().string();
     }
 }
