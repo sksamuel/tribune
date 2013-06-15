@@ -23,45 +23,44 @@ import java.util.Map;
  */
 public class RedisDriver extends AbstractRiverComponent implements River {
 
-    private static final int DEFAULT_REDIS_PORT = 6379;
-    private static final String DEFAULT_REDIS_INDEX = "redisindex";
-    private static final String DEFAULT_REDIS_MESSAGE_FIELD = "message";
-    private static final String DEFAULT_REDIS_CHANNEL = "*";
-    private static final String DEFAULT_REDIS_HOSTNAME = "localhost";
+    static final int DEFAULT_REDIS_PORT = 6379;
+    static final String DEFAULT_REDIS_INDEX = "redisindex";
+    static final String DEFAULT_REDIS_MESSAGE_FIELD = "message";
+    static final String[] DEFAULT_REDIS_CHANNELS = {"*"};
+    static final String DEFAULT_REDIS_HOSTNAME = "localhost";
 
     private static Logger logger = LoggerFactory.getLogger(ElasticRedisSubscriber.class);
 
-    private final String index;
-    private final String hostname;
-    private final String password;
-    private final String[] channels;
-    private final int port;
-    private final int database;
-    private final String messageField;
-    private final RiverSettings settings;
-    private Client client;
-    private ElasticRedisSubscriber subscriber;
+    final String hostname;
+    final String password;
+    final String[] channels;
+    final int port;
+    final int database;
+    final String messageField;
+    final RiverSettings settings;
+    final String riverIndexName;
+    Client client;
+    ElasticRedisSubscriber subscriber;
 
     public RedisDriver(RiverName riverName, RiverSettings settings, @RiverIndexName final String riverIndexName, final Client client) {
         super(riverName, settings);
         this.settings = settings;
+        this.riverIndexName = riverIndexName;
         this.client = client;
 
         if (settings.settings().containsKey("redis")) {
             Map<String, Object> redisSettings = (Map<String, Object>) settings.settings().get("redis");
-            hostname = XContentMapValues.nodeStringValue(redisSettings.get("host"), DEFAULT_REDIS_HOSTNAME);
+            hostname = XContentMapValues.nodeStringValue(redisSettings.get("hostname"), DEFAULT_REDIS_HOSTNAME);
             port = XContentMapValues.nodeIntegerValue(redisSettings.get("port"), DEFAULT_REDIS_PORT);
-            channels = XContentMapValues.nodeStringValue(redisSettings.get("channels"), DEFAULT_REDIS_CHANNEL).split(",");
+            channels = XContentMapValues.nodeStringValue(redisSettings.get("channels"), "*").split(",");
             database = XContentMapValues.nodeIntegerValue(redisSettings.get("database"), 0);
             password = XContentMapValues.nodeStringValue(redisSettings.get("password"), null);
-            index = XContentMapValues.nodeStringValue(redisSettings.get("index"), DEFAULT_REDIS_INDEX);
             messageField = XContentMapValues.nodeStringValue(redisSettings.get("messageField"), DEFAULT_REDIS_MESSAGE_FIELD);
         } else {
             hostname = DEFAULT_REDIS_HOSTNAME;
             port = DEFAULT_REDIS_PORT;
-            channels = new String[]{DEFAULT_REDIS_CHANNEL};
+            channels = DEFAULT_REDIS_CHANNELS;
             database = 0;
-            index = DEFAULT_REDIS_INDEX;
             password = null;
             messageField = DEFAULT_REDIS_MESSAGE_FIELD;
         }
@@ -86,7 +85,7 @@ public class RedisDriver extends AbstractRiverComponent implements River {
         try {
 
             final JedisPool pool = getJedisPool();
-            subscriber = new ElasticRedisSubscriber(settings, client, index, messageField);
+            subscriber = new ElasticRedisSubscriber(settings, client, riverIndexName, messageField);
             final RedisSubscriptionThread subscriptionThread = new RedisSubscriptionThread(pool, subscriber, channels);
             Thread thread = EsExecutors.daemonThreadFactory(settings.globalSettings(), "redis_subscription").newThread(subscriptionThread);
             thread.start();
@@ -102,7 +101,7 @@ public class RedisDriver extends AbstractRiverComponent implements River {
 
     void ensureIndexCreated() {
         try {
-            client.admin().indices().prepareCreate(index).execute().actionGet();
+            client.admin().indices().prepareCreate(riverIndexName).execute().actionGet();
         } catch (Exception e) {
             //noinspection ThrowableResultOfMethodCallIgnored,StatementWithEmptyBody
             if (ExceptionsHelper.unwrapCause(e) instanceof IndexAlreadyExistsException) {
