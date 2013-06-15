@@ -76,7 +76,7 @@ redis 127.0.0.1:6379> PUBLISH test-channel "I love redis me"
 Then the content "I love redis me" would be indexed in the _test-redis_ with type _test-channel_.
 The actual body of the request to elastic search would look like this:
 
-```json
+```
 {
    "content" : "I love redis me",
    "timestamp" : <timestamp message received>
@@ -90,7 +90,7 @@ curl -XGET 'http://localhost:9200/test-redis/_search?q=content:redis'
 ```
 
 ## License
-```txt
+```
 This software is licensed under the Apache 2 license, quoted below.
 
 Copyright 2013 Stephen Samuel
