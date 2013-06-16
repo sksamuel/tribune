@@ -17,8 +17,6 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-import java.util.Map;
-
 /**
  * @author Stephen Samuel
  */
@@ -53,31 +51,14 @@ public class RedisDriver extends AbstractRiverComponent implements River {
         this.settings = settings;
         this.client = client;
 
-        if (settings.settings().containsKey("redis")) {
-            Map<String, Object> redisSettings = (Map<String, Object>) settings.settings().get("redis");
-            hostname = XContentMapValues.nodeStringValue(redisSettings.get("hostname"), DEFAULT_REDIS_HOSTNAME);
-            port = XContentMapValues.nodeIntegerValue(redisSettings.get("port"), DEFAULT_REDIS_PORT);
-            channels = XContentMapValues.nodeStringValue(redisSettings.get("channels"), DEFAULT_REDIS_CHANNELS).split(",");
-            database = XContentMapValues.nodeIntegerValue(redisSettings.get("database"), 0);
-            password = XContentMapValues.nodeStringValue(redisSettings.get("password"), null);
-            messageField = XContentMapValues.nodeStringValue(redisSettings.get("messageField"), DEFAULT_REDIS_MESSAGE_FIELD);
-            json = XContentMapValues.nodeBooleanValue(redisSettings.get("json"), false);
-        } else {
-            hostname = DEFAULT_REDIS_HOSTNAME;
-            port = DEFAULT_REDIS_PORT;
-            channels = new String[]{DEFAULT_REDIS_CHANNELS};
-            database = 0;
-            password = null;
-            messageField = DEFAULT_REDIS_MESSAGE_FIELD;
-            json = false;
-        }
-
-        if (settings.settings().containsKey("index")) {
-            Map<String, Object> redisSettings = (Map<String, Object>) settings.settings().get("index");
-            index = XContentMapValues.nodeStringValue(redisSettings.get("name"), DEFAULT_REDIS_INDEX);
-        } else {
-            index = DEFAULT_REDIS_INDEX;
-        }
+        hostname = XContentMapValues.nodeStringValue(settings.settings().get("redis.hostname"), DEFAULT_REDIS_HOSTNAME);
+        port = XContentMapValues.nodeIntegerValue(settings.settings().get("redis.port"), DEFAULT_REDIS_PORT);
+        channels = XContentMapValues.nodeStringValue(settings.settings().get("redis.channels"), DEFAULT_REDIS_CHANNELS).split(",");
+        database = XContentMapValues.nodeIntegerValue(settings.settings().get("redis.database"), 0);
+        password = XContentMapValues.nodeStringValue(settings.settings().get("redis.password"), null);
+        messageField = XContentMapValues.nodeStringValue(settings.settings().get("redis.messageField"), DEFAULT_REDIS_MESSAGE_FIELD);
+        json = XContentMapValues.nodeBooleanValue(settings.settings().get("redis.json"), false);
+        index = XContentMapValues.nodeStringValue(settings.settings().get("index.name"), DEFAULT_REDIS_INDEX);
 
         logger.debug("Redis settings [hostname={}, port={}, channels={}, database={}]", new Object[]{hostname,
                 port,

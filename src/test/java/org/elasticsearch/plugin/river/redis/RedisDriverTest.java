@@ -10,11 +10,11 @@ import org.elasticsearch.river.RiverName;
 import org.elasticsearch.river.RiverSettings;
 import org.junit.Test;
 import org.mockito.Mockito;
-import redis.clients.jedis.Jedis;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.elasticsearch.common.settings.ImmutableSettings.settingsBuilder;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -28,46 +28,32 @@ public class RedisDriverTest {
     RiverSettings settings = new RiverSettings(mock(Settings.class), map);
     Client client = mock(Client.class);
     RedisDriver driver = new RedisDriver(name, settings, "myindex", client);
-    Jedis jedis = mock(Jedis.class);
 
     @Test
     public void settingsAreTakenFromSettingsRedisJsonObjectIfSet() {
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Settings globalSettings = settingsBuilder().loadFromClasspath("settings.yml").build();
+        Map map = settingsBuilder().loadFromClasspath("dummy-river.json").build().getAsMap();
+        RiverSettings riverSettings = new RiverSettings(globalSettings, map);
+        RedisDriver driver = new RedisDriver(name, riverSettings, "myindex", client);
 
-        Map<String, Object> redis = new HashMap<String, Object>();
-        map.put("redis", redis);
-
-        redis.put("hostname", "myhost");
-        redis.put("port", "12345");
-        redis.put("channels", "a,b,c");
-        redis.put("messageField", "mf");
-        redis.put("password", "letmein");
-        redis.put("database", "3");
-        redis.put("json", "true");
-
-        Map<String, Object> index = new HashMap<String, Object>();
-        map.put("index", index);
-
-        index.put("name", "myindex");
-
-        RiverSettings settings = new RiverSettings(mock(Settings.class), map);
-        RedisDriver driver = new RedisDriver(name, settings, "_river", client);
-        assertEquals("myhost", driver.getHostname());
-        assertEquals(12345, driver.getPort());
-        assertEquals("myindex", driver.getIndex());
-        assertEquals("mf", driver.getMessageField());
-        assertArrayEquals(new String[]{"a", "b", "c"}, driver.getChannels());
+        assertEquals("superhost", driver.getHostname());
+        assertEquals(9865, driver.getPort());
+        assertEquals("reddyredindex", driver.getIndex());
+        assertEquals("putithere", driver.getMessageField());
+        assertArrayEquals(new String[]{"c1", "c2"}, driver.getChannels());
         assertEquals("letmein", driver.getPassword());
-        assertEquals(3, driver.getDatabase());
+        assertEquals(16, driver.getDatabase());
         assertEquals(true, driver.isJson());
     }
 
     @Test
     public void settingsAreDefaultsIfJsonObjectNotSet() {
+
         Map<String, Object> map = new HashMap<String, Object>();
         RiverSettings settings = new RiverSettings(mock(Settings.class), map);
         RedisDriver driver = new RedisDriver(name, settings, "myindex", client);
+
         assertEquals(RedisDriver.DEFAULT_REDIS_HOSTNAME, driver.getHostname());
         assertEquals(RedisDriver.DEFAULT_REDIS_PORT, driver.getPort());
         assertEquals(RedisDriver.DEFAULT_REDIS_MESSAGE_FIELD, driver.getMessageField());

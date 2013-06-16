@@ -1,0 +1,15 @@
+{
+    "type": "redis",
+    "redis": {
+        "hostname": "superhost",
+        "port": 9865,
+        "channels": "c1,c2",
+        "messageField": "putithere",
+        "json": true,
+        "password": "letmein",
+        "database" : 16
+    },
+    "index": {
+        "name": "reddyredindex"
+    }
+}
