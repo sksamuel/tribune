@@ -111,7 +111,7 @@ Then execute:
 
 
 
-## How to use
+## How to install
 
 The plugin is available on maven central.
 
