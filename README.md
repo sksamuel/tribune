@@ -90,6 +90,16 @@ curl -XGET 'http://localhost:9200/test-redis/_search?q=content:redis'
 ```
 
 
+## Integration Tests
+
+Make sure you are running a redis server on localhost:6479 or alternatively update the simple-redis-river.json settings inside src/test/resources
+to point to your local server.
+
+Then execute:
+```mvn -Pint-test clean install```
+
+
+
 ## How to use
 
 The plugin is available on maven central.
