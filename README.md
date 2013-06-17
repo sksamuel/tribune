@@ -89,6 +89,24 @@ Query elastic to see the document
 curl -XGET 'http://localhost:9200/test-redis/_search?q=content:redis'
 ```
 
+
+## How to use
+
+The plugin is available on maven central.
+
+```xml
+<dependency>
+    <groupId>com.sksamuel.elasticsearch</groupId>
+    <artifactId>elasticsearch-river-redis</artifactId>
+    <version>0.90.1.2</version>
+</dependency>
+```
+
+To install run:
+```
+$ bin\plugin -install com.sksamuel.elasticsearch/elasticsearch-river-redis/0.90.1.2
+```
+
 ## License
 ```
 This software is licensed under the Apache 2 license, quoted below.
