@@ -51,19 +51,22 @@ public class RedisDriver extends AbstractRiverComponent implements River {
         this.settings = settings;
         this.client = client;
 
-        hostname = XContentMapValues.nodeStringValue(settings.settings().get("redis.hostname"), DEFAULT_REDIS_HOSTNAME);
-        port = XContentMapValues.nodeIntegerValue(settings.settings().get("redis.port"), DEFAULT_REDIS_PORT);
-        channels = XContentMapValues.nodeStringValue(settings.settings().get("redis.channels"), DEFAULT_REDIS_CHANNELS).split(",");
-        database = XContentMapValues.nodeIntegerValue(settings.settings().get("redis.database"), 0);
-        password = XContentMapValues.nodeStringValue(settings.settings().get("redis.password"), null);
-        messageField = XContentMapValues.nodeStringValue(settings.settings().get("redis.messageField"), DEFAULT_REDIS_MESSAGE_FIELD);
-        json = XContentMapValues.nodeBooleanValue(settings.settings().get("redis.json"), false);
-        index = XContentMapValues.nodeStringValue(settings.settings().get("index.name"), DEFAULT_REDIS_INDEX);
+        hostname =
+                XContentMapValues.nodeStringValue(XContentMapValues.extractValue("redis.hostname", settings.settings()),
+                        DEFAULT_REDIS_HOSTNAME);
+        port = XContentMapValues.nodeIntegerValue(XContentMapValues.extractValue("redis.port", settings.settings()), DEFAULT_REDIS_PORT);
+        channels =
+                XContentMapValues.nodeStringValue(XContentMapValues.extractValue("redis.channels", settings.settings()),
+                        DEFAULT_REDIS_CHANNELS).split(",");
+        database = XContentMapValues.nodeIntegerValue(XContentMapValues.extractValue("redis.database", settings.settings()), 0);
+        password = XContentMapValues.nodeStringValue(XContentMapValues.extractValue("redis.password", settings.settings()), null);
+        messageField =
+                XContentMapValues.nodeStringValue(XContentMapValues.extractValue("redis.messageField", settings.settings()),
+                        DEFAULT_REDIS_MESSAGE_FIELD);
+        json = XContentMapValues.nodeBooleanValue(XContentMapValues.extractValue("redis.json", settings.settings()), false);
+        index = XContentMapValues.nodeStringValue(XContentMapValues.extractValue("index.name", settings.settings()), DEFAULT_REDIS_INDEX);
 
-        logger.debug("Redis settings [hostname={}, port={}, channels={}, database={}]", new Object[]{hostname,
-                port,
-                channels,
-                database});
+        logger.debug("Redis settings [hostname={}, port={}, database={}]", new Object[]{hostname, port, database});
         logger.debug("River settings [indexName={}, channels={}, messageField={}, json={}]", new Object[]{index,
                 channels,
                 messageField,

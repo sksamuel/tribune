@@ -9,12 +9,13 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.internal.InternalSettingsPerparer;
-import org.elasticsearch.plugins.PluginManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
+
+import java.util.UUID;
 
 import static org.elasticsearch.client.Requests.clusterHealthRequest;
 import static org.elasticsearch.client.Requests.countRequest;
@@ -33,7 +34,7 @@ public class RedisRiverIntTest {
     private static Logger logger = LoggerFactory.getLogger(RedisRiverIntTest.class);
 
     private Node node;
-    private String river = "redis-river-" + System.currentTimeMillis();
+    private final String river = "redis-river-" + UUID.randomUUID().toString();
     String index;
     String channel;
     private Jedis jedis;
@@ -65,7 +66,6 @@ public class RedisRiverIntTest {
 
         logger.debug("Starting local elastic...");
         Tuple<Settings, Environment> initialSettings = InternalSettingsPerparer.prepareSettings(globalSettings, true);
-        PluginManager pluginManager = new PluginManager(initialSettings.v2(), null);
 
         if (!initialSettings.v2().configFile().exists()) {
             FileSystemUtils.mkdirs(initialSettings.v2().configFile());
