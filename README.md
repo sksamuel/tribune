@@ -1,6 +1,17 @@
 Redis River Plugin for ElasticSearch
 =========================
 
+Redis River Plugin is a river module for Elasticsearch that will subscribe to a redis
+pubsub channel(s) and index incoming messages.
+
+The messages can be indexed "as is" - assumption is that they must be valid json key-value objects, 
+or the message can be taken as a string and indexed inside a configurable field.
+
+Indexed documents will not be deleted as pubsub is a fire and forget mechanism. In the future we will
+add support for a kind of TTL on the documents.
+
+## Plugin history
+
 | Redis Driver Plugin | ElasticSearch | Redis |
 | ------ | --------- | --------- |
 | 0.90.1.x | 0.90.1 | 2.6.x |
@@ -15,14 +26,14 @@ Start the Redis river by curling a document like the following to the river inde
 curl -XPUT 'http://localhost:9200/_river/redisriver/_meta' -d '{
     "type": "redis",
     "redis": {
-        "hostname": "REDIS_HOSTNAME",
-        "port" : "REDIS_PORT_OPTIONAL",
+        "hostname": "localhost",
+        "port" : "1234",
         "json" : false,
         "messageField" : "content",
 		"channels" : "channel1,channel2"
     },
     "index": {
-        "name": "INDEX_NAME",
+        "name": "redisindex",
     }
 }'
 ```
@@ -100,7 +111,7 @@ Then execute:
 
 
 
-## How to use
+## How to install
 
 The plugin is available on maven central.
 
