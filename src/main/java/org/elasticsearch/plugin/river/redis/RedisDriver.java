@@ -56,7 +56,8 @@ public class RedisDriver extends AbstractRiverComponent implements River {
 
         hostname = nodeStringValue(extractValue("redis.hostname", settings.settings()), DEFAULT_REDIS_HOSTNAME);
         port = nodeIntegerValue(extractValue("redis.port", settings.settings()), DEFAULT_REDIS_PORT);
-        keys = nodeStringValue(extractValue("redis.channels", settings.settings()), DEFAULT_REDIS_KEYS).split(",");
+        String k = nodeStringValue(extractValue("redis.keys", settings.settings()), null);
+        keys = k == null ? new String[0] : k.split(",");
         channels = nodeStringValue(extractValue("redis.channels", settings.settings()), DEFAULT_REDIS_CHANNELS).split(",");
         database = nodeIntegerValue(extractValue("redis.database", settings.settings()), 0);
         password = nodeStringValue(extractValue("redis.password", settings.settings()), null);
