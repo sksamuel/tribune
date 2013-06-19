@@ -4,7 +4,6 @@ import org.elasticsearch.ExceptionsHelper;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.util.concurrent.EsExecutors;
-import org.elasticsearch.common.xcontent.support.XContentMapValues;
 import org.elasticsearch.indices.IndexAlreadyExistsException;
 import org.elasticsearch.river.AbstractRiverComponent;
 import org.elasticsearch.river.River;
@@ -16,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+
+import static org.elasticsearch.common.xcontent.support.XContentMapValues.*;
 
 /**
  * @author Stephen Samuel
@@ -51,20 +52,14 @@ public class RedisDriver extends AbstractRiverComponent implements River {
         this.settings = settings;
         this.client = client;
 
-        hostname =
-                XContentMapValues.nodeStringValue(XContentMapValues.extractValue("redis.hostname", settings.settings()),
-                        DEFAULT_REDIS_HOSTNAME);
-        port = XContentMapValues.nodeIntegerValue(XContentMapValues.extractValue("redis.port", settings.settings()), DEFAULT_REDIS_PORT);
-        channels =
-                XContentMapValues.nodeStringValue(XContentMapValues.extractValue("redis.channels", settings.settings()),
-                        DEFAULT_REDIS_CHANNELS).split(",");
-        database = XContentMapValues.nodeIntegerValue(XContentMapValues.extractValue("redis.database", settings.settings()), 0);
-        password = XContentMapValues.nodeStringValue(XContentMapValues.extractValue("redis.password", settings.settings()), null);
-        messageField =
-                XContentMapValues.nodeStringValue(XContentMapValues.extractValue("redis.messageField", settings.settings()),
-                        DEFAULT_REDIS_MESSAGE_FIELD);
-        json = XContentMapValues.nodeBooleanValue(XContentMapValues.extractValue("redis.json", settings.settings()), false);
-        index = XContentMapValues.nodeStringValue(XContentMapValues.extractValue("index.name", settings.settings()), DEFAULT_REDIS_INDEX);
+        hostname = nodeStringValue(extractValue("redis.hostname", settings.settings()), DEFAULT_REDIS_HOSTNAME);
+        port = nodeIntegerValue(extractValue("redis.port", settings.settings()), DEFAULT_REDIS_PORT);
+        channels = nodeStringValue(extractValue("redis.channels", settings.settings()), DEFAULT_REDIS_CHANNELS).split(",");
+        database = nodeIntegerValue(extractValue("redis.database", settings.settings()), 0);
+        password = nodeStringValue(extractValue("redis.password", settings.settings()), null);
+        messageField = nodeStringValue(extractValue("redis.messageField", settings.settings()), DEFAULT_REDIS_MESSAGE_FIELD);
+        json = nodeBooleanValue(extractValue("redis.json", settings.settings()), false);
+        index = nodeStringValue(extractValue("index.name", settings.settings()), DEFAULT_REDIS_INDEX);
 
         logger.debug("Redis settings [hostname={}, port={}, database={}]", new Object[]{hostname, port, database});
         logger.debug("River settings [indexName={}, channels={}, messageField={}, json={}]", new Object[]{index,
