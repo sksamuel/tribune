@@ -28,6 +28,7 @@ public class RedisDriver extends AbstractRiverComponent implements River {
     static final String DEFAULT_REDIS_MESSAGE_FIELD = "message";
     static final String DEFAULT_REDIS_CHANNELS = "elasticsearch";
     static final String DEFAULT_REDIS_HOSTNAME = "localhost";
+    static final String DEFAULT_REDIS_KEYS = "";
 
     private static Logger logger = LoggerFactory.getLogger(RedisSubscriber.class);
 
@@ -35,6 +36,7 @@ public class RedisDriver extends AbstractRiverComponent implements River {
     private final String password;
     private final String index;
     private final String[] channels;
+    private final String[] keys;
     private final int port;
     private final int database;
     private final String messageField;
@@ -54,6 +56,7 @@ public class RedisDriver extends AbstractRiverComponent implements River {
 
         hostname = nodeStringValue(extractValue("redis.hostname", settings.settings()), DEFAULT_REDIS_HOSTNAME);
         port = nodeIntegerValue(extractValue("redis.port", settings.settings()), DEFAULT_REDIS_PORT);
+        keys = nodeStringValue(extractValue("redis.channels", settings.settings()), DEFAULT_REDIS_KEYS).split(",");
         channels = nodeStringValue(extractValue("redis.channels", settings.settings()), DEFAULT_REDIS_CHANNELS).split(",");
         database = nodeIntegerValue(extractValue("redis.database", settings.settings()), 0);
         password = nodeStringValue(extractValue("redis.password", settings.settings()), null);
@@ -147,6 +150,10 @@ public class RedisDriver extends AbstractRiverComponent implements River {
 
     public String[] getChannels() {
         return channels;
+    }
+
+    public String[] getKeys() {
+        return keys;
     }
 
     public String getIndex() {

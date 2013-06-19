@@ -40,6 +40,7 @@ public class RedisDriverTest {
         assertEquals("superhost", driver.getHostname());
         assertEquals(9865, driver.getPort());
         assertEquals("reddyredindex", driver.getIndex());
+        assertArrayEquals(new String[]{"key1", "key2*"}, driver.getKeys());
         assertEquals("putithere", driver.getMessageField());
         assertArrayEquals(new String[]{"c1", "c2"}, driver.getChannels());
         assertEquals("letmein", driver.getPassword());
@@ -55,6 +56,7 @@ public class RedisDriverTest {
         RedisDriver driver = new RedisDriver(name, settings, "myindex", client);
 
         assertEquals(RedisDriver.DEFAULT_REDIS_HOSTNAME, driver.getHostname());
+        assertEquals(0, driver.getKeys().length);
         assertEquals(RedisDriver.DEFAULT_REDIS_PORT, driver.getPort());
         assertEquals(RedisDriver.DEFAULT_REDIS_MESSAGE_FIELD, driver.getMessageField());
         assertArrayEquals(new String[]{RedisDriver.DEFAULT_REDIS_CHANNELS}, driver.getChannels());
