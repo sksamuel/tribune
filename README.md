@@ -38,7 +38,7 @@ curl -XPUT 'http://localhost:9200/_river/redisriver/_meta' -d '{
 }'
 ```
 
-The following parameters are available in the rediss river document.
+The following parameters are available in the redis river document.
 
 | Parameter | Description |
 | ------ | --------- |
