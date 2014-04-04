@@ -13,7 +13,7 @@
     <groupId>com.sksamuel.elasticsearch</groupId>
     <artifactId>elasticsearch-river-redis</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.2</version>
+    <version>1.1.0</version>
     <name>elasticsearch-river-redis</name>
     <description>A river plugin for elastic search that offers an easy way to index redis pubsub</description>
     <url>https://github.com/sksamuel/elasticsearch-river-redis</url>
@@ -162,7 +162,7 @@
             <dependency>
                 <groupId>org.elasticsearch</groupId>
                 <artifactId>elasticsearch</artifactId>
-                <version>1.0.2</version>
+                <version>1.1.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
