@@ -21,7 +21,7 @@ class RedisIndexer implements Runnable {
     private final String index;
     private final boolean json;
     private final String messageField;
-    private BlockingQueue<String[]> queue = new LinkedBlockingQueue<String[]>();
+    private BlockingQueue<String[]> queue = new LinkedBlockingQueue<>();
 
     public RedisIndexer(Client client, String index, boolean json, String messageField) {
         this.client = client;

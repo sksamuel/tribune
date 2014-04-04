@@ -13,7 +13,7 @@
     <groupId>com.sksamuel.elasticsearch</groupId>
     <artifactId>elasticsearch-river-redis</artifactId>
     <packaging>jar</packaging>
-    <version>0.90.1.2</version>
+    <version>1.0.2</version>
     <name>elasticsearch-river-redis</name>
     <description>A river plugin for elastic search that offers an easy way to index redis pubsub</description>
     <url>https://github.com/sksamuel/elasticsearch-river-redis</url>
@@ -118,11 +118,8 @@
         <commons.beanutils.version>1.8.3</commons.beanutils.version>
 
         <junit.version>4.11</junit.version>
-
         <log4j.version>1.2.17</log4j.version>
-
         <mockito.version>1.9.5</mockito.version>
-
         <slf4j.version>1.6.6</slf4j.version>
     </properties>
 
@@ -165,7 +162,7 @@
             <dependency>
                 <groupId>org.elasticsearch</groupId>
                 <artifactId>elasticsearch</artifactId>
-                <version>0.90.1</version>
+                <version>1.0.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

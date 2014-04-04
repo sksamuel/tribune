@@ -3,12 +3,9 @@ package org.elasticsearch.plugin.river.redis;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.common.collect.Tuple;
-import org.elasticsearch.common.io.FileSystemUtils;
+import org.elasticsearch.action.support.QuerySourceBuilder;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.env.Environment;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.node.internal.InternalSettingsPerparer;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -21,7 +18,7 @@ import static org.elasticsearch.client.Requests.clusterHealthRequest;
 import static org.elasticsearch.client.Requests.countRequest;
 import static org.elasticsearch.common.io.Streams.copyToStringFromClasspath;
 import static org.elasticsearch.common.settings.ImmutableSettings.settingsBuilder;
-import static org.elasticsearch.index.query.QueryBuilders.fieldQuery;
+import static org.elasticsearch.index.query.QueryBuilders.queryString;
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -65,16 +62,6 @@ public class RedisRiverIntTest {
         logger.debug("... connected");
 
         logger.debug("Starting local elastic...");
-        Tuple<Settings, Environment> initialSettings = InternalSettingsPerparer.prepareSettings(globalSettings, true);
-
-        if (!initialSettings.v2().configFile().exists()) {
-            FileSystemUtils.mkdirs(initialSettings.v2().configFile());
-        }
-
-        if (!initialSettings.v2().logsFile().exists()) {
-            FileSystemUtils.mkdirs(initialSettings.v2().logsFile());
-        }
-
         node = nodeBuilder().local(true).settings(globalSettings).node();
 
         logger.info("Create river [{}]", river);
@@ -106,15 +93,17 @@ public class RedisRiverIntTest {
         Thread.sleep(1000);
         refreshIndex();
 
+        QuerySourceBuilder builder = new QuerySourceBuilder();
+        builder.setQuery(queryString(field + ":" + msg));
+
         logger.debug("Counting [index={}, type={}, field={}, msg={}]", new Object[]{index, channel, field, msg});
-        CountResponse resp =
-                node.client().count(countRequest(index).types(channel).query(fieldQuery(field, msg))).actionGet();
+        CountResponse resp = node.client().count(countRequest(index).types(channel).source(builder)).actionGet();
         assertEquals(1, resp.getCount());
 
         msg = "coldplay";
 
         logger.debug("Counting [index={}, type={}, field={}, msg={}]", new Object[]{index, channel, field, msg});
-        resp = node.client().count(countRequest(index).types(channel).query(fieldQuery(field, msg))).actionGet();
+        resp = node.client().count(countRequest(index).types(channel).source(builder)).actionGet();
         assertEquals(0, resp.getCount());
 
         logger.debug("Publishing message [channel={}]", channel);
@@ -124,7 +113,7 @@ public class RedisRiverIntTest {
         refreshIndex();
 
         logger.debug("Counting [index={}, type={}, field={}, msg={}]", new Object[]{index, channel, field, msg});
-        resp = node.client().count(countRequest(index).types(channel).query(fieldQuery(field, msg))).actionGet();
+        resp = node.client().count(countRequest(index).types(channel).source(builder)).actionGet();
         assertEquals(1, resp.getCount());
 
         shutdown();
