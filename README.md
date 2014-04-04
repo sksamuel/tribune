@@ -14,6 +14,8 @@ add support for a kind of TTL on the documents.
 
 | Redis Driver Plugin | ElasticSearch | Redis |
 | ------ | --------- | --------- |
+| 1.1.0 | 1.1.0 | 2.6.x |
+| 1.0.2 | 1.0.2 | 2.6.x |
 | 0.90.1.x | 0.90.1 | 2.6.x |
 
 [![Build Status](https://travis-ci.org/sksamuel/elasticsearch-river-redis.png)](https://travis-ci.org/sksamuel/elasticsearch-river-redis)
@@ -119,13 +121,13 @@ The plugin is available on maven central.
 <dependency>
     <groupId>com.sksamuel.elasticsearch</groupId>
     <artifactId>elasticsearch-river-redis</artifactId>
-    <version>0.90.1.2</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
 To install run:
 ```
-$ bin\plugin -install com.sksamuel.elasticsearch/elasticsearch-river-redis/0.90.1.2
+$ bin\plugin -install com.sksamuel.elasticsearch/elasticsearch-river-redis/1.1.0
 ```
 
 ## License
