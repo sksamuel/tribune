@@ -7,11 +7,13 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <dependencySets>
         <dependencySet>
+            <unpack>false</unpack>
             <outputDirectory>/</outputDirectory>
-            <useProjectArtifact>true</useProjectArtifact>
+            <useProjectArtifact>false</useProjectArtifact>
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
                 <exclude>org.elasticsearch:elasticsearch</exclude>
+                <exclude>junit:junit</exclude>
             </excludes>
         </dependencySet>
         <!-- Include Jedis driver as dependency -->
@@ -21,4 +23,13 @@
             </includes>
         </dependencySet>
     </dependencySets>
+    <fileSets>
+        <fileSet>
+            <directory>${project.build.directory}/</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>${project.name}-${elasticsearch.version}.jar</include>
+            </includes>
+        </fileSet>
+    </fileSets>
 </assembly>
