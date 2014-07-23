@@ -74,7 +74,7 @@ curl -XPUT 'http://localhost:9200/_river/redisriver/_meta' -d '{
         "channels": "test-channel"
     },
     "index": {
-        "name": "test-redis",
+        "name": "test-redis"
     }
 }'
 ```
