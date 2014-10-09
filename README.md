@@ -54,7 +54,22 @@ The following parameters are available in the redis river document.
 | index.name | The name of the index where documents should be indexed. Optional. Defaults to _redis-index_.
 
 Then any messages published on the channels that the river is subscribed to will be automatically indexed. The index name is taken from the index.name parameter in the settings, and the type is taken as the channel name.
+## How to install
 
+The plugin is available on maven central.
+
+```xml
+<dependency>
+    <groupId>com.sksamuel.elasticsearch</groupId>
+    <artifactId>elasticsearch-river-redis</artifactId>
+    <version>1.1.0</version>
+</dependency>
+```
+
+To install run:
+```
+$ bin\plugin -install com.sksamuel.elasticsearch/elasticsearch-river-redis/1.1.0
+```
 ## Example
 
 Start elastic search locally on port 9200.
