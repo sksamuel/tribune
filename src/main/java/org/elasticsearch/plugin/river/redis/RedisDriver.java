@@ -42,11 +42,14 @@ public class RedisDriver extends AbstractRiverComponent implements River {
     private final String messageField;
     private final boolean json;
     private final RedisIndexer indexer;
+    private final JedisPool pool;
 
     final RiverSettings settings;
     final Client client;
     RedisSubscriber subscriber;
+    RedisMonitor monitor;
     Thread thread;
+    Thread monitor_thread;
 
     @Inject
     public RedisDriver(RiverName riverName, RiverSettings settings, @RiverIndexName final String riverIndexName, final Client client) {
@@ -72,6 +75,7 @@ public class RedisDriver extends AbstractRiverComponent implements River {
                 json});
 
         indexer = new RedisIndexer(client, index, json, messageField);
+        pool = new JedisPool(new JedisPoolConfig(), hostname, port, 0, password, database);
     }
 
     @Override
@@ -93,18 +97,21 @@ public class RedisDriver extends AbstractRiverComponent implements River {
         } catch (Exception e) {
             logger.debug("Could not create redis pool. Disabling river");
         }
+
+        try {
+            monitor = new RedisMonitor(pool, indexer, keys);
+            monitor_thread = EsExecutors.daemonThreadFactory(settings.globalSettings(), "redis_monitor").newThread(monitor);
+            monitor_thread.start();
+        } catch (Exception e) {
+            logger.debug("Could not create redis monitor. Disabling river");
+        }
     }
 
     void startSubscriberThread(RedisSubscriber subscriber) {
         // this has to run on a separate thread because redis subscription method blocks
-        final JedisPool pool = getJedisPool();
         final RedisSubscriptionTask task = new RedisSubscriptionTask(pool, subscriber, channels);
         thread = EsExecutors.daemonThreadFactory(settings.globalSettings(), "redis_subscription").newThread(task);
         thread.start();
-    }
-
-    JedisPool getJedisPool() {
-        return new JedisPool(new JedisPoolConfig(), hostname, port, 0, password, database);
     }
 
     void ensureIndexCreated() {
@@ -125,6 +132,8 @@ public class RedisDriver extends AbstractRiverComponent implements River {
 
     @Override
     public void close() {
+        if (monitor != null)
+            monitor.shutdown();
         if (subscriber != null && subscriber.isSubscribed())
             subscriber.unsubscribe();
     }
