@@ -1,6 +1,9 @@
 Redis River Plugin for ElasticSearch
 =========================
 
+**Rivers are deprecated in Elasticsearch 1.5 and will be removed in 2.0. Therefore, this plugin will no longer be maintained.
+https://www.elastic.co/blog/deprecating_rivers**
+
 Redis River Plugin is a river module for Elasticsearch that will subscribe to a redis
 pubsub channel(s) and index incoming messages.
 
