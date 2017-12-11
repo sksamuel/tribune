@@ -6,13 +6,18 @@ import org.scalatest.{FlatSpec, Matchers}
 
 class ValidationTest extends FlatSpec with Matchers {
 
-  "Validation" should "validate" in {
-    val validator: Validator[Starship] = new Validator[Starship] {
+  "Validation Macros" should "build validator" in {
+    val v1: Validator[Starship] = new Validator[Starship] {
       override def validate(t: Starship): this.ValidationResult = {
         Invalid(NonEmptyList.of(MaxWarpExceeded, InvalidDesignation))
       }
     }
-    validator.validate(Starship("Enterprise", "1701", 12)) shouldBe Invalid(NonEmptyList.of(MaxWarpExceeded, InvalidDesignation))
+
+    val v2 = core.validator[Starship] { starship =>
+      starship.maxWarp
+    }
+
+    v1.validate(Starship("Enterprise", "1701", 12)) shouldBe Invalid(NonEmptyList.of(MaxWarpExceeded, InvalidDesignation))
   }
 }
 
