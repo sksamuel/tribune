@@ -4,7 +4,19 @@ import cats.data.NonEmptyList
 import cats.data.Validated.Invalid
 import org.scalatest.{FlatSpec, Matchers}
 
+trait Must
+
 class ValidationTest extends FlatSpec with Matchers {
+
+  implicit class RichField(field: Any) {
+    def must(matcher: Must): Unit = macros.Validate
+  }
+
+  object beNull extends Must
+
+  def validator[T](fn: T => Unit): Unit = {
+
+  }
 
   "Validation Macros" should "build validator" in {
     val v1: Validator[Starship] = new Validator[Starship] {
@@ -13,8 +25,8 @@ class ValidationTest extends FlatSpec with Matchers {
       }
     }
 
-    val v2 = core.validator[Starship] { starship =>
-      starship.maxWarp
+    val v2 = validator[Starship] { starship =>
+      starship.maxWarp must beNull
     }
 
     v1.validate(Starship("Enterprise", "1701", 12)) shouldBe Invalid(NonEmptyList.of(MaxWarpExceeded, InvalidDesignation))

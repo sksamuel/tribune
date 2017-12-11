@@ -10,6 +10,7 @@ object Validate {
   def applyImpl[T: c.WeakTypeTag](c: scala.reflect.macros.whitebox.Context): c.Expr[Validator[T]] = {
     import c.universe._
     val tpe = weakTypeTag[T].tpe
+    println(showRaw(c))
 
     c.Expr[Validator[T]](
       q"""
