@@ -1,28 +1,15 @@
 package com.sksamuel.monkeytail
 
 import cats.data.NonEmptyList
-import cats.data.Validated.{Invalid, Valid}
+import cats.data.Validated.Invalid
+import com.sksamuel.monkeytail.macros.ValidatorBuilder
 import org.scalatest.{FlatSpec, Matchers}
 
-trait Must
+class MacroValidatorBuilder[T] extends ValidatorBuilder[T] {
+  override def validate[U](field: T => U): ValidatorBuilder[T] = macros.Macros[T, U](field)
+}
 
 class ValidationTest extends FlatSpec with Matchers {
-
-  implicit class RichField[T](field: T) {
-    def must(matcher: Must): Unit = {
-      println(s"Must $field")
-      val validator = macros.Validate(field)
-      validator.validate(field)
-    }
-  }
-
-  object beNull extends Must
-
-  def validator[T](fn: T => Unit): Validator[T] = new Validator[T] {
-    override def validate(t: T) = {
-      Valid(t)
-    }
-  }
 
   "Validation Macros" should "build validator" in {
     val v1: Validator[Starship] = new Validator[Starship] {
@@ -31,13 +18,11 @@ class ValidationTest extends FlatSpec with Matchers {
       }
     }
 
-    val v2 = validator[Starship] { starship =>
-      starship.maxWarp must beNull
-    }
-
     val enterprise = Starship("Enterprise", "1701", 12)
-    v1.validate(enterprise) shouldBe Invalid(NonEmptyList.of(MaxWarpExceeded, InvalidDesignation))
-    v2.validate(enterprise)
+
+    val v2 = new MacroValidatorBuilder[Starship]
+      .validate(_.maxWarp)
+      .validate(_.name)
   }
 }
 
