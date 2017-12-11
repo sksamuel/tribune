@@ -8,8 +8,8 @@ trait Must
 
 class ValidationTest extends FlatSpec with Matchers {
 
-  implicit class RichField(field: Any) {
-    def must(matcher: Must): Unit = macros.Validate
+  implicit class RichField[T](field: T) {
+    def must(matcher: Must): Validator[T] = macros.Validate(field)
   }
 
   object beNull extends Must
