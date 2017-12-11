@@ -17,6 +17,7 @@ object Validate {
         {
           new com.sksamuel.monkeytail.Validator[$tpe] {
             override def validate(t: $tpe): this.ValidationResult = {
+              sys.error($field.toString)
               cats.data.Validated.Valid[$tpe](t)
             }
           }
