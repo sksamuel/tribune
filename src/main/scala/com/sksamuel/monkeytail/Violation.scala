@@ -12,12 +12,13 @@ object Violation {
   }
 }
 
+case class BasicViolation(message: String) extends Violation
+
 trait ViolationBuilder[-U] {
   def apply(path: Path, value: U): Violation
 }
 
-object DefaultViolationBuilder extends ViolationBuilder[Any] {
+object BasicViolationBuilder extends ViolationBuilder[Any] {
   override def apply(path: Path, value: Any): Violation = BasicViolation(s"${path.value} has invalid value: $value")
 }
 
-case class BasicViolation(message: String) extends Violation

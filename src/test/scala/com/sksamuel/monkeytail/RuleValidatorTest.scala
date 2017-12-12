@@ -94,8 +94,7 @@ class RuleValidatorTest extends FlatSpec with Matchers {
 
   it should "allow classes to be tested as a whole" in {
 
-    val starshipValidator = Validator[Starship]
-      .test { starship =>
+    val starshipValidator = Validator.simple[Starship] { starship =>
         starship.maxWarp < 10 && starship.name != null
       }
 
