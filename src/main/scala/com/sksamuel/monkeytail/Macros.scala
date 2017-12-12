@@ -27,8 +27,19 @@ object FieldPath {
 
 object Macros {
 
+  def test[T](c: scala.reflect.macros.whitebox.Context)
+             (test: c.Expr[T => Boolean])(implicit builder: ViolationBuilder[T] = BasicViolationBuilder): c.Expr[RuleValidator[T]] = {
+    import c.universe._
+
+    c.Expr[RuleValidator[T]](
+      q"""
+             ${c.prefix}
+           """
+    )
+  }
+
   def fieldContext[T, U](c: scala.reflect.macros.whitebox.Context)
-                        (extractor: c.Expr[T => U]): c.universe.Expr[FieldContext[T, U]] = {
+                        (extractor: c.Expr[T => U]): c.Expr[FieldContext[T, U]] = {
     import c.universe._
 
     def recursePath(tree: Tree): Seq[String] = tree match {
