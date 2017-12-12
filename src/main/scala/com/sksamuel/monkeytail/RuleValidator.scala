@@ -1,7 +1,9 @@
 package com.sksamuel.monkeytail
 
+import cats.Monoid
 import cats.data.Validated.{Invalid, Valid}
 import cats.data.{NonEmptyList, Validated}
+import com.sksamuel.monkeytail.Validator.{identity, reduce}
 
 import scala.language.experimental.macros
 

@@ -1,8 +1,8 @@
 package com.sksamuel.monkeytail
 
+import cats.Monoid
 import cats.data.Validated.{Invalid, Valid}
 import cats.data.{NonEmptyList, Validated}
-import sun.security.validator.SimpleValidator
 
 /**
   * Instances of Validator[T] can be invoked for a T for validation
@@ -20,10 +20,27 @@ trait SimpleValidator[T] extends Validator[T] {
     case Some(violation) => Invalid(NonEmptyList.of(violation))
     case None => Valid(t)
   }
-
 }
 
 object Validator {
+
+  def identity[T]: Validator[T] = new Validator[T] {
+    override def apply(t: T) = Valid(t)
+  }
+
+  implicit def monoid[T]: Monoid[Validator[T]] = new Monoid[Validator[T]] {
+    override def empty: Validator[T] = identity[T]
+    override def combine(val1: Validator[T], val2: Validator[T]): Validator[T] = new Validator[T] {
+      override def apply(t: T): Validated[NonEmptyList[Violation], T] = reduce(t, List(val1(t), val2(t)))
+    }
+  }
+
+  def reduce[T](t: T, validations: List[Validated[NonEmptyList[Violation], T]]): Validated[NonEmptyList[Violation], T] = {
+    val errors = validations collect {
+      case Invalid(errs) => errs.toList
+    }
+    if (errors.nonEmpty) Invalid(NonEmptyList.fromListUnsafe(errors.flatten)) else Valid(t)
+  }
 
   // returns a rule based validator which already has a rule added for every
   // field to ensure all fields are not null
