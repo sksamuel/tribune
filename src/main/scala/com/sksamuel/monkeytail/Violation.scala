@@ -8,16 +8,16 @@ trait Violation {
 
 object Violation {
   implicit def violation2builder[Any](violation: Violation): ViolationBuilder[Any] = new ViolationBuilder[Any] {
-    override def apply(name: String, value: Any): Violation = violation
+    override def apply(path: Path, value: Any): Violation = violation
   }
 }
 
 trait ViolationBuilder[-U] {
-  def apply(name: String, value: U): Violation
+  def apply(path: Path, value: U): Violation
 }
 
 object DefaultViolationBuilder extends ViolationBuilder[Any] {
-  override def apply(name: String, value: Any): Violation = BasicViolation(s"$name has invalid value: $value")
+  override def apply(path: Path, value: Any): Violation = BasicViolation(s"${path.value} has invalid value: $value")
 }
 
 case class BasicViolation(message: String) extends Violation

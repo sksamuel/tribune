@@ -38,7 +38,7 @@ class RuleValidatorTest extends FlatSpec with Matchers {
   it should "support violation builders" in {
 
     object MaxWarpExceededViolation extends ViolationBuilder[Double] {
-      override def apply(name: String, value: Double): Violation = BasicViolation(s"Max warp exceeded, was $value")
+      override def apply(path: Path, value: Double) = BasicViolation(s"Max warp exceeded, was $value")
     }
 
     val starshipValidator = Validator[Starship]
@@ -68,13 +68,13 @@ class RuleValidatorTest extends FlatSpec with Matchers {
   it should "supported nested validation" in {
 
     case class Foo(name: String)
-    case class Wibble(foos: Foo)
+    case class Wibble(foo: Foo)
 
     implicit val fooValidator: Validator[Foo] = Validator[Foo]
       .field(_.name)(_ != null)
 
     val validator = Validator[Wibble]
-      .validate(_.foos)
+      .validate(_.foo)
 
     validator(Wibble(Foo(null))) shouldBe
       Invalid(NonEmptyList.of(BasicViolation("name has invalid value: null")))
@@ -82,5 +82,13 @@ class RuleValidatorTest extends FlatSpec with Matchers {
 
   it should "return a context path to nested fields" in {
 
+    case class Foo(name: String)
+    case class Wibble(foo: Foo)
+
+    val validator = Validator[Wibble]
+      .field(_.foo.name)(_ != null)
+
+    validator(Wibble(Foo(null))) shouldBe
+      Invalid(NonEmptyList.of(BasicViolation("foo.name has invalid value: null")))
   }
 }
