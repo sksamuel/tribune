@@ -12,14 +12,13 @@ object Build extends AutoPlugin {
     val org = "com.sksamuel.monkeytail"
     val CatsVersion = "1.0.0-RC1"
     val ScalatestVersion = "3.0.4"
-    val Slf4jVersion = "1.7.25"
   }
 
   import autoImport._
 
   override def projectSettings = Seq(
     organization := org,
-    scalaVersion := "2.11.12",
+    scalaVersion := "2.12.4",
     crossScalaVersions := Seq("2.11.12", "2.12.4"),
     publishMavenStyle := true,
     resolvers += Resolver.mavenLocal,
@@ -32,10 +31,9 @@ object Build extends AutoPlugin {
     sbtrelease.ReleasePlugin.autoImport.releasePublishArtifactsAction := PgpKeys.publishSigned.value,
     sbtrelease.ReleasePlugin.autoImport.releaseCrossBuild := true,
     scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8"),
-    javacOptions := Seq("-source", "1.7", "-target", "1.7"),
+    javacOptions := Seq("-source", "1.8", "-target", "1.8"),
     libraryDependencies ++= Seq(
       "org.typelevel"                         %% "cats-core"                % CatsVersion,
-      "org.slf4j"                             %  "slf4j-api"                % Slf4jVersion,
       "org.scalatest"                         %% "scalatest"                % ScalatestVersion      % "test"
     ),
     publishTo := {
