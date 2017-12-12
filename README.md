@@ -12,7 +12,7 @@ Validation utilities for cats.
 This project is similar to other excellent projects like [https://github.com/wix/accord](https://github.com/wix/accord) and [https://github.com/tobnee/DValidation](https://github.com/tobnee/DValidation) 
 but differs in that it focuses entirely on supporting cats.
 
-The main abstraction in monkeytail is the `Validator[T]` trait which validates instances of T using cats.Validation.
+The main abstraction in monkeytail is the `Validator[T]` trait which validates instances of `T` using `cats.Validation`.
 
 ```scala
 trait Validator[T] {
@@ -29,7 +29,7 @@ trait Violation {
 }
 ```
 
-Monkeytail offers macro based builders to quickly build instances of Validator[T] or you can always roll your own. 
+Monkeytail offers macro based builders to quickly build instances of `Validator[T]` or you can always roll your own. 
 Validators can be combined using the provided instances of `Monoid[Validator[T]]`.
 
 ### Getting Started
@@ -40,7 +40,7 @@ Let's declare a class we want to validate. Yes I'm a [Star Trek fan](http://memo
 case class Starship(name: String, maxWarp: Double)
 ```
 
-We can always implement an instance of `Validator[Starship]` ourselves, in the boilerplate manual way.
+We can always implement an instance of `Validator[Starship]` ourselves, in the boilerplatey manual way.
 
 ```scala
 val validator = Validator.simple[Starship] { starship =>
@@ -48,12 +48,13 @@ val validator = Validator.simple[Starship] { starship =>
 }
 ```
 
-That's fine for simple cases, but really we want to remove as much boilerplate as possible. 
-So let's use the providedvalidator builder which allows us to build up rules for fields.
-Getting a rule builder just involves invoking apply on the `Validator` object.
+That's fine for simple cases, but really we want to remove as much boilerplate as possible, otherwise what's
+the point of this project? So let's use the provided validator builder which allows us to build up rules for validation field by field.
 
-The main utility is in the `field` method on the validator builder, which accepts an extractor function, 
-and then simply a test expression that validates that field and returns a bool if the field is valid. 
+Creating a rule builder just involves invoking apply on the `Validator` object.
+
+The main utility is in the `field` method on the validator builder, which accepts an extractor function to extract
+the field we want to test, and then a test function that validates that field and returns a bool if the field is valid. 
 The test expression can be as simple or as complicated as you want.
 
 ```scala
@@ -81,7 +82,8 @@ validator(Starship(null, 11)) ==
     ))
 ```
 
-What's very nice here is that the error messages automatically include the correct field name for us. The macro is taking care of that behind the scenes.
+What's nice here is that the error messages are automatically generated and include the correct field name for us. 
+The macro is taking care of that behind the scenes.
 
 It will work for nested paths as well, if you did something like `field(_.address.postcode)(_.length == 8)`, then the
 error would include the path `address.postcode`
