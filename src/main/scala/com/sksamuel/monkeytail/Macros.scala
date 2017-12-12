@@ -11,6 +11,11 @@ trait Path {
   def field: String
 }
 
+object NoPath extends Path {
+  override def value = ""
+  override def field = ""
+}
+
 case class FieldPath(components: NonEmptyList[String]) extends Path {
   override def value: String = components.toList.mkString(".")
   override def field: String = components.last

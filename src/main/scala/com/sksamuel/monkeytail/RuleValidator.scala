@@ -19,7 +19,14 @@ class RuleValidator[T](val rules: List[Rule[T]]) extends Validator[T] {
   // prepares a field for a rule to be added
   def field[U](extractor: T => U): FieldContext[T, U] = macro Macros.fieldContext[T, U]
 
-  def validate[U](extractor: T => U)(implicit validator: Validator[U]): RuleValidator[T] = {
+  def test(test: T => Boolean)(implicit builder: ViolationBuilder[T] = DefaultViolationBuilder): RuleValidator[T] = {
+    val rule = new Rule[T] {
+      override def apply(t: T): Validated[NonEmptyList[Violation], T] = if (test(t)) Valid(t) else Invalid(NonEmptyList.of(builder(NoPath, t)))
+    }
+    new RuleValidator[T](rules :+ rule)
+  }
+
+  def valid[U](extractor: T => U)(implicit validator: Validator[U]): RuleValidator[T] = {
     val rule = new Rule[T] {
       override def apply(t: T): Validated[NonEmptyList[Violation], T] = validator(extractor(t)) match {
         case Invalid(errors) => Invalid(errors)
@@ -34,9 +41,7 @@ trait Rule[T] extends (T => Validated[NonEmptyList[Violation], T])
 
 case class FieldContext[T, U](extractor: T => U, validator: RuleValidator[T], path: Path) {
 
-  def apply(test: U => Boolean)(implicit builder: ViolationBuilder[U] = DefaultViolationBuilder): RuleValidator[T] = validate(test)
-
-  def validate(test: U => Boolean)(implicit builder: ViolationBuilder[U] = DefaultViolationBuilder): RuleValidator[T] = {
+  def apply(test: U => Boolean)(implicit builder: ViolationBuilder[U] = DefaultViolationBuilder): RuleValidator[T] = {
     val rule = new Rule[T] {
       override def apply(t: T): Validated[NonEmptyList[Violation], T] = {
         val value = extractor(t)
