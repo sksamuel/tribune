@@ -7,6 +7,7 @@ import org.scalatest.{FlatSpec, Matchers}
 
 class ValidatorTest extends FlatSpec with Matchers {
 
+  case class Starship(name: String, flagship: Boolean, maxWarp: Double)
   case class Planet(name: String, system: String)
 
   "Validators" should "support combine via a Monoid instance" in {
