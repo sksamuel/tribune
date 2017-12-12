@@ -58,14 +58,14 @@ class RuleValidatorTest extends FlatSpec with Matchers {
       .field(_.name)(_ != null)
 
     val validator = Validator[Wibble]
-      .validate(_.foos)
+      .valid(_.foos)
 
     validator(Wibble(Seq(Foo(null), Foo("a"), Foo(null)))) shouldBe
       Invalid(NonEmptyList.of(BasicViolation("name has invalid value: null"), BasicViolation("name has invalid value: null")))
 
   }
 
-  it should "supported nested validation" in {
+  it should "supported nested validation with implicit lookup" in {
 
     case class Foo(name: String)
     case class Wibble(foo: Foo)
@@ -74,7 +74,7 @@ class RuleValidatorTest extends FlatSpec with Matchers {
       .field(_.name)(_ != null)
 
     val validator = Validator[Wibble]
-      .validate(_.foo)
+      .valid(_.foo)
 
     validator(Wibble(Foo(null))) shouldBe
       Invalid(NonEmptyList.of(BasicViolation("name has invalid value: null")))
@@ -90,5 +90,16 @@ class RuleValidatorTest extends FlatSpec with Matchers {
 
     validator(Wibble(Foo(null))) shouldBe
       Invalid(NonEmptyList.of(BasicViolation("foo.name has invalid value: null")))
+  }
+
+  it should "allow classes to be tested as a whole" in {
+
+    val starshipValidator = Validator[Starship]
+      .test { starship =>
+        starship.maxWarp < 10 && starship.name != null
+      }
+
+    starshipValidator(Starship(null, true, 12)) shouldBe
+      Invalid(NonEmptyList.of(BasicViolation(" has invalid value: Starship(null,true,12.0)")))
   }
 }
