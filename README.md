@@ -7,7 +7,7 @@ Validation utilities for cats.
 [<img src="https://img.shields.io/maven-central/v/com.sksamuel.monkeytail/monkeytail_2.11.svg?label=latest%20release%20for%202.11"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22monkeytail_2.11%22)
 [<img src="https://img.shields.io/maven-central/v/com.sksamuel.monkeytail/monkeytail_2.12.svg?label=latest%20release%20for%202.12"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22monkeytail_2.12%22)
 
-#### Introduction
+### Introduction
 
 This project is similar to other excellent projects like [https://github.com/wix/accord](https://github.com/wix/accord) and [https://github.com/tobnee/DValidation](https://github.com/tobnee/DValidation) 
 but differs in that it focuses entirely on supporting cats.
@@ -32,7 +32,7 @@ trait Violation {
 Monkeytail offers macro based builders to quickly build instances of Validator[T] or you can always roll your own. 
 Validators can be combined using the provided instances of `Monoid[Validator[T]]`.
 
-#### Getting Started
+### Getting Started
 
 Let's declare a class we want to validate. Yes I'm a [Star Trek fan](http://memory-alpha.wikia.com/wiki/Star_Trek:_Discovery).
 
@@ -49,17 +49,21 @@ val validator = Validator.simple[Starship] { starship =>
 ```
 
 That's fine for simple cases, but really we want to remove as much boilerplate as possible. 
-So let's use the validator builder which operates field by field and builds up a validator instance for us.
+So let's use the providedvalidator builder which allows us to build up rules for fields.
+Getting a rule builder just involves invoking apply on the `Validator` object.
+
+The main utility is in the `field` method on the validator builder, which accepts an extractor function, 
+and then simply a test expression that validates that field and returns a bool if the field is valid. 
+The test expression can be as simple or as complicated as you want.
 
 ```scala
 val validator = Validator[Starship]
-  .field(_.name)(name => name != null && name.startsWith("NCC") || name.startsWith("NX"))
+  .field(_.name)(_ != null)
   .field(_.maxWarp)(_ < 10)
 ```
 
-As you will already know, no ship can exceed warp 10, so we must validate that. And of course, a ship without the prefix NCC or NX is not a real starship.  
-
-We can now invoke this validator, as follows:
+As you will already know, no ship can exceed warp 10, so we must validate that. 
+And of course, a ship without a name is invalid. We can now invoke this validator, like this:
 
 ```scala
 val enterprise = Starship("Enterprise", 9.6) 
@@ -82,7 +86,7 @@ What's very nice here is that the error messages automatically include the corre
 It will work for nested paths as well, if you did something like `field(_.address.postcode)(_.length == 8)`, then the
 error would include the path `address.postcode`
 
-#### Custom Errors
+### Custom Errors
 
 As mentioned earlier, the type used for errors is `Violation` and we can provide our own instances of `Violation` when
 errors occur. This allows us to introduce a richer type system for errors as well as customize the actual error message, 
@@ -105,4 +109,92 @@ val validator = Validator[Starship]
   .field(_.maxWarp)(_ < 10)(MaxWarpExceededViolation)
   
 validator(Starship("Enterprise", 11)) shouldBe Invalid(NonEmptyList.of(MaxWarpExceededViolation))
+```
+
+### Nested Validators
+
+When we have a type that contains another type, and we already have a validator for the nested type,
+we can tell monkeytail to just use the existing validator and delegate to that.
+
+For example, if our starship model was like this:
+
+```scala
+case class Designation(prefix: String, code: String)
+case class Starship(name: String, maxWarp: Double, designation: Designation)
+```
+
+We could define a validator for the `Designation` class separately (perhaps we use it in multiple places).
+
+```scala
+implicit val designationValidator = Validator[Designation]
+  .field(_.prefix)(prefix => prefix != null && (prefix.startsWith("NCC") || prefix.startsWith("NX"))
+  .field(_.code)(_ != null)
+```
+
+Then we we can define a validator for the `Starship` class and use the previous validator automatically
+for the `designation` field, assuming it is available as an implicit in the current scope. Note, we use
+the `valid` method rather than the `field` method we've been using so far.
+
+```scala
+val designationValidator = Validator[Starship]
+  .field(_.name)(_ != null)
+  .field(_.maxWarp)(_ < 10)(MaxWarpExceededViolation)
+  .valid(_.designation) // this will require the previous implicit.
+```
+
+### Using Monkeytail in your project
+
+For gradle users, add (replace 2.12 with 2.11 for Scala 2.11):
+
+```groovy
+compile 'com.sksamuel.elastic4s:elastic4s-core_2.12:x.x.x'
+```
+
+For SBT users add:
+
+```scala
+libraryDependencies += "com.sksamuel.monkeytail" %% "monkeytail" % "x.x.x"
+```
+
+For Maven users add (replace 2.12 with 2.11 for Scala 2.11):
+
+```xml
+<dependency>
+    <groupId>com.sksamuel.monkeytail</groupId>
+    <artifactId>monkeytail_2.12</artifactId>
+    <version>x.x.x</version>
+</dependency>
+```
+
+You will need to set the version by looking for the latest in maven central. You can click the links at the of the page.
+
+### Building and Testing
+
+This project is built with SBT. So to build
+```
+sbt compile
+```
+
+And to test
+```
+sbt test
+```
+
+### License
+```
+This software is licensed under the Apache 2 license, quoted below.
+
+Copyright 2013-2016 Stephen Samuel
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
 ```
