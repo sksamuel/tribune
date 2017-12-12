@@ -1,23 +1,44 @@
 package com.sksamuel.monkeytail
 
+import cats.data.NonEmptyList
+
 import scala.language.experimental.macros
 import scala.language.implicitConversions
+
+trait Path {
+  def value: String
+  // returns just the final part of the path
+  def field: String
+}
+
+case class FieldPath(components: NonEmptyList[String]) extends Path {
+  override def value: String = components.toList.mkString(".")
+  override def field: String = components.last
+}
+
+object FieldPath {
+  def apply(components: String*): FieldPath = FieldPath(NonEmptyList.fromListUnsafe(components.toList))
+}
 
 object Macros {
 
   def fieldContext[T, U](c: scala.reflect.macros.whitebox.Context)
                         (extractor: c.Expr[T => U]): c.universe.Expr[FieldContext[T, U]] = {
     import c.universe._
+
+    def recursePath(tree: Tree): Seq[String] = tree match {
+      case Select(qualifier, name) => recursePath(qualifier) :+ name.decodedName.toString
+      case _ => Nil
+    }
+
     println(c.internal)
     println(c.prefix)
     extractor.tree match {
-      case Function(params, Select(q, name)) =>
-        println("params=" + params)
-        println("q=" + q)
-        println("name=" + name)
+      case Function(_, selector) =>
+        val path = recursePath(selector)
         c.Expr[FieldContext[T, U]](
           q"""
-             com.sksamuel.monkeytail.FieldContext(${name.decodedName.toString}, $extractor, ${c.prefix})
+             com.sksamuel.monkeytail.FieldContext($extractor, ${c.prefix}, com.sksamuel.monkeytail.FieldPath(..$path))
            """
         )
     }

@@ -32,16 +32,16 @@ class RuleValidator[T](val rules: List[Rule[T]]) extends Validator[T] {
 
 trait Rule[T] extends (T => Validated[NonEmptyList[Violation], T])
 
-case class FieldContext[T, U](field: String, extractor: T => U, validator: RuleValidator[T]) {
+case class FieldContext[T, U](extractor: T => U, validator: RuleValidator[T], path: Path) {
 
-  def apply(test: U => Boolean)(implicit violationFn: ViolationBuilder[U] = DefaultViolationBuilder): RuleValidator[T] = validate(test)
+  def apply(test: U => Boolean)(implicit builder: ViolationBuilder[U] = DefaultViolationBuilder): RuleValidator[T] = validate(test)
 
-  def validate(test: U => Boolean)(implicit violationFn: ViolationBuilder[U] = DefaultViolationBuilder): RuleValidator[T] = {
+  def validate(test: U => Boolean)(implicit builder: ViolationBuilder[U] = DefaultViolationBuilder): RuleValidator[T] = {
     val rule = new Rule[T] {
       override def apply(t: T): Validated[NonEmptyList[Violation], T] = {
         val value = extractor(t)
         if (test(value)) Valid(t) else {
-          val violation = violationFn(field, value)
+          val violation = builder(path, value)
           Invalid(NonEmptyList.of(violation))
         }
       }
