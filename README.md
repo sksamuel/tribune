@@ -9,7 +9,7 @@ Validation utilities for cats.
 
 #### Introduction
 
-This project is similar to other excellent projects like []https://github.com/wix/accord] and []https://github.com/tobnee/DValidation] 
+This project is similar to other excellent projects like [https://github.com/wix/accord](https://github.com/wix/accord) and [https://github.com/tobnee/DValidation](https://github.com/tobnee/DValidation) 
 but differs in that it focuses entirely on supporting cats.
 
 The main abstraction in monkeytail is the `Validator[T]` trait which validates instances of T using cats.Validation.
