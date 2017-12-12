@@ -17,7 +17,7 @@ trait ViolationBuilder[-U] {
 }
 
 object DefaultViolationBuilder extends ViolationBuilder[Any] {
-  override def apply(name: String, value: Any): Violation = DefaultViolation(s"$name has invalid value: $value")
+  override def apply(name: String, value: Any): Violation = BasicViolation(s"$name has invalid value: $value")
 }
 
-case class DefaultViolation(message: String) extends Violation
+case class BasicViolation(message: String) extends Violation

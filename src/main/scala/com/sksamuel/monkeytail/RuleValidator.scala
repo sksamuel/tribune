@@ -5,6 +5,8 @@ import cats.data.{NonEmptyList, Validated}
 
 import scala.language.experimental.macros
 
+// an implementation of Validator that allows rules to be added based on the fields of T
+// when validate is invoked, all the rules are executed against the fields of T
 class RuleValidator[T](val rules: List[Rule[T]]) extends Validator[T] {
 
   def apply(t: T): Validated[NonEmptyList[Violation], T] = {
@@ -14,6 +16,7 @@ class RuleValidator[T](val rules: List[Rule[T]]) extends Validator[T] {
     if (errors.nonEmpty) Invalid(NonEmptyList.fromListUnsafe(errors.flatten)) else Valid(t)
   }
 
+  // prepares a field for a rule to be added
   def field[U](extractor: T => U): FieldContext[T, U] = macro Macros.fieldContext[T, U]
 
   def validate[U](extractor: T => U)(implicit validator: Validator[U]): RuleValidator[T] = {
