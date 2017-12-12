@@ -91,14 +91,4 @@ class RuleValidatorTest extends FlatSpec with Matchers {
     validator(Wibble(Foo(null))) shouldBe
       Invalid(NonEmptyList.of(BasicViolation("foo.name has invalid value: null")))
   }
-
-  it should "allow classes to be tested as a whole" in {
-
-    val starshipValidator = Validator.simple[Starship] { starship =>
-        starship.maxWarp < 10 && starship.name != null
-      }
-
-    starshipValidator(Starship(null, true, 12)) shouldBe
-      Invalid(NonEmptyList.of(BasicViolation(" has invalid value: Starship(null,true,12.0)")))
-  }
 }
