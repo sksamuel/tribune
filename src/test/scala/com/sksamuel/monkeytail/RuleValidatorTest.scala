@@ -15,7 +15,7 @@ class RuleValidatorTest extends FlatSpec with Matchers {
       .field(_.maxWarp)(_ < 10)
       .field(_.flagship)(_ == true)
 
-    starshipValidator(Starship("Enterprise", true, 9)) shouldBe Valid(Starship("Enterprise",true,9.0))
+    starshipValidator(Starship("Enterprise", true, 9)) shouldBe Valid(Starship("Enterprise", true, 9.0))
     starshipValidator(Starship(null, true, 9)) shouldBe Invalid(NonEmptyList.of(BasicViolation("name has invalid value: null")))
     starshipValidator(Starship("Enterprise", false, 9)) shouldBe Invalid(NonEmptyList.of(BasicViolation("flagship has invalid value: false")))
     starshipValidator(Starship(null, false, 11)) shouldBe Invalid(NonEmptyList.of(BasicViolation("name has invalid value: null"), BasicViolation("maxWarp has invalid value: 11.0"), BasicViolation("flagship has invalid value: false")))
@@ -47,11 +47,37 @@ class RuleValidatorTest extends FlatSpec with Matchers {
       .field(_.flagship)(_ == true)
 
     starshipValidator(Starship("Enterprise", true, 11)) shouldBe Invalid(NonEmptyList.of(BasicViolation("Max warp exceeded, was 11.0")))
+  }
+
+  it should "support validation of sequences of case classes" in {
+
+    case class Foo(name: String)
+    case class Wibble(foos: Seq[Foo])
+
+    implicit val fooValidator: Validator[Foo] = Validator[Foo]
+      .field(_.name)(_ != null)
+
+    val validator = Validator[Wibble]
+      .validate(_.foos)
+
+    validator(Wibble(Seq(Foo(null), Foo("a"), Foo(null)))) shouldBe
+      Invalid(NonEmptyList.of(BasicViolation("name has invalid value: null"), BasicViolation("name has invalid value: null")))
 
   }
 
   it should "supported nested validation" in {
 
+    case class Foo(name: String)
+    case class Wibble(foos: Foo)
+
+    implicit val fooValidator: Validator[Foo] = Validator[Foo]
+      .field(_.name)(_ != null)
+
+    val validator = Validator[Wibble]
+      .validate(_.foos)
+
+    validator(Wibble(Foo(null))) shouldBe
+      Invalid(NonEmptyList.of(BasicViolation("name has invalid value: null")))
   }
 
   it should "return a context path to nested fields" in {
