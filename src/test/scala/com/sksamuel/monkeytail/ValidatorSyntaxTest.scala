@@ -71,17 +71,20 @@ class ValidatorSyntaxTest extends FlatSpec with Matchers {
   //      Invalid(NonEmptyList.of(DefaultViolation("Invalid value: null", Path("name")), DefaultViolation("Invalid value: null", Path("name"))))
   //  }
 
-  //  it should "support validation of sequences using forall" in {
-  //
-  //    case class Foo(name: String)
-  //    case class Wibble(foos: Seq[Foo])
-  //
-  //    val validator = Validator[Wibble]
-  //      .forall(_.foos)(_.toString != null)
-  //
-  //    validator(Wibble(Seq(Foo(null), Foo("a"), Foo(null)))) shouldBe
-  //      Invalid(NonEmptyList.of(DefaultViolation("Invalid value: null", Path("name")), DefaultViolation("Invalid value: null", Path("name"))))
-  //  }
+  it should "support validation of sequences using forall with index in paths" in {
+
+    case class Foo(name: String)
+    case class Wibble(foos: Seq[Foo])
+
+    val validator = Validator[Wibble]
+      .forall(_.foos)(_.name != null)
+
+    validator(Wibble(Seq(Foo(null), Foo("a"), Foo(null)))) shouldBe
+      Invalid(NonEmptyList.of(
+        DefaultViolation("Invalid value: Foo(null)", Path("foos", "[0]")),
+        DefaultViolation("Invalid value: Foo(null)", Path("foos", "[2]"))
+      ))
+  }
 
   it should "supported nested validation with implicit lookup" in {
 
