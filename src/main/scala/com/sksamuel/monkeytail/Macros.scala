@@ -30,7 +30,7 @@ object Macros {
         val path = recursePath(selector)
         c.Expr[SeqContext[T, U]](
           q"""
-             com.sksamuel.monkeytail.FieldContext($extractor, ${c.prefix}, com.sksamuel.monkeytail.Path(..$path))
+             com.sksamuel.monkeytail.FieldContext($extractor, ${c.prefix}.wrapped, com.sksamuel.monkeytail.Path(..$path))
            """
         )
     }
@@ -50,7 +50,7 @@ object Macros {
         val path = recursePath(selector)
         c.Expr[FieldContext[T, U]](
           q"""
-             com.sksamuel.monkeytail.FieldContext($extractor, ${c.prefix}, com.sksamuel.monkeytail.Path(..$path))
+             com.sksamuel.monkeytail.FieldContext($extractor, ${c.prefix}.wrapped, com.sksamuel.monkeytail.Path(..$path))
            """
         )
     }
