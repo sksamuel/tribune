@@ -88,8 +88,9 @@ error would include the path `address.postcode`
 
 ### Custom Errors
 
-As mentioned earlier, the type used for errors is `Violation` and we can provide our own instances of `Violation` when
-errors occur. This allows us to introduce a richer type system for errors as well as provide customized error messages
+As mentioned earlier, the type used for errors is `Violation` and by default all errors are instances of `DefaultViolation`.
+However we can provide our own instances of `Violation`.
+This allows us to introduce a richer type system for errors as well as provide customized error messages
 instead of the default `"$field has invalid value: $value"`.
 
 At a basic level, a custom `Violation` can include no context at all.
