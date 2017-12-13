@@ -37,8 +37,12 @@ case class Starship(name: String, maxWarp: Double)
 We can always implement an instance of `Validator[Starship]` ourselves, in the boilerplatey manual way.
 
 ```scala
-val validator = Validator.simple[Starship] { starship =>
-  starship.maxWarp < 10 && starship.name != null
+val validator = new Validator[Starship] { 
+  override def apply(t: Starship): Validated[NonEmptyList[Violation], Starship] = {
+    val v1 = if (t.name == null) Invalid(NonEmptyList(SimpleViolation("Name cannot be null"))) else Valid(t)
+    val v2 = if (t.maxWarp < 10) Valid(t) else Invalid(NonEmptyList(SimpleViolation("Exceeded max warp"))) 
+    // combine validators here ..
+  }
 }
 ```
 

@@ -5,6 +5,8 @@ import scala.language.implicitConversions
 // gives a strong typing to the error
 trait Violation
 
+case class SimpleViolation(message: String) extends Violation
+
 // the violation type used by default when no custom violation is specified
 // includes a generated error message and the path to the field that caused the error
 case class DefaultViolation(message: String, path: Path) extends Violation
