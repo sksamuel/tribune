@@ -17,7 +17,7 @@ object Path {
 object Macros {
 
   def seqContext[T, U](c: scala.reflect.macros.whitebox.Context)
-                      (extractor: c.Expr[T => U]): c.Expr[SeqContext[T, U]] = {
+                      (extractor: c.Expr[T => Seq[U]]): c.Expr[SeqContext[T, U]] = {
     import c.universe._
 
     def recursePath(tree: Tree): Seq[String] = tree match {
@@ -30,7 +30,7 @@ object Macros {
         val path = recursePath(selector)
         c.Expr[SeqContext[T, U]](
           q"""
-             com.sksamuel.monkeytail.FieldContext($extractor, ${c.prefix}.wrapped, com.sksamuel.monkeytail.Path(..$path))
+             com.sksamuel.monkeytail.SeqContext($extractor, ${c.prefix}.wrapped, com.sksamuel.monkeytail.Path(..$path))
            """
         )
     }

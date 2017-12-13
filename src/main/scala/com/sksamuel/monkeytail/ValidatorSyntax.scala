@@ -14,7 +14,7 @@ object ValidatorSyntax {
     def field[U](extractor: T => U): FieldContext[T, U] = macro Macros.fieldContext[T, U]
 
     // prepares an iterable field to be used as a validator
-    def forall[U](extractor: T => Seq[U]): SeqContext[T, U] = macro Macros.seqContext[T, Seq[U]]
+    def forall[U](extractor: T => Seq[U]): SeqContext[T, U] = macro Macros.seqContext[T, U]
 
     // uses an existing validator for the extracted field
     def valid[U](extractor: T => U)(implicit validator: Validator[U]): Validator[T] = {
@@ -45,6 +45,7 @@ case class SeqContext[T, U](extractor: T => Seq[U],
   def apply(test: U => Boolean)(implicit builder: ViolationBuilder[U] = DefaultViolationBuilder): Validator[T] = {
     val validator = new Validator[T] {
       override def apply(t: T): Validated[NonEmptyList[Violation], T] = {
+        // extract the sequence
         val us = extractor(t).toList
         val validations = us.zipWithIndex.map { case (u, index) =>
           if (test(u)) Valid(t) else {
