@@ -5,7 +5,7 @@ import cats.data.Validated.{Invalid, Valid}
 import cats.data.{NonEmptyList, Validated}
 
 /**
-  * Instances of Validator[T] can be invoked for a T for validation
+  * Instances of Validator[T] can be invoked for a T
   * which will return a cats.Validated
   */
 trait Validator[T] {
@@ -49,17 +49,7 @@ object Validator {
   // create a rule based validator for case classes
   def apply[T <: Product]: RuleValidator[T] = new RuleValidator[T](Nil)
 
-  def simple[T](testFn: T => Boolean)(implicit builder: ViolationBuilder[T] = BasicViolationBuilder): SimpleValidator[T] = new SimpleValidator[T] {
-    override def test(t: T): Option[Violation] = if (testFn(t)) None else Option(builder.apply(NoPath, t))
-  }
-
-  // allows validators to be used against sequences
-  implicit def seqVal[T](implicit validator: Validator[T]): Validator[Seq[T]] = new Validator[Seq[T]] {
-    override def apply(t: Seq[T]): Validated[NonEmptyList[Violation], Seq[T]] = {
-      val errors = t.map(validator.apply).toList collect {
-        case Invalid(errs) => errs.toList
-      }
-      if (errors.nonEmpty) Invalid(NonEmptyList.fromListUnsafe(errors.flatten)) else Valid(t)
-    }
+  def simple[T](testFn: T => Boolean)(implicit builder: ViolationBuilder[T] = DefaultViolationBuilder): SimpleValidator[T] = new SimpleValidator[T] {
+    override def test(t: T): Option[Violation] = if (testFn(t)) None else Option(builder.apply(Path.empty, t))
   }
 }
