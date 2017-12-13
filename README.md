@@ -75,13 +75,13 @@ And if we provide some erroneous input we'll get back the appropriate accumulate
 validator(Starship(null, 11)) == 
   Invalid(
     NonEmptyList.of(
-      SimpleViolation("name has invalid value: null"), 
-      SimpleViolation("maxWarp has invalid value: 11.0")
+      DefaultViolation("Invalid value: null", Path("name")), 
+      DefaultViolation("Invalid value: 11.0", Path("maxWarp"))
     ))
 ```
 
-What's nice here is that the error messages are automatically generated and include the correct field name for us. 
-The macro is taking care of that behind the scenes.
+What's nice here is that the error messages are automatically generated and the violations include the path
+to the field name. The macro is taking care of that behind the scenes.
 
 It will work for nested paths as well, if you did something like `field(_.address.postcode)(_.length == 8)`, then the
 error would include the path `address.postcode`
