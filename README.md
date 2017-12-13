@@ -47,12 +47,12 @@ val validator = new Validator[Starship] {
 ```
 
 That's fine for simple cases, but really we want to remove as much boilerplate as possible, otherwise what's
-the point of this project? So let's use the provided validator builder which allows us to build up rules for validation field by field.
+the point of this project? So let's use the provided validator utilties which allows us to build up validation field by field.
 
-Creating a rule builder just involves invoking apply on the `Validator` object.
+Creating an empty validator just involves invoking apply on the `Validator` object. Then, make sure you have imported `monkeytail.ValidatorSyntax._` to enable the magic functions on the validator instance.
 
-The main utility is in the `field` method on the validator builder, which accepts an extractor function to extract
-the field we want to test, and then a test function that validates that field and returns a bool if the field is valid. 
+The main utility is in the `field` method, which accepts an extractor function to extract
+the value we want to test, and then a test function that validates it and returns a bool if it is valid. 
 The test expression can be as simple or as complicated as you want.
 
 ```scala
