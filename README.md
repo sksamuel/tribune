@@ -91,7 +91,7 @@ error would include the path `address.postcode`
 As mentioned earlier, the type used for errors is `Violation` and by default all errors are instances of `DefaultViolation`.
 However we can provide our own instances of `Violation`.
 This allows us to introduce a richer type system for errors as well as provide customized error messages
-instead of the default `"$field has invalid value: $value"`.
+instead of the default `"Invalid value: $value"`.
 
 At a basic level, a custom `Violation` can include no context at all.
 Let's create a custom error type for ships that dare to exceed warp 10.
