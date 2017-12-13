@@ -86,8 +86,9 @@ error would include the path `address.postcode`
 
 As mentioned earlier, the type used for errors is `Violation` and we can provide our own instances of `Violation` when
 errors occur. This allows us to introduce a richer type system for errors as well as provide customized error messages
-based rather than the default `"$field has invalid value: $value"`. 
+instead of the default `"$field has invalid value: $value"`.
 
+At a basic level, a custom `Violation` can include no context at all.
 Let's create a custom error type for ships that dare to exceed warp 10.
 
 ```scala
@@ -102,7 +103,28 @@ val validator = Validator[Starship]
   .field(_.name)(_ != null)
   .field(_.maxWarp)(_ < 10)(MaxWarpExceededViolation)
   
-validator(Starship("Enterprise", 11)) shouldBe Invalid(NonEmptyList.of(MaxWarpExceededViolation))
+validator(Starship("Enterprise", 11)) == Invalid(NonEmptyList.of(MaxWarpExceededViolation))
+```
+
+We can add extra information to the violations if we wish. 
+For this we will need a ViolationBuilder which is just a function that accepts the `Path` to the value
+that generated the error, and the value that was under test. What we include in the violation type is up to us.
+ 
+In the following example we're including a custom message using the value that failed. 
+
+```scala
+
+case class MaxWarpExceededViolation(message: String) extends Violation
+
+object MaxWarpExceededViolationBuilder extends ViolationBuilder[Double] {
+  override def apply(path: Path, value: Double) = MaxWarpExceededViolation(s"Max warp exceeded, was $value")
+}
+
+val validator = Validator[Starship]
+  .field(_.name)(_ != null)
+  .field(_.maxWarp)(_ < 10)(MaxWarpExceededViolationBuilder)
+  
+validator(Starship("Enterprise", 11)) == Invalid(NonEmptyList.of(MaxWarpExceededViolation("Max warp exceeded, was 11.0")))
 ```
 
 ### Nested Validators
@@ -138,15 +160,19 @@ val designationValidator = Validator[Starship]
 
 ### Validating sequences
 
-Monkeytail can automatically take care of sequences for you. You can either have an implicit validator in scope
-which will be applied to each element of the sequence, like this:
+At the moment support for sequences is very basic and will be improved for 1.0 final.
+You can use an existing validator and pass that into the `forall` method to validate each
+element of the sequence individually, accumulating errors as elements fail.
 
 ```scala
 case class Friend(name: String)
 case class User(username: String, friends: Seq[Friend])
 
-Validator[User]
-    .valid(_.friends) // requires an implicit Validator[Friend]
+val friendValidator = Validator[Friend].field(...) // etc
+
+// reuse the existing validator
+val userValidator = Validator[User]
+    .forall(_.friends, friendValidator) 
 ```
 Or you can validate them manually using a regular test expression, like this:
 
