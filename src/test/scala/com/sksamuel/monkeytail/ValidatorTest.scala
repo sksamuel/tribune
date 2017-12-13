@@ -19,16 +19,26 @@ class ValidatorTest extends FlatSpec with Matchers {
       .field(_.system)(_ != null)
 
     val combinedValidator = List(nameValidator, systemValidator).combineAll
-    combinedValidator(Planet(null, null)) shouldBe Invalid(NonEmptyList.of(BasicViolation("name has invalid value: null"), BasicViolation("system has invalid value: null")))
+    combinedValidator(Planet(null, null)) shouldBe Invalid(NonEmptyList.of(DefaultViolation("Invalid value: null", Path("name")), DefaultViolation("Invalid value: null", Path("system"))))
   }
 
   it should "allow classes to be tested as a whole" in {
+
+    val starshipValidator = Validator[Starship].test { starship =>
+      starship.maxWarp < 10 && starship.name != null
+    }
+
+    starshipValidator(Starship(null, true, 12)) shouldBe
+      Invalid(NonEmptyList.of(DefaultViolation("Invalid value: Starship(null,true,12.0)", Path.empty)))
+  }
+
+  "SimpleValidator" should "allow classes to be tested as a whole" in {
 
     val starshipValidator = Validator.simple[Starship] { starship =>
       starship.maxWarp < 10 && starship.name != null
     }
 
     starshipValidator(Starship(null, true, 12)) shouldBe
-      Invalid(NonEmptyList.of(BasicViolation(" has invalid value: Starship(null,true,12.0)")))
+      Invalid(NonEmptyList.of(DefaultViolation("Invalid value: Starship(null,true,12.0)", Path.empty)))
   }
 }

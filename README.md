@@ -1,7 +1,7 @@
 Monkeytail
 =========================
 
-Validation utilities for cats.
+Validation utilities for cats. Licensed Apache 2.
 
 [![Build Status](https://travis-ci.org/sksamuel/monkeytail.png?branch=master)](https://travis-ci.org/sksamuel/monkeytail)
 [<img src="https://img.shields.io/maven-central/v/com.sksamuel.monkeytail/monkeytail_2.11.svg?label=latest%20release%20for%202.11"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22monkeytail_2.11%22)
@@ -10,7 +10,7 @@ Validation utilities for cats.
 ### Introduction
 
 This project is similar to other excellent projects like [https://github.com/wix/accord](https://github.com/wix/accord) and [https://github.com/tobnee/DValidation](https://github.com/tobnee/DValidation) 
-but differs in that it focuses entirely on supporting cats.
+but differs in that it focuses entirely on supporting [cats](https://typelevel.org/cats).
 
 The main abstraction in monkeytail is the `Validator[T]` trait which validates instances of `T` using `cats.Validation`.
 
@@ -22,12 +22,6 @@ trait Validator[T] {
 
 You will notice that the error type used in the Validation is the `Violation` trait. This simple trait provides a means
 to build up domain specific strongly typed errors and is used throughout monkeytail.
-
-```scala
-trait Violation {
-  def message: String
-}
-```
 
 Monkeytail offers macro based builders to quickly build instances of `Validator[T]` or you can always roll your own. 
 Validators can be combined using the provided instances of `Monoid[Validator[T]]`.
@@ -77,8 +71,8 @@ And if we provide some erroneous input we'll get back the appropriate accumulate
 validator(Starship(null, 11)) == 
   Invalid(
     NonEmptyList.of(
-      BasicViolation("name has invalid value: null"), 
-      BasicViolation("maxWarp has invalid value: 11.0")
+      SimpleViolation("name has invalid value: null"), 
+      SimpleViolation("maxWarp has invalid value: 11.0")
     ))
 ```
 
@@ -91,15 +85,13 @@ error would include the path `address.postcode`
 ### Custom Errors
 
 As mentioned earlier, the type used for errors is `Violation` and we can provide our own instances of `Violation` when
-errors occur. This allows us to introduce a richer type system for errors as well as customize the actual error message, 
-rather than the default `"$field has invalid value: $value"`. 
+errors occur. This allows us to introduce a richer type system for errors as well as provide customized error messages
+based rather than the default `"$field has invalid value: $value"`. 
 
-Let's create a custom error for ships that dare to exceed warp 10.
+Let's create a custom error type for ships that dare to exceed warp 10.
 
 ```scala
-object MaxWarpExceededViolation extends Violation {
-  override def message = "Max Warp Exceeded"
-}
+object MaxWarpExceededViolation extends Violation
 ```
 
 Now we can include this when we add a validation rule and when we validate our instances, we'll get back the
@@ -143,6 +135,29 @@ val designationValidator = Validator[Starship]
   .field(_.maxWarp)(_ < 10)(MaxWarpExceededViolation)
   .valid(_.designation) // this will require the previous implicit.
 ```
+
+### Validating sequences
+
+Monkeytail can automatically take care of sequences for you. You can either have an implicit validator in scope
+which will be applied to each element of the sequence, like this:
+
+```scala
+case class Friend(name: String)
+case class User(username: String, friends: Seq[Friend])
+
+Validator[User]
+    .valid(_.friends) // requires an implicit Validator[Friend]
+```
+Or you can validate them manually using a regular test expression, like this:
+
+```scala
+Validator[User]
+    .forall(_.friends)(_.name != null)
+```
+
+By using the `forall` method on the validator builder, you can pass in a test expression for a single element, 
+and then this expression will be evaluated in turn for every element of the sequence. Every failing element
+will be included in the resulting `cats.Validated` instance.
 
 ### Using Monkeytail in your project
 
