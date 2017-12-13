@@ -4,11 +4,13 @@ import cats.data.NonEmptyList
 import cats.data.Validated.{Invalid, Valid}
 import org.scalatest.{FlatSpec, Matchers}
 
-class RuleValidatorTest extends FlatSpec with Matchers {
+class ValidatorSyntaxTest extends FlatSpec with Matchers {
+
+  import ValidatorSyntax._
 
   case class Starship(name: String, flagship: Boolean, maxWarp: Double)
 
-  "RuleValidator" should "allow fields of any type to be validated" in {
+  "ValidatorSyntax" should "allow fields of any type to be validated" in {
 
     val starshipValidator = Validator[Starship]
       .field(_.name)(_ != null)
