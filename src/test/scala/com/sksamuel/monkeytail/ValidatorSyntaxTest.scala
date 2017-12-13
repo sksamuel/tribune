@@ -56,22 +56,25 @@ class ValidatorSyntaxTest extends FlatSpec with Matchers {
     starshipValidator(Starship("Enterprise", true, 11)) shouldBe Invalid(NonEmptyList.of(MaxWarpViolation("Max warp exceeded, was 11.0")))
   }
 
-  //  it should "support validation of sequences of case classes with index in path" in {
-  //
-  //    case class Foo(name: String)
-  //    case class Wibble(foos: Seq[Foo])
-  //
-  //    implicit val fooValidator: Validator[Foo] = Validator[Foo]
-  //      .field(_.name)(_ != null)
-  //
-  //    val validator = Validator[Wibble]
-  //      .valid(_.foos)
-  //
-  //    validator(Wibble(Seq(Foo(null), Foo("a"), Foo(null)))) shouldBe
-  //      Invalid(NonEmptyList.of(DefaultViolation("Invalid value: null", Path("name")), DefaultViolation("Invalid value: null", Path("name"))))
-  //  }
+  it should "support validation of sequences by delegation" in {
 
-  it should "support validation of sequences using forall with index in paths" in {
+    case class Foo(name: String)
+    case class Wibble(foos: Seq[Foo])
+
+    implicit val fooValidator: Validator[Foo] = Validator[Foo]
+      .field(_.name)(_ != null)
+
+    val validator = Validator[Wibble]
+      .forall(_.foos, fooValidator)
+
+    validator(Wibble(Seq(Foo(null), Foo("a"), Foo(null)))) shouldBe
+      Invalid(NonEmptyList.of(
+        DefaultViolation("Invalid value: null", Path("name")),
+        DefaultViolation("Invalid value: null", Path("name"))
+      ))
+  }
+
+  it should "support validation of sequences using forall" in {
 
     case class Foo(name: String)
     case class Wibble(foos: Seq[Foo])
@@ -81,8 +84,8 @@ class ValidatorSyntaxTest extends FlatSpec with Matchers {
 
     validator(Wibble(Seq(Foo(null), Foo("a"), Foo(null)))) shouldBe
       Invalid(NonEmptyList.of(
-        DefaultViolation("Invalid value: Foo(null)", Path("foos", "[0]")),
-        DefaultViolation("Invalid value: Foo(null)", Path("foos", "[2]"))
+        DefaultViolation("Invalid value: Foo(null)", Path.empty),
+        DefaultViolation("Invalid value: Foo(null)", Path.empty)
       ))
   }
 

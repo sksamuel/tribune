@@ -12,6 +12,11 @@ trait Validator[T] {
   def apply(t: T): Validated[NonEmptyList[Violation], T]
 }
 
+class DefaultValidator[T](test: T => Boolean, builder: ViolationBuilder[T]) extends Validator[T] {
+  override def apply(t: T): Validated[NonEmptyList[Violation], T] =
+    if (test(t)) Valid(t) else Invalid(NonEmptyList.of(builder(Path.empty, t)))
+}
+
 trait SimpleValidator[T] extends Validator[T] {
 
   def test(t: T): Option[Violation]
@@ -41,6 +46,19 @@ object Validator {
       case Invalid(errs) => errs.toList
     }
     if (errors.nonEmpty) Invalid(NonEmptyList.fromListUnsafe(errors.flatten)) else Valid(t)
+  }
+
+  // returns a Validator for T that handles nested sequences by delegation to a validator for the element type
+  def seq[T, U](extractor: T => Seq[U], validator: Validator[U])
+               (implicit builder: ViolationBuilder[U] = DefaultViolationBuilder): Validator[T] = new Validator[T] {
+    override def apply(t: T): Validated[NonEmptyList[Violation], T] = {
+      // extract the sequence
+      val validations = extractor(t).toList.map(validator.apply)
+      val errors = validations.collect {
+        case Invalid(errs) => errs.toList
+      }
+      if (errors.nonEmpty) Invalid(NonEmptyList.fromListUnsafe(errors.flatten)) else Valid(t)
+    }
   }
 
   def simple[T](testFn: T => Boolean)(implicit builder: ViolationBuilder[T] = DefaultViolationBuilder): SimpleValidator[T] = new SimpleValidator[T] {
