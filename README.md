@@ -53,14 +53,14 @@ the point of this project? So let's use the provided validator utilties which al
 
 Creating an empty validator just involves invoking apply on the `Validator` object. Then, make sure you have imported `monkeytail.ValidatorSyntax._` to enable the magic functions on the validator instance.
 
-The main utility is in the `field` method, which accepts an extractor function to extract
+The main utility is in the `validate` method, which accepts an extractor function to extract
 the value we want to test, and then a test function that validates it and returns a bool if it is valid. 
 The test expression can be as simple or as complicated as you want.
 
 ```scala
 val validator = Validator[Starship]
-  .field(_.name)(_ != null)
-  .field(_.maxWarp)(_ < 10)
+  .validate(_.name)(_ != null)
+  .validate(_.maxWarp)(_ < 10)
 ```
 
 As you will already know, no ship can exceed warp 10, so we must validate that. 
@@ -85,7 +85,7 @@ validator(Starship(null, 11)) ==
 What's nice here is that the error messages are automatically generated and the violations include the path
 to the field name. The macro is taking care of that behind the scenes.
 
-It will work for nested paths as well, if you did something like `field(_.address.postcode)(_.length == 8)`, then the
+It will work for nested paths as well, if you did something like `validate(_.address.postcode)(_.length == 8)`, then the
 error would include the path `address.postcode`
 
 ### Custom Errors
@@ -107,8 +107,8 @@ proper type.
 
 ```scala
 val validator = Validator[Starship]
-  .field(_.name)(_ != null)
-  .field(_.maxWarp)(_ < 10)(MaxWarpExceededViolation)
+  .validate(_.name)(_ != null)
+  .validate(_.maxWarp)(_ < 10)(MaxWarpExceededViolation)
   
 validator(Starship("Enterprise", 11)) == Invalid(NonEmptyList.of(MaxWarpExceededViolation))
 ```
@@ -128,8 +128,8 @@ object MaxWarpExceededViolationBuilder extends ViolationBuilder[Double] {
 }
 
 val validator = Validator[Starship]
-  .field(_.name)(_ != null)
-  .field(_.maxWarp)(_ < 10)(MaxWarpExceededViolationBuilder)
+  .validate(_.name)(_ != null)
+  .validate(_.maxWarp)(_ < 10)(MaxWarpExceededViolationBuilder)
   
 validator(Starship("Enterprise", 11)) == Invalid(NonEmptyList.of(MaxWarpExceededViolation("Max warp exceeded, was 11.0")))
 ```
@@ -150,20 +150,38 @@ We could define a validator for the `Designation` class separately (perhaps we u
 
 ```scala
 implicit val designationValidator = Validator[Designation]
-  .field(_.prefix)(prefix => prefix != null && (prefix.startsWith("NCC") || prefix.startsWith("NX"))
-  .field(_.code)(_ != null)
+  .validate(_.prefix)(prefix => prefix != null && (prefix.startsWith("NCC") || prefix.startsWith("NX"))
+  .validate(_.code)(_ != null)
 ```
 
 Then we we can define a validator for the `Starship` class and use the previous validator automatically
 for the `designation` field, assuming it is available as an implicit in the current scope. Note, we use
-the `valid` method rather than the `field` method we've been using so far.
+the `valid` method rather than the `validate` method we've been using so far.
 
 ```scala
 val designationValidator = Validator[Starship]
-  .field(_.name)(_ != null)
-  .field(_.maxWarp)(_ < 10)(MaxWarpExceededViolation)
-  .valid(_.designation) // this will require the previous implicit.
+  .validate(_.name)(_ != null)
+  .validate(_.maxWarp)(_ < 10)(MaxWarpExceededViolation)
+  .validate(_.designation) // this will require the previous implicit.
 ```
+
+### Sanitize / Normalize values
+
+Before a field is checked we might want to change the value to sanitize the value into our standard. For example
+you might decide that all email addresses should be lowercase, or you might want to trim excess whitespace from
+certain fields before it is validated.
+
+To do this we can use the `sanitize` method on the validator. For example:
+
+```scala
+Validator[Starship]
+  .sanitize(_.name)(_.toLowerCase)
+  .validate(_.name)(_.startsWith("ncc"))
+```
+
+The sanitized value is passed through the validation chain and so is present in any validations that occur
+after the sanitized call, as well as being included in the final result. So in the above case, any starship
+that passes validation will have it's name lower-cased in the result.
 
 ### Validating sequences
 
@@ -175,7 +193,7 @@ element of the sequence individually, accumulating errors as elements fail.
 case class Friend(name: String)
 case class User(username: String, friends: Seq[Friend])
 
-val friendValidator = Validator[Friend].field(...) // etc
+val friendValidator = Validator[Friend].validate(...) // etc
 
 // reuse the existing validator
 val userValidator = Validator[User]
