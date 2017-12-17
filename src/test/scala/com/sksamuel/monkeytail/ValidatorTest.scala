@@ -51,4 +51,9 @@ class ValidatorTest extends FlatSpec with Matchers {
         DefaultViolation("system should not be null", Path(List("system")))
       ))
   }
+
+  it should "support being used as the basis for custom validations" in {
+    Validator.notnull[Starship]
+      .validate(_.maxWarp)(_ < 10)
+  }
 }

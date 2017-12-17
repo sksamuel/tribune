@@ -134,6 +134,27 @@ val validator = Validator[Starship]
 validator(Starship("Enterprise", 11)) == Invalid(NonEmptyList.of(MaxWarpExceededViolation("Max warp exceeded, was 11.0")))
 ```
 
+
+### Validation Helpers
+
+If you want to validate that all the fields of a case class are not then, then `Validator.notnull[T]` is a convenience macro.
+It will add a validation rule for every field in the case class to test that the value is not null. In other words, behind the scenes,
+the macro is doing this:
+
+```scala
+Validator[Foo]
+  .validate(_.a)(_ != null)
+  .validate(_.b)(_ != null)
+  ... // and so on
+```
+
+The validator returned by this helper can then be used as the basis for your own rules. For example:
+
+```scala
+Validator.notnull[Starship]
+  .validate(_.maxWarp)(_ < 10)
+```
+
 ### Nested Validators
 
 When we have a type that contains another type, and we already have a validator for the nested type,
