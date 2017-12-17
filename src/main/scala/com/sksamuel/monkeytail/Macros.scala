@@ -55,4 +55,21 @@ object Macros {
         )
     }
   }
+
+  def sanitizeContext[T <: Product : c.WeakTypeTag, U: c.WeakTypeTag](c: scala.reflect.macros.whitebox.Context)
+                                                                     (extractor: c.Expr[T => U]): c.Expr[SanitizeContext[T, U]] = {
+    import c.universe._
+    val tpeT = weakTypeOf[T]
+    val tpeU = weakTypeOf[U]
+
+    extractor.tree match {
+      case Function(_, Select(_, name)) =>
+        val term = TermName(name.decodedName.toString)
+        c.Expr[SanitizeContext[T, U]](
+          q"""
+             com.sksamuel.monkeytail.SanitizeContext($extractor, ${c.prefix}.wrapped, (t: $tpeT, u: $tpeU) => t.copy($term = u))
+           """
+        )
+    }
+  }
 }

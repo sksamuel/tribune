@@ -13,9 +13,9 @@ class ValidatorSyntaxTest extends FlatSpec with Matchers {
   "ValidatorSyntax" should "allow fields of any type to be validated" in {
 
     val starshipValidator = Validator[Starship]
-      .field(_.name)(_ != null)
-      .field(_.maxWarp)(_ < 10)
-      .field(_.flagship)(_ == true)
+      .validate(_.name)(_ != null)
+      .validate(_.maxWarp)(_ < 10)
+      .validate(_.flagship)(_ == true)
 
     starshipValidator(Starship("Enterprise", true, 9)) shouldBe Valid(Starship("Enterprise", true, 9.0))
     starshipValidator(Starship(null, true, 9)) shouldBe Invalid(NonEmptyList.of(DefaultViolation("Invalid value: null", Path("name"))))
@@ -33,9 +33,9 @@ class ValidatorSyntaxTest extends FlatSpec with Matchers {
     case object MaxWarpExceededViolation extends Violation
 
     val starshipValidator = Validator[Starship]
-      .field(_.name)(_ != null)
-      .field(_.maxWarp)(_ < 10)(MaxWarpExceededViolation)
-      .field(_.flagship)(_ == true)
+      .validate(_.name)(_ != null)
+      .validate(_.maxWarp)(_ < 10)(MaxWarpExceededViolation)
+      .validate(_.flagship)(_ == true)
 
     starshipValidator(Starship("Enterprise", true, 11)) shouldBe Invalid(NonEmptyList.of(MaxWarpExceededViolation))
   }
@@ -49,9 +49,9 @@ class ValidatorSyntaxTest extends FlatSpec with Matchers {
     }
 
     val starshipValidator = Validator[Starship]
-      .field(_.name)(_ != null)
-      .field(_.maxWarp)(_ < 10)(MaxWarpExceededViolation)
-      .field(_.flagship)(_ == true)
+      .validate(_.name)(_ != null)
+      .validate(_.maxWarp)(_ < 10)(MaxWarpExceededViolation)
+      .validate(_.flagship)(_ == true)
 
     starshipValidator(Starship("Enterprise", true, 11)) shouldBe Invalid(NonEmptyList.of(MaxWarpViolation("Max warp exceeded, was 11.0")))
   }
@@ -62,7 +62,7 @@ class ValidatorSyntaxTest extends FlatSpec with Matchers {
     case class Wibble(foos: Seq[Foo])
 
     implicit val fooValidator: Validator[Foo] = Validator[Foo]
-      .field(_.name)(_ != null)
+      .validate(_.name)(_ != null)
 
     val validator = Validator[Wibble]
       .forall(_.foos, fooValidator)
@@ -95,7 +95,7 @@ class ValidatorSyntaxTest extends FlatSpec with Matchers {
     case class Wibble(foo: Foo)
 
     implicit val fooValidator: Validator[Foo] = Validator[Foo]
-      .field(_.name)(_ != null)
+      .validate(_.name)(_ != null)
 
     val validator = Validator[Wibble]
       .valid(_.foo)
@@ -110,9 +110,18 @@ class ValidatorSyntaxTest extends FlatSpec with Matchers {
     case class Wibble(foo: Foo)
 
     val validator = Validator[Wibble]
-      .field(_.foo.name)(_ != null)
+      .validate(_.foo.name)(_ != null)
 
     validator(Wibble(Foo(null))) shouldBe
       Invalid(NonEmptyList.of(DefaultViolation("Invalid value: null", Path("foo", "name"))))
+  }
+
+  it should "support sanitizing of fields" in {
+
+    val validator = Validator[Starship]
+      .sanitize(_.name)(_.toLowerCase)
+      .sanitize(_.maxWarp)(_ - 1)
+
+    validator(Starship("ENTERPRISE", true, 9.6)) shouldBe Valid(Starship("enterprise", true, 8.6))
   }
 }
