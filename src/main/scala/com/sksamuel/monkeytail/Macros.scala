@@ -16,6 +16,26 @@ object Path {
 
 object Macros {
 
+  def notnull[T <: Product : c.WeakTypeTag](c: scala.reflect.macros.whitebox.Context): c.Expr[Validator[T]] = {
+    import c.universe._
+
+    val tpe = weakTypeOf[T]
+    val fields = tpe.typeSymbol.asClass.primaryConstructor.asMethod.paramLists.flatten.map(_.name.decodedName.toString).zipWithIndex
+    c.Expr[Validator[T]](
+      q"""
+       import cats.data._
+       new com.sksamuel.monkeytail.Validator[$tpe] {
+         override def apply(t: $tpe): Validated[NonEmptyList[com.sksamuel.monkeytail.Violation], $tpe] = {
+           val violations = List(..$fields).flatMap { case (field, k) =>
+             if (t.productElement(k) == null) Some(DefaultViolation(field + " should not be null", Path(field))) else None
+           }
+           if (violations.isEmpty) Validated.Valid(t) else Validated.Invalid(NonEmptyList.fromListUnsafe(violations))
+         }
+       }
+     """
+    )
+  }
+
   def seqContext[T, U](c: scala.reflect.macros.whitebox.Context)
                       (extractor: c.Expr[T => Seq[U]]): c.Expr[SeqContext[T, U]] = {
     import c.universe._
