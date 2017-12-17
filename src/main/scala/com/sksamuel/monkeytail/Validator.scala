@@ -4,6 +4,8 @@ import cats.Monoid
 import cats.data.Validated.{Invalid, Valid}
 import cats.data.{NonEmptyList, Validated}
 
+import scala.language.experimental.macros
+
 /**
   * Instances of Validator[T] can be invoked for a T
   * which will return a cats.Validated
@@ -33,6 +35,8 @@ object Validator {
   def apply[T]: Validator[T] = new Validator[T] {
     override def apply(t: T) = Valid(t)
   }
+
+  def notnull[T <: Product]: Validator[T] = macro Macros.notnull[T]
 
   implicit def monoid[T]: Monoid[Validator[T]] = new Monoid[Validator[T]] {
     override def empty: Validator[T] = Validator.apply[T]

@@ -15,10 +15,10 @@ class ValidatorTest extends FlatSpec with Matchers {
   "Validator" should "support combine via a Monoid instance" in {
 
     val nameValidator: Validator[Planet] = Validator[Planet]
-      .field(_.name)(_ != null)
+      .validate(_.name)(_ != null)
 
     val systemValidator: Validator[Planet] = Validator[Planet]
-      .field(_.system)(_ != null)
+      .validate(_.system)(_ != null)
 
     val combinedValidator = List(nameValidator, systemValidator).combineAll
     combinedValidator(Planet(null, null)) shouldBe Invalid(NonEmptyList.of(DefaultViolation("Invalid value: null", Path("name")), DefaultViolation("Invalid value: null", Path("system"))))
@@ -42,5 +42,13 @@ class ValidatorTest extends FlatSpec with Matchers {
 
     starshipValidator(Starship(null, true, 12)) shouldBe
       Invalid(NonEmptyList.of(DefaultViolation("Invalid value: Starship(null,true,12.0)", Path.empty)))
+  }
+
+  "Validator.notnull" should "Add validation rule for every field" in {
+    Validator.notnull[Planet](Planet(null, null)) shouldBe
+      Invalid(NonEmptyList.of(
+        DefaultViolation("name should not be null", Path(List("name"))),
+        DefaultViolation("system should not be null", Path(List("system")))
+      ))
   }
 }
