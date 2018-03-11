@@ -10,7 +10,7 @@ object Build extends AutoPlugin {
 
   object autoImport {
     val org = "com.sksamuel.monkeytail"
-    val CatsVersion = "1.0.0-RC1"
+    val CatsVersion = "1.0.1"
     val ScalatestVersion = "3.0.4"
   }
 
