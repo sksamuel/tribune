@@ -1,3 +1,4 @@
+import com.typesafe.sbt.SbtPgp
 import com.typesafe.sbt.pgp.PgpKeys
 import sbt.Keys._
 import sbt._
@@ -28,6 +29,8 @@ object Build extends AutoPlugin {
     parallelExecution := false,
     parallelExecution in ThisBuild := false,
     concurrentRestrictions in Global += Tags.limit(Tags.Test, 1),
+    SbtPgp.autoImport.useGpg := true,
+    SbtPgp.autoImport.useGpgAgent := true,
     sbtrelease.ReleasePlugin.autoImport.releasePublishArtifactsAction := PgpKeys.publishSigned.value,
     sbtrelease.ReleasePlugin.autoImport.releaseCrossBuild := true,
     scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8"),
