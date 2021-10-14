@@ -3,9 +3,9 @@ Monkeytail
 
 _parse don't validate_ for Kotlin.
 
-[![Build Status](https://travis-ci.org/sksamuel/monkeytail.png?branch=master)](https://travis-ci.org/sksamuel/monkeytail)
-[<img src="https://img.shields.io/maven-central/v/com.sksamuel.monkeytail/monkeytail_2.11.svg?label=latest%20release%20for%202.11"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22monkeytail_2.11%22)
-[<img src="https://img.shields.io/maven-central/v/com.sksamuel.monkeytail/monkeytail_2.12.svg?label=latest%20release%20for%202.12"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22monkeytail_2.12%22)
+![master](https://github.com/sksamuel/monkeytail/workflows/master/badge.svg)
+[<img src="https://img.shields.io/maven-central/v/com.sksamuel.monkeytail/monkeytail-core.svg?label=latest%20release"/>](http://search.maven.org/#search%7Cga%7C1%7Cmonkeytail)
+[<img src="https://img.shields.io/nexus/s/https/oss.sonatype.org/com.sksamuel.monkeytail/monkeytail-core.svg?label=latest%20snapshot&style=plastic"/>](https://oss.sonatype.org/content/repositories/snapshots/com/sksamuel/monkeytail/)
 
 ![alt text](https://raw.githubusercontent.com/sksamuel/monkeytail/master/src/main/graphics/logo_130.png)
 
