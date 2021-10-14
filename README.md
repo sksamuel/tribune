@@ -1,7 +1,7 @@
 Monkeytail
 =========================
 
-_parser don't validate_ for Kotlin.
+_parse don't validate_ for Kotlin.
 
 [![Build Status](https://travis-ci.org/sksamuel/monkeytail.png?branch=master)](https://travis-ci.org/sksamuel/monkeytail)
 [<img src="https://img.shields.io/maven-central/v/com.sksamuel.monkeytail/monkeytail_2.11.svg?label=latest%20release%20for%202.11"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22monkeytail_2.11%22)
