@@ -7,7 +7,7 @@ _parse don't validate_ for Kotlin.
 [<img src="https://img.shields.io/maven-central/v/com.sksamuel.monkeytail/monkeytail-core.svg?label=latest%20release"/>](http://search.maven.org/#search%7Cga%7C1%7Cmonkeytail)
 [<img src="https://img.shields.io/nexus/s/https/oss.sonatype.org/com.sksamuel.monkeytail/monkeytail-core.svg?label=latest%20snapshot&style=plastic"/>](https://oss.sonatype.org/content/repositories/snapshots/com/sksamuel/monkeytail/)
 
-![alt text](https://raw.githubusercontent.com/sksamuel/monkeytail/master/src/main/graphics/logo_130.png)
+![alt text](https://raw.githubusercontent.com/sksamuel/monkeytail/master/graphics/logo_130.png)
 
 ### Introduction
 
