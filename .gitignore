@@ -1,12 +1,15 @@
 *.class
+*.log
 .idea
 *.iml
-target
+.kotlintest
 
-# Package Files #
-*.jar
-*.war
-*.ear
-
-target
+target/
+build/
+out/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
 credentials.sbt
+.gradle
