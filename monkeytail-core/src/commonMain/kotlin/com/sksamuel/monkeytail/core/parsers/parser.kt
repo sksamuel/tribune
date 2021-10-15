@@ -1,4 +1,4 @@
-package com.sksamuel.monkeytail.core
+package com.sksamuel.monkeytail.core.parsers
 
 import com.sksamuel.monkeytail.core.validation.Validated
 import com.sksamuel.monkeytail.core.validation.flatMap
@@ -9,6 +9,21 @@ import com.sksamuel.monkeytail.core.validation.valid
  * A [Parser] accepts input <I> and returns a Validated<E,A> based on validation rules.
  */
 fun interface Parser<in I, out A, out E> {
+
+   companion object {
+
+      /**
+       * Returns an identity [Parser] for a type I.
+       *
+       * This can be used as the entry point to building a parser. Eg,
+       *
+       * Parser<T>()...parse(t)
+       */
+      operator fun <I> invoke(): Parser<I, I, Nothing> = Parser { it.valid() }
+
+      val string: Parser<String, String, Nothing> = Parser { it.valid() }
+   }
+
    fun parse(input: I): Validated<E, A>
 }
 

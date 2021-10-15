@@ -1,4 +1,4 @@
-package com.sksamuel.monkeytail.core
+package com.sksamuel.monkeytail.core.parsers
 
 import com.sksamuel.monkeytail.core.validation.Validated
 import com.sksamuel.monkeytail.core.validation.invalid
