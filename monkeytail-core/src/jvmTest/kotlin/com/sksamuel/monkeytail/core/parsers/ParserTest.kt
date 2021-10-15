@@ -118,42 +118,6 @@ class ValidatedTest : FunSpec() {
          p.parse(null) shouldBe "cannot be null or blank".invalid()
       }
 
-      test("min length") {
-         val p = Parser<String>().minlen(4) { "too short" }.map { Foo(it) }
-         p.parse("abc") shouldBe "too short".invalid()
-         p.parse("abcd") shouldBe Foo("abcd").valid()
-      }
-
-      test("max length") {
-         val p = Parser<String>().maxlen(4) { "too long" }.map { Foo(it) }
-         p.parse("abcde") shouldBe "too long".invalid()
-         p.parse("abcd") shouldBe Foo("abcd").valid()
-         p.parse("abc") shouldBe Foo("abc").valid()
-      }
-
-      test("length") {
-         val p = Parser<String>().length(4) { "must be 4 chars" }.map { Foo(it) }
-         p.parse("abcde") shouldBe "must be 4 chars".invalid()
-         p.parse("abcd") shouldBe Foo("abcd").valid()
-         p.parse("abc") shouldBe "must be 4 chars".invalid()
-      }
-
-      test("trim") {
-         val p = Parser<String>().trim().map { Foo(it) }
-         p.parse(" abcd ") shouldBe Foo("abcd").valid()
-         p.parse("abc    ") shouldBe Foo("abc").valid()
-      }
-
-      test("uppercase") {
-         val p = Parser<String>().uppercase().map { Foo(it) }
-         p.parse("abcd") shouldBe Foo("ABCD").valid()
-      }
-
-      test("lowercase") {
-         val p = Parser<String>().lowercase().map { Foo(it) }
-         p.parse("ABCD") shouldBe Foo("abcd").valid()
-      }
-
       test("filter") {
          val p = Parser<String>().filter(String::isNotEmpty) { "boom" }.map { Foo(it) }
          p.parse("") shouldBe "boom".invalid()

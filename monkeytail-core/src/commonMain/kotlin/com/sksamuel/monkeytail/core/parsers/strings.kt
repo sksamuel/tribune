@@ -4,12 +4,25 @@ import com.sksamuel.monkeytail.core.validation.invalid
 import com.sksamuel.monkeytail.core.validation.valid
 
 /**
- * Modifies a String -> String [Parser] by trimming the output string to remove prefix
- * and suffix whitespace.
+ * Modifies the output of a String producing [Parser] by trimming the output string
+ * to remove prefix and suffix whitespace.
  *
  * @return the output of the underlying parser with whitespace trimmed.
  */
 fun <I, E> Parser<I, String, E>.trim(): Parser<I, String, E> = map { it.trim() }
+
+/**
+ * Modifies the output of a String producing [Parser] to strip the given [chars].
+ */
+fun <I, E> Parser<I, String, E>.strip(chars: CharArray): Parser<I, String, E> =
+   map { chars.fold(it) { acc, c -> acc.replace(c.toString(), "") } }
+
+/**
+ * Constrains a String producing parser to ensure it matches the given [regex].
+ */
+fun <I, E> Parser<I, String, E>.match(regex: Regex, ifError: (String) -> E): Parser<I, String, E> =
+   filter({ it.matches(regex) }, ifError)
+
 
 /**
  * Modifies a String -> String [Parser] by uppercasing the output string.
