@@ -16,7 +16,7 @@ class NullTest : FunSpec() {
       test("nullable") {
          val p = Parser<String>().nullable()
          p.parse("abc") shouldBe "abc".valid()
-         p.parse(null) shouldBe "wibble".valid()
+         p.parse(null) shouldBe null.valid()
       }
    }
 }
