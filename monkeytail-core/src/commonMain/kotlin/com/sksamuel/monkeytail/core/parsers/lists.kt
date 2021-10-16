@@ -22,7 +22,7 @@ fun <I, A, E> Parser<I, A, E>.repeated(): Parser<List<I>, List<A>, E> {
  * the underlying parser. This version of repeated supports upper and lower bounds
  * on the list size.
  *
- * In other words, given an parser, this will return a parser that handles lists of the inputs.
+ * In other words, given a parser, this will return a parser that handles lists of the inputs.
  *
  * @param min the minimum number of elements in the list
  * @param max the maximum number of elements in the list
