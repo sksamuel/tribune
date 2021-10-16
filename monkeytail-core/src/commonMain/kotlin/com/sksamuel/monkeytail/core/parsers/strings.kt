@@ -105,7 +105,7 @@ fun <I, E> Parser<I, String, E>.minlen(len: Int, ifError: (String) -> E): Parser
  * @return valid if the input string is not null and not blank, otherwise invalid
  */
 fun <E> Parser<String, String, E>.notNullOrBlank(ifError: () -> E): Parser<String?, String, E> {
-   return parser { input: String? ->
+   return Parser { input: String? ->
       if (input.isNullOrBlank()) ifError().invalid() else this@notNullOrBlank.parse(input)
    }
 }

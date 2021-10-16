@@ -33,7 +33,7 @@ fun <I, A, E> Parser<I, A, E>.nullable(): Parser<I?, A?, E> {
  * @return valid if the input string is not null, otherwise invalid
  */
 fun <I, A, E> Parser<I, A, E>.notNull(ifNull: () -> E): Parser<I?, A, E> {
-   return parser { input: I? ->
+   return Parser { input: I? ->
       if (input == null) ifNull().invalid() else this@notNull.parse(input)
    }
 }

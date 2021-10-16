@@ -21,18 +21,14 @@ fun interface Parser<in I, out A, out E> {
        */
       operator fun <I> invoke(): Parser<I, I, Nothing> = Parser { it.valid() }
 
-      val string: Parser<String, String, Nothing> = Parser { it.valid() }
+      /**
+       * An identity string parser.
+       */
+      val string: Parser<String, String, Nothing> = invoke<String>()
    }
 
    fun parse(input: I): Validated<E, A>
 }
-
-fun <I> I.parser(): Parser<I, I, Nothing> = Parser { it.valid() }
-
-/**
- * Returns a [Parser] backed by the given function.
- */
-fun <I, A, E> parser(fn: (I) -> Validated<E, A>) = Parser<I, A, E> { input -> fn(input) }
 
 /**
  * Returns a [Parser] that maps the result of this parser by invoking the given function [f]
@@ -44,7 +40,8 @@ fun <I, A, E> parser(fn: (I) -> Validated<E, A>) = Parser<I, A, E> { input -> fn
  *
  * @return a parser which returns the modified result of this parser.
  */
-fun <I, A, B, E> Parser<I, A, E>.map(f: (A) -> B): Parser<I, B, E> = parser { this@map.parse(it).map(f) }
+fun <I, A, B, E> Parser<I, A, E>.map(f: (A) -> B): Parser<I, B, E> =
+   Parser { this@map.parse(it).map(f) }
 
 /**
  * Returns a [Parser] that maps the non-null results of a nullable parser.
@@ -56,9 +53,8 @@ fun <I, A, B, E> Parser<I, A, E>.map(f: (A) -> B): Parser<I, B, E> = parser { th
  *
  * @return a parser which returns the modified result of this parser.
  */
-fun <I, A, B, E> Parser<I, A?, E>.mapIfNotNull(f: (A) -> B): Parser<I, B?, E> = parser { input ->
-   this@mapIfNotNull.parse(input).map { if (it == null) null else f(it) }
-}
+fun <I, A, B, E> Parser<I, A?, E>.mapIfNotNull(f: (A) -> B): Parser<I, B?, E> =
+   Parser { input -> this@mapIfNotNull.parse(input).map { if (it == null) null else f(it) } }
 
 /**
  * Returns a [Parser] that maps the result of this parser by invoking the given function [f]
@@ -69,7 +65,7 @@ fun <I, A, B, E> Parser<I, A?, E>.mapIfNotNull(f: (A) -> B): Parser<I, B?, E> = 
  * @return a parser which returns the modified and flattened result of this parser.
  */
 fun <I, A, B, E> Parser<I, A, E>.flatMap(f: (A) -> Validated<E, B>): Parser<I, B, E> =
-   parser { this@flatMap.parse(it).flatMap(f) }
+   Parser { this@flatMap.parse(it).flatMap(f) }
 
 /**
  * Returns a [Parser] that rejects the output of this parser if the output fails to pass

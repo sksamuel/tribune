@@ -12,7 +12,7 @@ import com.sksamuel.monkeytail.core.validation.traverse
  * @return a parser that accepts lists
  */
 fun <I, A, E> Parser<I, A, E>.repeated(): Parser<List<I>, List<A>, E> {
-   return parser { input ->
+   return Parser { input ->
       input.map { this@repeated.parse(it) }.traverse()
    }
 }
@@ -34,7 +34,7 @@ fun <I, A, E> Parser<I, A, E>.repeated(
    max: Int = Int.MAX_VALUE,
    ifInvalidSize: (Int) -> E
 ): Parser<List<I>, List<A>, E> {
-   return parser { input ->
+   return Parser { input ->
       if ((min..max).contains(input.size)) input.map { this@repeated.parse(it) }.traverse()
       else ifInvalidSize(input.size).invalid()
    }
