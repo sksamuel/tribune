@@ -11,8 +11,8 @@ import com.sksamuel.monkeytail.core.validation.valid
  * Note: This parser accepts nullable inputs if the receiver accepts nullable inputs
  * and a null is considered a failing case.
  */
-fun <I, E> Parser<I, String, E>.float(ifError: (String) -> E): Parser<I, Float, E> =
+fun <I, E> Parser<I, String, E>.double(ifError: (String) -> E): Parser<I, Double, E> =
    flatMap {
-      val f = it.toFloatOrNull()
-      f?.valid() ?: ifError(it).invalid()
+      val d = it.toDoubleOrNull()
+      d?.valid() ?: ifError(it).invalid()
    }

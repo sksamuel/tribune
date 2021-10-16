@@ -2,6 +2,7 @@ package com.sksamuel.monkeytail.core.parsers
 
 import com.sksamuel.monkeytail.core.validation.Validated
 import com.sksamuel.monkeytail.core.validation.invalid
+import com.sksamuel.monkeytail.core.validation.valid
 
 /**
  * Maps a [Parser] that produces a nullable output, to one that produces a non-nullable
@@ -38,3 +39,9 @@ fun <I, A, E> Parser<I, A, E>.notNull(ifNull: () -> E): Parser<I?, A, E> {
    }
 }
 
+/**
+ * Composes this [Parser] to never fail, by replacing any failing values with null.
+ */
+fun <I, A, E> Parser<I, A, E>.orNull(): Parser<I, A?, Nothing> {
+   return Parser { input: I -> this@orNull.parse(input).fold({ Validated(null) }, { it.valid() }) }
+}
