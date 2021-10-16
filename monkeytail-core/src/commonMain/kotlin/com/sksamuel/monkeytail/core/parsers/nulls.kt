@@ -42,6 +42,6 @@ fun <I, A, E> Parser<I, A, E>.notNull(ifNull: () -> E): Parser<I?, A, E> {
 /**
  * Composes this [Parser] to never fail, by replacing any failing values with null.
  */
-fun <I, A, E> Parser<I, A, E>.orNull(): Parser<I, A?, Nothing> {
-   return Parser { input: I -> this@orNull.parse(input).fold({ Validated(null) }, { it.valid() }) }
+fun <I, A, E> Parser<I, A, E>.failAsNull(): Parser<I, A?, Nothing> {
+   return Parser { input: I -> this@failAsNull.parse(input).fold({ Validated(null) }, { it.valid() }) }
 }
