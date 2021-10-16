@@ -27,6 +27,8 @@ fun interface Parser<in I, out A, out E> {
    fun parse(input: I): Validated<E, A>
 }
 
+fun <I> I.parser(): Parser<I, I, Nothing> = Parser { it.valid() }
+
 /**
  * Returns a [Parser] backed by the given function.
  */

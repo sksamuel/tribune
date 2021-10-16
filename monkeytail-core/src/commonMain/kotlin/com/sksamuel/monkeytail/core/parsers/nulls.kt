@@ -4,9 +4,8 @@ import com.sksamuel.monkeytail.core.validation.Validated
 import com.sksamuel.monkeytail.core.validation.invalid
 
 /**
- * Maps an existing [Parser] that produces nullable output, with a parser that
- * produces non-nullable output, by replacing any nulls with the result of the
- * given function [ifNull].
+ * Maps a [Parser] that produces a nullable output, to one that produces a non-nullable
+ * output, by replacing any nulls with the result of the given function [ifNull].
  *
  * @param ifNull the default generating function
  *
@@ -17,7 +16,7 @@ fun <I, A, E> Parser<I, A?, E>.default(ifNull: () -> A): Parser<I, A, E> {
 }
 
 /**
- * Widens an existing [Parser] to accept null inputs which are returned as valid.
+ * Composes an existing non-nullable [Parser] to accept null inputs which are returned as valid.
  */
 fun <I, A, E> Parser<I, A, E>.nullable(): Parser<I?, A?, E> {
    return Parser { input ->
