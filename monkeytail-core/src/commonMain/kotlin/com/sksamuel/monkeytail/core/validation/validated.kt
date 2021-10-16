@@ -69,6 +69,8 @@ sealed class Validated<out E, out A> {
          is Valid<A> -> Result.success(this.value)
       }
    }
+
+   fun getOrNull(): A? = fold({ null }, { it })
 }
 
 fun <A> Result<A>.toValidated(): Validated<Throwable, A> = fold({ it.valid() }, { it.invalid() })
