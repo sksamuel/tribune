@@ -16,3 +16,14 @@ fun <I, E> Parser<I, String, E>.double(ifError: (String) -> E): Parser<I, Double
       val d = it.toDoubleOrNull()
       d?.valid() ?: ifError(it).invalid()
    }
+
+fun <I, E> Parser<I, Double, E>.positive(ifError: (Double) -> E): Parser<I, Double, E> =
+   flatMap {
+      if (it > 0.0) it.valid() else ifError(it).invalid()
+   }
+
+
+fun <I, E> Parser<I, Double, E>.negative(ifError: (Double) -> E): Parser<I, Double, E> =
+   flatMap {
+      if (it < 0.0) it.valid() else ifError(it).invalid()
+   }
