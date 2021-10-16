@@ -112,7 +112,7 @@ class ValidatedTest : FunSpec() {
       }
 
       test("not null or blank") {
-         val p = Parser.string.notNullOrBlank { "cannot be null or blank" }.map { Foo(it) }
+         val p = Parser.string.nullable().notNullOrBlank { "cannot be null or blank" }.map { Foo(it) }
          p.parse("") shouldBe "cannot be null or blank".invalid()
          p.parse("     ") shouldBe "cannot be null or blank".invalid()
          p.parse(null) shouldBe "cannot be null or blank".invalid()
