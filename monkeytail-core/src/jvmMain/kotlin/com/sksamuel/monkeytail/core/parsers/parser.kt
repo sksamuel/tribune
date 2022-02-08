@@ -1,12 +1,13 @@
 package com.sksamuel.monkeytail.core.parsers
 
-import com.sksamuel.monkeytail.core.validation.Validated
-import com.sksamuel.monkeytail.core.validation.flatMap
-import com.sksamuel.monkeytail.core.validation.invalid
-import com.sksamuel.monkeytail.core.validation.valid
+import arrow.core.Nel
+import arrow.core.NonEmptyList
+import arrow.core.Validated
+import arrow.core.ValidatedNel
+import arrow.core.invalidNel
 
 /**
- * A [Parser] accepts input <I> and returns a Validated<E, A> based on validation rules.
+ * A [Parser] accepts input of type [I] and returns a [ValidatedNel].
  */
 fun interface Parser<in I, out A, out E> {
 
@@ -19,16 +20,22 @@ fun interface Parser<in I, out A, out E> {
        *
        * Parser<T>()...parse(t)
        */
-      operator fun <I> invoke(): Parser<I, I, Nothing> = Parser { it.valid() }
+      operator fun <I> invoke(): Parser<I, I, NonEmptyList<Nothing>> = Parser { it.valid() }
 
       /**
        * An identity string parser.
        */
-      val string: Parser<String, String, Nothing> = invoke<String>()
+      val string: Parser<String, String, NonEmptyList<Nothing>> = invoke()
    }
 
-   fun parse(input: I): Validated<E, A>
+   fun parse(input: I): ValidatedNel<E, A>
 }
+
+fun <E, A> ValidatedNel<E, A>.getOrThrow(): A = fold({ error(it) }, { it })
+fun <E, A> ValidatedNel<E, A>.getErrorsOrThrow(): NonEmptyList<E> = fold({ it }, { error(it.toString()) })
+fun <A> A.valid(): ValidatedNel<Nothing, A> = Validated.Valid(this)
+fun <E> E.invalid(): ValidatedNel<E, Nothing> = this.invalidNel()
+fun <E> List<E>.invalid(): ValidatedNel<E, Nothing> = Validated.Invalid(Nel.fromListUnsafe(this))
 
 /**
  * Returns a [Parser] that rejects the output of this parser if the output fails to pass

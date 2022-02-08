@@ -1,7 +1,7 @@
 package com.sksamuel.monkeytail.core.parsers
 
-import com.sksamuel.monkeytail.core.validation.Validated
-import com.sksamuel.monkeytail.core.validation.flatMap
+import arrow.core.ValidatedNel
+import arrow.core.andThen
 
 /**
  * Returns a [Parser] that maps the result of this parser by invoking the given function [f]
@@ -37,5 +37,5 @@ fun <I, A, B, E> Parser<I, A?, E>.mapIfNotNull(f: (A) -> B): Parser<I, B?, E> =
  *
  * @return a parser which returns the modified and flattened result of this parser.
  */
-fun <I, A, B, E> Parser<I, A, E>.flatMap(f: (A) -> Validated<E, B>): Parser<I, B, E> =
-   Parser { this@flatMap.parse(it).flatMap(f) }
+fun <I, A, B, E> Parser<I, A, E>.flatMap(f: (A) -> ValidatedNel<E, B>): Parser<I, B, E> =
+   Parser { this@flatMap.parse(it).andThen(f) }

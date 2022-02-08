@@ -1,7 +1,5 @@
 package com.sksamuel.monkeytail.core.parsers
 
-import com.sksamuel.monkeytail.core.validation.invalid
-import com.sksamuel.monkeytail.core.validation.valid
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 

@@ -1,7 +1,5 @@
 package com.sksamuel.monkeytail.core.parsers
 
-import com.sksamuel.monkeytail.core.validation.invalid
-import com.sksamuel.monkeytail.core.validation.valid
 
 /**
  * Modifies the output of a String producing [Parser] by trimming the output string

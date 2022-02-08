@@ -1,8 +1,5 @@
 package com.sksamuel.monkeytail.core.parsers
 
-import com.sksamuel.monkeytail.core.validation.invalid
-import com.sksamuel.monkeytail.core.validation.valid
-
 /**
  * Returns a [Parser] that rejects the output of this parser if the output is not one
  * of the given acceptable values. In the case of rejection, the error message

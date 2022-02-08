@@ -22,13 +22,14 @@ kotlin {
 
       val commonMain by getting {
          dependencies {
-//            implementation("io.arrow-kt:arrow-core:1.0.1")
+//
          }
       }
 
       val jvmMain by getting {
          dependsOn(commonMain)
          dependencies {
+            implementation("io.arrow-kt:arrow-core:1.0.1")
             implementation(kotlin("reflect"))
          }
       }

@@ -1,7 +1,6 @@
 package com.sksamuel.monkeytail.core.parsers
 
-import com.sksamuel.monkeytail.core.validation.invalid
-import com.sksamuel.monkeytail.core.validation.traverse
+import arrow.core.sequenceValidated
 
 /**
  * Lifts an existing [Parser] to support lists of the input types supported by
@@ -13,7 +12,7 @@ import com.sksamuel.monkeytail.core.validation.traverse
  */
 fun <I, A, E> Parser<I, A, E>.repeated(): Parser<List<I>, List<A>, E> {
    return Parser { input ->
-      input.map { this@repeated.parse(it) }.traverse()
+      input.map { this@repeated.parse(it) }.sequenceValidated()
    }
 }
 
@@ -35,7 +34,7 @@ fun <I, A, E> Parser<I, A, E>.repeated(
    ifInvalidSize: (Int) -> E
 ): Parser<List<I>, List<A>, E> {
    return Parser { input ->
-      if ((min..max).contains(input.size)) input.map { this@repeated.parse(it) }.traverse()
+      if ((min..max).contains(input.size)) input.map { this@repeated.parse(it) }.sequenceValidated()
       else ifInvalidSize(input.size).invalid()
    }
 }

@@ -1,8 +1,6 @@
 package com.sksamuel.monkeytail.core.parsers
 
-import com.sksamuel.monkeytail.core.validation.Validated
-import com.sksamuel.monkeytail.core.validation.invalid
-import com.sksamuel.monkeytail.core.validation.valid
+import arrow.core.Validated
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
@@ -23,76 +21,58 @@ class ValidatedTest : FunSpec() {
          Parser.string
             .notBlank { "cannot be blank" }
             .map { Foo("input") }
-            .parse("    ") shouldBe Validated.invalid("cannot be blank")
+            .parse("    ") shouldBe Validated.invalidNel("cannot be blank")
       }
 
       test("parser should support default") {
          val p = Parser<String>()
             .mapIfNotNull { Foo(it) }
-            .default { Foo("foo") }
-         val result: Foo = p.parse("foo").getUnsafe()
+            .withDefault { Foo("foo") }
+         val result: Foo = p.parse("foo").getOrThrow()
       }
 
       test("parser should support default on nullable inputs") {
          val p = Parser<String?>()
             .mapIfNotNull { Foo(it) }
-            .default { Foo("foo") }
-         val result: Foo = p.parse("foo").getUnsafe()
+            .withDefault { Foo("foo") }
+         val result: Foo = p.parse("foo").getOrThrow()
       }
 
       test("parser should support booleans") {
          val p = Parser<String>().boolean { "not a boolean" }
-         p.parse("foo").getErrorsUnsafe() shouldBe listOf("not a boolean")
-         p.parse("true").getUnsafe() shouldBe true
-         p.parse("false").getUnsafe() shouldBe false
-      }
-
-      test("parser should support ints") {
-         val p = Parser<String>().long { "not an int" }
-         p.parse("foo").getErrorsUnsafe() shouldBe listOf("not an int")
-         p.parse("12345").getUnsafe() shouldBe 12345
-      }
-
-      test("parser should support ints with nullable pass through") {
-         val p = Parser<String>().long { "not an int" }.nullable()
-         p.parse("12345").getUnsafe() shouldBe 12345
-         p.parse(null).getUnsafe() shouldBe null
-      }
-
-      test("parser should support ints with nullable failure message") {
-         val p = Parser<String>().long { "not an int" }.notNull { "cannot be null" }
-         p.parse("12345").getUnsafe() shouldBe 12345
-         p.parse(null).getErrorsUnsafe() shouldBe listOf("cannot be null")
+         p.parse("foo").getErrorsOrThrow() shouldBe listOf("not a boolean")
+         p.parse("true").getOrThrow() shouldBe true
+         p.parse("false").getOrThrow() shouldBe false
       }
 
       test("parser should support longs") {
          val p = Parser<String>().long { "not a long" }
-         p.parse("foo").getErrorsUnsafe() shouldBe listOf("not a long")
-         p.parse("12345").getUnsafe() shouldBe 12345L
+         p.parse("foo").getErrorsOrThrow() shouldBe listOf("not a long")
+         p.parse("12345").getOrThrow() shouldBe 12345L
       }
 
       test("parser should support doubles") {
          val p = Parser<String>().double { "not a double" }.map { Width(it) }
-         p.parse("foo").getErrorsUnsafe() shouldBe listOf("not a double")
-         p.parse("123.45").getUnsafe() shouldBe Width(123.45)
+         p.parse("foo").getErrorsOrThrow() shouldBe listOf("not a double")
+         p.parse("123.45").getOrThrow() shouldBe Width(123.45)
       }
 
       test("parser should support doubles with nullable pass through") {
-         val p = Parser.string.double { "not a double" }.nullable()
-         p.parse("123.45").getUnsafe() shouldBe 123.45
-         p.parse(null).getUnsafe() shouldBe null
+         val p = Parser.string.double { "not a double" }.allowNulls()
+         p.parse("123.45").getOrThrow() shouldBe 123.45
+         p.parse(null).getOrThrow() shouldBe null
       }
 
       test("parser should support doubles with nullable failure message") {
          val p = Parser.string.double { "not a double" }.notNull { "cannot be null" }
-         p.parse("123.45").getUnsafe() shouldBe 123.45
-         p.parse(null).getErrorsUnsafe() shouldBe listOf("cannot be null")
+         p.parse("123.45").getOrThrow() shouldBe 123.45
+         p.parse(null).getErrorsOrThrow() shouldBe listOf("cannot be null")
       }
 
       test("parser should support floats") {
          val p = Parser.string.float { "not a float" }
-         p.parse("foo").getErrorsUnsafe() shouldBe listOf("not a float")
-         p.parse("123.45").getUnsafe() shouldBe 123.45F
+         p.parse("foo").getErrorsOrThrow() shouldBe listOf("not a float")
+         p.parse("123.45").getOrThrow() shouldBe 123.45F
       }
 
       test("repeated parser") {
@@ -112,7 +92,7 @@ class ValidatedTest : FunSpec() {
       }
 
       test("not null or blank") {
-         val p = Parser.string.nullable().notNullOrBlank { "cannot be null or blank" }.map { Foo(it) }
+         val p = Parser.string.allowNulls().notNullOrBlank { "cannot be null or blank" }.map { Foo(it) }
          p.parse("") shouldBe "cannot be null or blank".invalid()
          p.parse("     ") shouldBe "cannot be null or blank".invalid()
          p.parse(null) shouldBe "cannot be null or blank".invalid()
@@ -133,7 +113,7 @@ class ValidatedTest : FunSpec() {
       }
 
       test("non neg") {
-         val p = Parser<String>().int { "must be int" }.nonneg { "must be >= 0" }
+         val p = Parser<String>().int { "must be int" }.nonNegative { "must be >= 0" }
          p.parse("-1") shouldBe "must be >= 0".invalid()
          p.parse("0") shouldBe 0.valid()
          p.parse("1") shouldBe 1.valid()

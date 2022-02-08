@@ -1,11 +1,7 @@
 package com.sksamuel.monkeytail.core.parsers
 
-import com.sksamuel.monkeytail.core.validation.invalid
-import com.sksamuel.monkeytail.core.validation.valid
-
 /**
  * Chains a [Parser] to convert String? -> Int.
- * An input of type
  */
 fun <I, E> Parser<I, String, E>.int(ifError: (String) -> E): Parser<I, Int, E> =
    flatMap {
@@ -13,15 +9,18 @@ fun <I, E> Parser<I, String, E>.int(ifError: (String) -> E): Parser<I, Int, E> =
       i?.valid() ?: ifError(it).invalid()
    }
 
+/**
+ * Chains a [Parser] to convert String? -> positive Int.
+ */
 fun <I, E> Parser<I, Int, E>.positive(ifError: (Int) -> E): Parser<I, Int, E> =
-   flatMap {
-      if (it > 0) it.valid() else ifError(it).invalid()
-   }
+   this.filter({ it > 0 }, ifError)
 
-fun <I, E> Parser<I, Int, E>.nonneg(ifError: (Int) -> E): Parser<I, Int, E> =
-   flatMap {
-      if (it >= 0) it.valid() else ifError(it).invalid()
-   }
+/**
+ * Chains a [Parser] to convert String? -> non-negative Int.
+ */
+fun <I, E> Parser<I, Int, E>.nonNegative(ifError: (Int) -> E): Parser<I, Int, E> =
+   this.filter({ it >= 0 }, ifError)
+
 
 fun <I, E> Parser<I, Int, E>.negative(ifError: (Int) -> E): Parser<I, Int, E> =
    flatMap {

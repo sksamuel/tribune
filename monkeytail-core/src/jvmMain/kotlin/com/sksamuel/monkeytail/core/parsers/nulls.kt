@@ -1,8 +1,6 @@
 package com.sksamuel.monkeytail.core.parsers
 
-import com.sksamuel.monkeytail.core.validation.Validated
-import com.sksamuel.monkeytail.core.validation.invalid
-import com.sksamuel.monkeytail.core.validation.valid
+import arrow.core.Validated
 
 /**
  * Maps a [Parser] that produces a nullable output, to one that produces a non-nullable
@@ -12,16 +10,16 @@ import com.sksamuel.monkeytail.core.validation.valid
  *
  * @return the same underlying value if not null, or the default otherwise
  */
-fun <I, A, E> Parser<I, A?, E>.default(ifNull: () -> A): Parser<I, A, E> {
+fun <I, A, E> Parser<I, A?, E>.withDefault(ifNull: () -> A): Parser<I, A, E> {
    return map { it ?: ifNull() }
 }
 
 /**
  * Composes an existing non-nullable [Parser] to accept null inputs which are returned as valid.
  */
-fun <I, A, E> Parser<I, A, E>.nullable(): Parser<I?, A?, E> {
+fun <I, A, E> Parser<I, A, E>.allowNulls(): Parser<I?, A?, E> {
    return Parser { input ->
-      if (input == null) Validated.Valid(null) else this@nullable.parse(input)
+      if (input == null) Validated.Valid(null) else this@allowNulls.parse(input)
    }
 }
 
@@ -43,5 +41,5 @@ fun <I, A, E> Parser<I, A, E>.notNull(ifNull: () -> E): Parser<I?, A, E> {
  * Composes this [Parser] to never fail, by replacing any failing values with null.
  */
 fun <I, A, E> Parser<I, A, E>.failAsNull(): Parser<I, A?, Nothing> {
-   return Parser { input: I -> this@failAsNull.parse(input).fold({ Validated(null) }, { it.valid() }) }
+   return Parser { input: I -> this@failAsNull.parse(input).fold({ Validated.Valid(null) }, { it.valid() }) }
 }
