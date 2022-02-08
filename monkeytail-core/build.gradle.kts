@@ -22,7 +22,7 @@ kotlin {
 
       val commonMain by getting {
          dependencies {
-            implementation(Libs.Coroutines.core)
+//            implementation("io.arrow-kt:arrow-core:1.0.1")
          }
       }
 
@@ -30,7 +30,6 @@ kotlin {
          dependsOn(commonMain)
          dependencies {
             implementation(kotlin("reflect"))
-            implementation("io.github.microutils:kotlin-logging-jvm:2.0.6")
          }
       }
 
@@ -44,18 +43,8 @@ kotlin {
       }
 
       all {
-         languageSettings.useExperimentalAnnotation("kotlin.time.ExperimentalTime")
-         languageSettings.useExperimentalAnnotation("kotlin.experimental.ExperimentalTypeInference")
-         languageSettings.useExperimentalAnnotation("kotlin.OverloadResolutionByLambdaReturnType")
+         languageSettings.optIn("kotlin.OverloadResolutionByLambdaReturnType")
       }
-   }
-}
-
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-   kotlinOptions {
-      jvmTarget = "1.8"
-      apiVersion = "1.5"
    }
 }
 
