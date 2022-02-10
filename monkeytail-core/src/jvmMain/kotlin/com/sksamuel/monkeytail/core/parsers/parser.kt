@@ -5,6 +5,7 @@ import arrow.core.NonEmptyList
 import arrow.core.Validated
 import arrow.core.ValidatedNel
 import arrow.core.invalidNel
+import arrow.core.zip
 
 /**
  * A [Parser] accepts input of type [I] and returns a [ValidatedNel].
@@ -20,10 +21,29 @@ fun interface Parser<in I, out A, out E> {
        *
        * Parser<String>()...parse("mystring")
        */
-      operator fun <I> invoke(): Parser<I, I, NonEmptyList<Nothing>> = Parser { it.valid() }
+      operator fun <I> invoke(): Parser<I, I, Nothing> = Parser { it.valid() }
+
+      fun <INPUT, A, B, ERROR> compose(
+         p1: Parser<INPUT, A, ERROR>,
+         p2: Parser<INPUT, B, ERROR>,
+      ): Parser<INPUT, Pair<A, B>, ERROR> = Parser { input ->
+         p1.parse(input).zip(p2.parse(input)) { a, b -> Pair(a, b) }
+      }
+
+      fun <INPUT, A, B, C, ERROR> compose(
+         p1: Parser<INPUT, A, ERROR>,
+         p2: Parser<INPUT, B, ERROR>,
+         p3: Parser<INPUT, C, ERROR>,
+      ): Parser<INPUT, Triple<A, B, C>, ERROR> = Parser { input ->
+         p1.parse(input).zip(p2.parse(input), p3.parse(input)) { a, b, c -> Triple(a, b, c) }
+      }
    }
 
-   fun parse(input: I): ValidatedNel<E, A>
+   fun parse(input: I): Validated<NonEmptyList<E>, A>
+
+   fun <J> contramap(f: (J) -> I): Parser<J, A, E> =
+      Parser { this@Parser.parse(f(it)) }
+
 }
 
 // helper functions for validated

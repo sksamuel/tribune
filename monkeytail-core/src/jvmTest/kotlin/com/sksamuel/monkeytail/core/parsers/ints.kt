@@ -27,9 +27,30 @@ class IntTest : FunSpec() {
       }
 
       test("parser should support ints with nullable failure message") {
-         val p = Parser<String>().long { "not an int" }.notNull { "cannot be null" }
+         val p = Parser<String?>().notNull { "cannot be null" }.long { "not an int" }
          p.parse("12345").getOrThrow() shouldBe 12345
          p.parse(null).getErrorsOrThrow() shouldBe listOf("cannot be null")
+      }
+
+      test("non neg") {
+         val p = Parser<String>().int { "must be int" }.nonNegative { "must be >= 0" }
+         p.parse("-1") shouldBe "must be >= 0".invalid()
+         p.parse("0") shouldBe 0.valid()
+         p.parse("1") shouldBe 1.valid()
+      }
+
+      test("positive") {
+         val p = Parser<String>().int { "must be int" }.positive { "must be > 0" }
+         p.parse("0") shouldBe "must be > 0".invalid()
+         p.parse("-1") shouldBe "must be > 0".invalid()
+         p.parse("1") shouldBe 1.valid()
+      }
+
+      test("negative") {
+         val p = Parser<String>().int { "must be int" }.negative { "must be < 0" }
+         p.parse("0") shouldBe "must be < 0".invalid()
+         p.parse("-1") shouldBe (-1).valid()
+         p.parse("1") shouldBe "must be < 0".invalid()
       }
    }
 }

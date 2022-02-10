@@ -64,7 +64,7 @@ class ValidatedTest : FunSpec() {
       }
 
       test("parser should support doubles with nullable failure message") {
-         val p = Parser<String>().double { "not a double" }.notNull { "cannot be null" }
+         val p = Parser<String?>().notNull { "cannot be null" }.double { "not a double" }
          p.parse("123.45").getOrThrow() shouldBe 123.45
          p.parse(null).getErrorsOrThrow() shouldBe listOf("cannot be null")
       }
@@ -86,18 +86,6 @@ class ValidatedTest : FunSpec() {
          ps.parse(listOf("a")) shouldBe "Must have at least two elements".invalid()
       }
 
-      test("not null") {
-         val p = Parser<String>().map { Foo(it) }.notNull { "cannot be null" }
-         p.parse(null) shouldBe "cannot be null".invalid()
-      }
-
-      test("not null or blank") {
-         val p = Parser<String>().allowNulls().notNullOrBlank { "cannot be null or blank" }.map { Foo(it) }
-         p.parse("") shouldBe "cannot be null or blank".invalid()
-         p.parse("     ") shouldBe "cannot be null or blank".invalid()
-         p.parse(null) shouldBe "cannot be null or blank".invalid()
-      }
-
       test("filter") {
          val p = Parser<String>().filter(String::isNotEmpty) { "boom" }.map { Foo(it) }
          p.parse("") shouldBe "boom".invalid()
@@ -112,25 +100,25 @@ class ValidatedTest : FunSpec() {
          p.parse("b") shouldBe Foo("b").valid()
       }
 
-      test("non neg") {
-         val p = Parser<String>().int { "must be int" }.nonNegative { "must be >= 0" }
-         p.parse("-1") shouldBe "must be >= 0".invalid()
-         p.parse("0") shouldBe 0.valid()
-         p.parse("1") shouldBe 1.valid()
-      }
+      test("composite parser") {
+         data class UpdateRequest(val name: String, val age: String?)
+         data class ValidName(val name: String)
+         data class ValidAge(val age: Int)
 
-      test("positive") {
-         val p = Parser<String>().int { "must be int" }.positive { "must be > 0" }
-         p.parse("0") shouldBe "must be > 0".invalid()
-         p.parse("-1") shouldBe "must be > 0".invalid()
-         p.parse("1") shouldBe 1.valid()
-      }
+         val nameParser: Parser<UpdateRequest, ValidName, String> = Parser<UpdateRequest>()
+            .map { it.name }
+            .notBlank { "Name cannot be blank" }
+            .minlen(6) { "Name must have 6 characters" }
+            .map { ValidName(it) }
 
-      test("negative") {
-         val p = Parser<String>().int { "must be int" }.negative { "must be < 0" }
-         p.parse("0") shouldBe "must be < 0".invalid()
-         p.parse("-1") shouldBe (-1).valid()
-         p.parse("1") shouldBe "must be < 0".invalid()
+         val ageParser: Parser<UpdateRequest, ValidAge, String> = Parser<UpdateRequest>()
+            .map { it.age }
+            .notNull { "Age cannot be null" }
+            .int { "Age must be a number" }
+            .map { ValidAge(it) }
+
+         val parser = Parser.compose(nameParser, ageParser)
+         val result = parser.parse(UpdateRequest("a", "b"))
       }
    }
 }

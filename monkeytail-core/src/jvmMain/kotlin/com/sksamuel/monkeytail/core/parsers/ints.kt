@@ -1,7 +1,7 @@
 package com.sksamuel.monkeytail.core.parsers
 
 /**
- * Chains a [Parser] to convert String? -> Int.
+ * Chains a [Parser] to convert String -> Int.
  */
 fun <I, E> Parser<I, String, E>.int(ifError: (String) -> E): Parser<I, Int, E> =
    flatMap {

@@ -6,6 +6,18 @@ import io.kotest.matchers.shouldBe
 class StringTest : FunSpec() {
    init {
 
+      test("not null") {
+         val p = Parser<String?>().notNull { "cannot be null" }.map { Foo(it) }
+         p.parse(null) shouldBe "cannot be null".invalid()
+      }
+
+      test("not null or blank") {
+         val p = Parser<String>().allowNulls().notNullOrBlank { "cannot be null or blank" }.map { Foo(it) }
+         p.parse("") shouldBe "cannot be null or blank".invalid()
+         p.parse("     ") shouldBe "cannot be null or blank".invalid()
+         p.parse(null) shouldBe "cannot be null or blank".invalid()
+      }
+
       test("min length") {
          val p = Parser<String>().minlen(4) { "too short" }.map { Foo(it) }
          p.parse("abc") shouldBe "too short".invalid()
