@@ -14,11 +14,11 @@ class ValidatedTest : FunSpec() {
    init {
 
       test("parsing strings to domain object") {
-         Parser.string.parse("input").map { Foo("input") } shouldBe Foo("input").valid()
+         Parser<String>().parse("input").map { Foo("input") } shouldBe Foo("input").valid()
       }
 
       test("parsing non blank strings to domain object") {
-         Parser.string
+         Parser<String>()
             .notBlank { "cannot be blank" }
             .map { Foo("input") }
             .parse("    ") shouldBe Validated.invalidNel("cannot be blank")
@@ -58,30 +58,30 @@ class ValidatedTest : FunSpec() {
       }
 
       test("parser should support doubles with nullable pass through") {
-         val p = Parser.string.double { "not a double" }.allowNulls()
+         val p = Parser<String>().double { "not a double" }.allowNulls()
          p.parse("123.45").getOrThrow() shouldBe 123.45
          p.parse(null).getOrThrow() shouldBe null
       }
 
       test("parser should support doubles with nullable failure message") {
-         val p = Parser.string.double { "not a double" }.notNull { "cannot be null" }
+         val p = Parser<String>().double { "not a double" }.notNull { "cannot be null" }
          p.parse("123.45").getOrThrow() shouldBe 123.45
          p.parse(null).getErrorsOrThrow() shouldBe listOf("cannot be null")
       }
 
       test("parser should support floats") {
-         val p = Parser.string.float { "not a float" }
+         val p = Parser<String>().float { "not a float" }
          p.parse("foo").getErrorsOrThrow() shouldBe listOf("not a float")
          p.parse("123.45").getOrThrow() shouldBe 123.45F
       }
 
       test("repeated parser") {
-         val ps = Parser.string.map { Foo(it) }.repeated()
+         val ps = Parser<String>().map { Foo(it) }.repeated()
          ps.parse(listOf("a", "b")) shouldBe listOf(Foo("a"), Foo("b")).valid()
       }
 
       test("repeated with min length") {
-         val ps = Parser.string.map { Foo(it) }.repeated(min = 2) { "Must have at least two elements" }
+         val ps = Parser<String>().map { Foo(it) }.repeated(min = 2) { "Must have at least two elements" }
          ps.parse(listOf("a", "b")) shouldBe listOf(Foo("a"), Foo("b")).valid()
          ps.parse(listOf("a")) shouldBe "Must have at least two elements".invalid()
       }
@@ -92,7 +92,7 @@ class ValidatedTest : FunSpec() {
       }
 
       test("not null or blank") {
-         val p = Parser.string.allowNulls().notNullOrBlank { "cannot be null or blank" }.map { Foo(it) }
+         val p = Parser<String>().allowNulls().notNullOrBlank { "cannot be null or blank" }.map { Foo(it) }
          p.parse("") shouldBe "cannot be null or blank".invalid()
          p.parse("     ") shouldBe "cannot be null or blank".invalid()
          p.parse(null) shouldBe "cannot be null or blank".invalid()

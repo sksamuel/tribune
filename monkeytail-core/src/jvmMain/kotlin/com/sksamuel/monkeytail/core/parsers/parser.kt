@@ -18,19 +18,15 @@ fun interface Parser<in I, out A, out E> {
        *
        * This can be used as the entry point to building a parser. Eg,
        *
-       * Parser<T>()...parse(t)
+       * Parser<String>()...parse("mystring")
        */
       operator fun <I> invoke(): Parser<I, I, NonEmptyList<Nothing>> = Parser { it.valid() }
-
-      /**
-       * An identity string parser.
-       */
-      val string: Parser<String, String, NonEmptyList<Nothing>> = invoke()
    }
 
    fun parse(input: I): ValidatedNel<E, A>
 }
 
+// helper functions for validated
 fun <E, A> ValidatedNel<E, A>.getOrThrow(): A = fold({ error(it) }, { it })
 fun <E, A> ValidatedNel<E, A>.getErrorsOrThrow(): NonEmptyList<E> = fold({ it }, { error(it.toString()) })
 fun <A> A.valid(): ValidatedNel<Nothing, A> = Validated.Valid(this)
