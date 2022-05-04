@@ -1,4 +1,4 @@
-//package com.sksamuel.monkeytail.core.validation
+//package com.sksamuel.princeps.core.validation
 //
 //fun <A, B, RETURN, ERROR> Validated.Companion.mapN(
 //   a: Validated<ERROR, A>,

@@ -30,7 +30,6 @@ kotlin {
          dependsOn(commonMain)
          dependencies {
             api("io.arrow-kt:arrow-core:1.0.1")
-            implementation(kotlin("reflect"))
          }
       }
 

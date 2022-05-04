@@ -1,14 +1,5 @@
-apply(plugin = "maven-publish")
-apply(plugin = "signing")
-
-repositories {
-   mavenCentral()
-}
-
 val ossrhUsername: String by project
 val ossrhPassword: String by project
-val signingKey: String? by project
-val signingPassword: String? by project
 
 fun Project.publishing(action: PublishingExtension.() -> Unit) =
    configure(action)
@@ -16,36 +7,41 @@ fun Project.publishing(action: PublishingExtension.() -> Unit) =
 fun Project.signing(configure: SigningExtension.() -> Unit): Unit =
    configure(configure)
 
+fun Project.java(configure: JavaPluginExtension.() -> Unit): Unit =
+   configure(configure)
+
+
 val publications: PublicationContainer = (extensions.getByName("publishing") as PublishingExtension).publications
 
 signing {
    useGpgCmd()
-   if (signingKey != null && signingPassword != null) {
-      @Suppress("UnstableApiUsage")
-      useInMemoryPgpKeys(signingKey, signingPassword)
-   }
-   if (Ci.isRelease) {
+   if (Ci.isRelease)
       sign(publications)
-   }
+}
+
+java {
+   targetCompatibility = org.gradle.api.JavaVersion.VERSION_1_8
+   withJavadocJar()
+   withSourcesJar()
 }
 
 publishing {
    repositories {
       maven {
+         name = "deploy"
          val releasesRepoUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
          val snapshotsRepoUrl = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-         name = "deploy"
          url = if (Ci.isRelease) releasesRepoUrl else snapshotsRepoUrl
          credentials {
-            username = java.lang.System.getenv("OSSRH_USERNAME") ?: ossrhUsername
-            password = java.lang.System.getenv("OSSRH_PASSWORD") ?: ossrhPassword
+            username = System.getenv("OSSRH_USERNAME") ?: ossrhUsername
+            password = System.getenv("OSSRH_PASSWORD") ?: ossrhPassword
          }
       }
    }
 
-   publications.withType<MavenPublication>().forEach {
-      it.apply {
-         //if (Ci.isRelease)
+   publications {
+      register("mavenJava", MavenPublication::class) {
+         from(components["java"])
          pom {
             name.set("princeps")
             description.set("Multiplatform Kotlin Validation")
@@ -59,7 +55,7 @@ publishing {
 
             licenses {
                license {
-                  name.set("Apache-2.0")
+                  name.set("The Apache 2.0 License")
                   url.set("https://opensource.org/licenses/Apache-2.0")
                }
             }
@@ -72,6 +68,8 @@ publishing {
                }
             }
          }
+
       }
    }
 }
+

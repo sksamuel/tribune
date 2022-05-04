@@ -6,18 +6,14 @@ buildscript {
    }
 }
 
+
 plugins {
    java
-   kotlin("multiplatform") version Libs.kotlinVersion
+   kotlin("multiplatform").version(Libs.kotlinVersion)
    id("java-library")
    id("maven-publish")
    signing
-   id("org.jetbrains.dokka") version Libs.dokkaVersion
-}
-
-tasks {
-   javadoc {
-   }
+   id("org.jetbrains.dokka").version(Libs.dokkaVersion)
 }
 
 allprojects {
@@ -26,11 +22,11 @@ allprojects {
       mavenCentral()
    }
 
-   group = "com.sksamuel.monkeytail"
+   group = "com.sksamuel.princeps"
    version = Ci.publishVersion
 
    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-      kotlinOptions.jvmTarget = "1.8"
+      kotlinOptions.jvmTarget = "11"
       kotlinOptions.apiVersion = "1.6"
       kotlinOptions.languageVersion = "1.6"
    }
@@ -41,7 +37,7 @@ kotlin {
       jvm {
          compilations.all {
             kotlinOptions {
-               jvmTarget = "1.8"
+               jvmTarget = "11"
             }
          }
       }
