@@ -3,11 +3,11 @@ Princeps
 
 _parse don't validate_ for Kotlin.
 
-![master](https://github.com/sksamuel/monkeytail/workflows/master/badge.svg)
-[<img src="https://img.shields.io/maven-central/v/com.sksamuel.monkeytail/monkeytail-core.svg?label=latest%20release"/>](http://search.maven.org/#search%7Cga%7C1%7Cmonkeytail)
-[<img src="https://img.shields.io/nexus/s/https/oss.sonatype.org/com.sksamuel.monkeytail/monkeytail-core.svg?label=latest%20snapshot&style=plastic"/>](https://oss.sonatype.org/content/repositories/snapshots/com/sksamuel/monkeytail/)
+![master](https://github.com/sksamuel/princeps/workflows/master/badge.svg)
+[<img src="https://img.shields.io/maven-central/v/com.sksamuel.princeps/princeps-core.svg?label=latest%20release"/>](http://search.maven.org/#search%7Cga%7C1%7Cprinceps)
+[<img src="https://img.shields.io/nexus/s/https/oss.sonatype.org/com.sksamuel.princeps/princeps-core.svg?label=latest%20snapshot&style=plastic"/>](https://oss.sonatype.org/content/repositories/snapshots/com/sksamuel/princeps)
 
-![alt text](https://raw.githubusercontent.com/sksamuel/monkeytail/master/graphics/logo_130.png)
+![alt text](./logo.png)
 
 ### Introduction
 
@@ -15,10 +15,9 @@ _parse don't validate_ for Kotlin.
 
 ### Using Princeps in your project
 
-For gradle users):
 
 ```groovy
-compile 'com.sksamuel.monkeytail:monkeytail-core:x.x.x'
+compile 'com.sksamuel.princeps:princeps-core:x.x.x'
 ```
 
 ### License

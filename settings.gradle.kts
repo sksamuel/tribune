@@ -5,4 +5,4 @@ pluginManagement {
    }
 }
 
-include("monkeytail-core")
+include("princeps-core")
