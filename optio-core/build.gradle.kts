@@ -29,15 +29,15 @@ kotlin {
       val jvmMain by getting {
          dependsOn(commonMain)
          dependencies {
-            api("io.arrow-kt:arrow-core:1.0.1")
+            api("io.arrow-kt:arrow-core:_")
          }
       }
 
       val jvmTest by getting {
          dependsOn(jvmMain)
          dependencies {
-            implementation("io.kotest:kotest-assertions-core:5.3.0")
-            implementation("io.kotest:kotest-runner-junit5:5.3.0")
+            implementation(Testing.kotest.assertions.core)
+            implementation(Testing.kotest.runner.junit5)
          }
       }
 
