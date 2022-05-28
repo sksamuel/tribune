@@ -7,13 +7,11 @@ _parse don't validate_ for Kotlin.
 [<img src="https://img.shields.io/maven-central/v/com.sksamuel.princeps/princeps-core.svg?label=latest%20release"/>](http://search.maven.org/#search%7Cga%7C1%7Cprinceps)
 [<img src="https://img.shields.io/nexus/s/https/oss.sonatype.org/com.sksamuel.princeps/princeps-core.svg?label=latest%20snapshot&style=plastic"/>](https://oss.sonatype.org/content/repositories/snapshots/com/sksamuel/princeps)
 
-![alt text](./logo.png)
-
 ### Introduction
 
 
 
-### Using Princeps in your project
+### Using optio in your project
 
 
 ```groovy
