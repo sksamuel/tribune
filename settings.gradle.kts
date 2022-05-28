@@ -1,8 +1,7 @@
 pluginManagement {
    repositories {
       mavenCentral()
-      gradlePluginPortal()
    }
 }
 
-include("princeps-core")
+include("optio-core")

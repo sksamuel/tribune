@@ -43,14 +43,14 @@ publishing {
       register("mavenJava", MavenPublication::class) {
          from(components["java"])
          pom {
-            name.set("princeps")
+            name.set("optio")
             description.set("Multiplatform Kotlin Validation")
-            url.set("http://www.github.com/sksamuel/princeps")
+            url.set("http://www.github.com/sksamuel/optio")
 
             scm {
-               connection.set("scm:git:http://www.github.com/sksamuel/princeps")
+               connection.set("scm:git:http://www.github.com/sksamuel/optio")
                developerConnection.set("scm:git:http://github.com/sksamuel")
-               url.set("http://www.github.com/sksamuel/princeps")
+               url.set("http://www.github.com/sksamuel/optio")
             }
 
             licenses {
