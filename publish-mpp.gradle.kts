@@ -1,6 +1,5 @@
 apply(plugin = "java")
 apply(plugin = "java-library")
-apply(plugin = "org.jetbrains.dokka")
 
 apply(from = "$rootDir/signing-pom-details.gradle.kts")
 

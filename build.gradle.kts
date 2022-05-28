@@ -2,18 +2,15 @@ buildscript {
    repositories {
       mavenCentral()
       mavenLocal()
-      gradlePluginPortal()
    }
 }
 
 
 plugins {
-   java
-   kotlin("multiplatform").version(Libs.kotlinVersion)
+   kotlin("multiplatform").version("1.6.21")
    id("java-library")
    id("maven-publish")
    signing
-   id("org.jetbrains.dokka").version(Libs.dokkaVersion)
 }
 
 allprojects {
