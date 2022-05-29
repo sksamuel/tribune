@@ -24,11 +24,20 @@ fun interface Parser<in I, out A, out E> {
       /**
        * Returns an identity [Parser] for a type I.
        *
-       * This can be used as the entry point to building a parser. Eg,
+       * This can be used as the entry point to building a parser. Specify the source input type as
+       * the input type parameter to this function, and a parser (I) -> ValidatedNel<Nothing, I> will
+       * be returned.
+       *
+       * Eg:
        *
        * Parser<String>()...parse("mystring")
        */
       operator fun <I> invoke(): Parser<I, I, Nothing> = Parser { it.valid() }
+
+      /**
+       * Synonym for invoke.
+       */
+      fun <I> from() = invoke<I>()
 
       fun <INPUT, A, B, ERROR> compose(
          p1: Parser<INPUT, A, ERROR>,
