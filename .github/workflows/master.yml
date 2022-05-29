@@ -4,36 +4,120 @@ on:
    push:
       paths-ignore:
          - 'doc/**'
+         - 'documentation/**'
          - '*.md'
+         - '*.yml'
       branches:
          - master
 
+permissions:
+   contents: read
+
 jobs:
-   build:
+   linux:
       runs-on: ubuntu-latest
+      steps:
+         -  name: Checkout the repo
+            uses: actions/checkout@v3
+            with:
+               fetch-depth: 0
+
+         -  name: Setup JDK
+            uses: actions/setup-java@v3
+            with:
+               distribution: 'zulu'
+               java-version: '8'
+
+         -  uses: gradle/gradle-build-action@v2
+
+         -  name: Tests and snapshot
+            run: ./gradlew check publish
+
+         -  name: Bundle the build report
+            if: failure()
+            run: find . -type d -name 'reports' | zip -@ -r build-reports.zip
+
+         -  name: Upload the build report
+            if: failure()
+            uses: actions/upload-artifact@v3
+            with:
+               name: error-report
+               path: build-reports.zip
+
+   mac:
+      runs-on: macos-11
+      strategy:
+         matrix:
+            target:
+               - macosX64Test publishMacosX64PublicationToDeployRepository
+               - macosArm64Test publishMacosArm64PublicationToDeployRepository
+               - iosX64Test publishIosX64PublicationToDeployRepository
+               - iosSimulatorArm64Test publishIosSimulatorArm64PublicationToDeployRepository
+               - iosArm64TestKlibrary publishIosArm64PublicationToDeployRepository
+               - iosArm32TestKlibrary publishIosArm32PublicationToDeployRepository
+               - tvosX64Test publishTvosX64PublicationToDeployRepository
+               - tvosArm64TestKlibrary publishTvosArm64PublicationToDeployRepository
+               - watchosArm32TestKlibrary publishWatchosArm32PublicationToDeployRepository
+               - watchosArm64TestKlibrary publishWatchosArm64PublicationToDeployRepository
+               - watchosX86Test publishWatchosX86PublicationToDeployRepository
+               - watchosX64Test publishWatchosX64PublicationToDeployRepository
 
       steps:
-         - name: Checkout the repo
-           uses: actions/checkout@v2
+         -  name: Checkout the repo
+            uses: actions/checkout@v3
+            with:
+               fetch-depth: 0
 
-         - name: Run tests
-           run: ./gradlew check
+         -  name: Setup JDK
+            uses: actions/setup-java@v3
+            with:
+               distribution: 'zulu'
+               java-version: '8'
 
-         - name: Deploy snapshot
-           run: ./gradlew publish
+         -  uses: gradle/gradle-build-action@v2
 
-         - name: Bundle the build report
-           if: failure()
-           run: find . -type d -name 'reports' | zip -@ -r build-reports.zip
+         -  name: Tests and snapshot
+            run: ./gradlew ${{ matrix.target }}
 
-         - name: Upload the build report
-           if: failure()
-           uses: actions/upload-artifact@master
-           with:
-              name: error-report
-              path: build-reports.zip
+         -  name: Bundle the build report
+            if: failure()
+            run: find . -type d -name 'reports' | zip -@ -r build-reports.zip
+
+         -  name: Upload the build report
+            if: failure()
+            uses: actions/upload-artifact@v3
+            with:
+               name: error-report
+               path: build-reports.zip
+
+   windows:
+      runs-on: windows-latest
+      steps:
+         -  name: Checkout the repo
+            uses: actions/checkout@v3
+            with:
+               fetch-depth: 0
+
+         -  uses: gradle/gradle-build-action@v2
+
+         -  name: Tests and snapshot
+            run: ./gradlew mingwX64Test publishMingwX64PublicationToDeployRepository
+
+         -  name: Bundle the build report
+            if: failure()
+            run: find . -type d -name 'reports' | zip -@ -r build-reports.zip
+
+         -  name: Upload the build report
+            if: failure()
+            uses: actions/upload-artifact@v3
+            with:
+               name: error-report
+               path: build-reports.zip
+
 
 env:
-   GRADLE_OPTS: -Dorg.gradle.configureondemand=true -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs="-Xmx3g -XX:MaxPermSize=2048m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
+   GRADLE_OPTS: -Dorg.gradle.configureondemand=false -Dorg.gradle.parallel=false -Dkotlin.incremental=false -Dorg.gradle.jvmargs="-Xmx3g -XX:MaxPermSize=2048m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
    OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
    OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+   ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+   ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
