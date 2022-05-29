@@ -22,14 +22,13 @@ kotlin {
 
       val commonMain by getting {
          dependencies {
-//
+            api("io.arrow-kt:arrow-core:_")
          }
       }
 
       val jvmMain by getting {
          dependsOn(commonMain)
          dependencies {
-            api("io.arrow-kt:arrow-core:_")
          }
       }
 

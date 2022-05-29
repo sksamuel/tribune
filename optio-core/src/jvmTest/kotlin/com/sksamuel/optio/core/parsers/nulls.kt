@@ -1,5 +1,7 @@
 package com.sksamuel.optio.core.parsers
 
+import com.sksamuel.optio.core.parsers.Parser
+import com.sksamuel.optio.core.parsers.valid
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 

@@ -1,5 +1,10 @@
 package com.sksamuel.optio.core.parsers
 
+import com.sksamuel.optio.core.parsers.Parser
+import com.sksamuel.optio.core.parsers.filter
+import com.sksamuel.optio.core.parsers.invalid
+import com.sksamuel.optio.core.parsers.valid
+
 
 /**
  * Modifies the output of a String producing [Parser] by trimming the output string
