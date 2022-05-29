@@ -25,7 +25,7 @@ jobs:
          -  name: Setup JDK
             uses: actions/setup-java@v3
             with:
-               distribution: 'zulu'
+               distribution: 'adopt'
                java-version: '11'
 
          -  uses: gradle/gradle-build-action@v2
@@ -73,7 +73,7 @@ jobs:
          -  name: Setup JDK
             uses: actions/setup-java@v3
             with:
-               distribution: 'zulu'
+               distribution: 'adopt'
                java-version: '11'
 
          -  uses: gradle/gradle-build-action@v2
@@ -103,7 +103,7 @@ jobs:
          -  name: Setup JDK
             uses: actions/setup-java@v3
             with:
-               distribution: 'zulu'
+               distribution: 'adopt'
                java-version: '11'
 
          -  uses: gradle/gradle-build-action@v2
