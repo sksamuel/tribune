@@ -65,5 +65,3 @@ kotlin {
       iosSimulatorArm64()
    }
 }
-
-apply(from = "../publish-mpp.gradle.kts")
