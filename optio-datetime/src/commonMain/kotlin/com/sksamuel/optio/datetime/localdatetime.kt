@@ -7,7 +7,8 @@ import com.sksamuel.optio.core.parsers.flatMap
 import kotlinx.datetime.LocalDateTime
 
 /**
- * Maps a [Parser] that returns a [String] to return a [LocalDateTime] if the input is an iso-standard local date.
+ * Maps a [Parser] that returns a [String] to return a [LocalDateTime] if the input is
+ * an iso-standard local date time.
  */
 fun <I, E> Parser<I, String, E>.toLocalTime(
    ifError: (String, Throwable) -> E

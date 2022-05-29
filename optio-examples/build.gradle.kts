@@ -30,7 +30,12 @@ kotlin {
 
       val jvmMain by getting {
          dependencies {
-            api(project(":optio-ktor"))
+            implementation(project(":optio-ktor"))
+            implementation(Ktor.server.netty)
+            implementation(Ktor.client.cio)
+            api("io.ktor:ktor-serialization-jackson:_")
+            api("io.ktor:ktor-server-content-negotiation:_")
+            api("io.ktor:ktor-client-content-negotiation:_")
          }
       }
 
