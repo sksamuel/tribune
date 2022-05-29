@@ -11,9 +11,16 @@ _parse don't validate_ for Kotlin.
 
 ### Changelog
 
+1.1.1
+
+* Added ktor output handler
+
 1.1.0
 
-* Renamed project to Optio and release
+* Renamed project to Optio
+* Added datetime module
+* Added ktor module
+* Added zip and compose
 
 ### Using optio in your project
 
