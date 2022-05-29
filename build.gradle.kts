@@ -28,3 +28,15 @@ allprojects {
       kotlinOptions.languageVersion = "1.6"
    }
 }
+
+kotlin {
+   targets {
+      jvm {
+         compilations.all {
+            kotlinOptions {
+               jvmTarget = "1.8"
+            }
+         }
+      }
+   }
+}
