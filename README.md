@@ -9,6 +9,12 @@ _parse don't validate_ for Kotlin.
 
 ### Introduction
 
+### Changelog
+
+1.1.0
+
+* Renamed project to Optio and release
+
 ### Using optio in your project
 
 ```groovy
