@@ -13,7 +13,9 @@ import arrow.core.invalidNel
 import arrow.core.zip
 
 /**
- * A [Parser] accepts input of type [I] and returns a [ValidatedNel].
+ * A [Parser] is a function I => [ValidatedNel] that parses the input I.
+ *
+ * It is implemented as an interface to allow for variance on the type parameters.
  */
 fun interface Parser<in I, out A, out E> {
 
