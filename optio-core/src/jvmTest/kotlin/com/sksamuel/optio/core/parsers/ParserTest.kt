@@ -51,24 +51,6 @@ class ValidatedTest : FunSpec() {
          p.parse("12345").getOrThrow() shouldBe 12345L
       }
 
-      test("parser should support doubles") {
-         val p = Parser<String>().double { "not a double" }.map { Width(it) }
-         p.parse("foo").getErrorsOrThrow() shouldBe listOf("not a double")
-         p.parse("123.45").getOrThrow() shouldBe Width(123.45)
-      }
-
-      test("parser should support doubles with nullable pass through") {
-         val p = Parser<String>().double { "not a double" }.allowNulls()
-         p.parse("123.45").getOrThrow() shouldBe 123.45
-         p.parse(null).getOrThrow() shouldBe null
-      }
-
-      test("parser should support doubles with nullable failure message") {
-         val p = Parser<String?>().notNull { "cannot be null" }.double { "not a double" }
-         p.parse("123.45").getOrThrow() shouldBe 123.45
-         p.parse(null).getErrorsOrThrow() shouldBe listOf("cannot be null")
-      }
-
       test("parser should support floats") {
          val p = Parser<String>().float { "not a float" }
          p.parse("foo").getErrorsOrThrow() shouldBe listOf("not a float")

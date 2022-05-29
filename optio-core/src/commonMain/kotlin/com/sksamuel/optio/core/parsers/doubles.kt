@@ -19,8 +19,21 @@ fun <I, E> Parser<I, Double, E>.positive(ifError: (Double) -> E): Parser<I, Doub
       if (it > 0.0) it.valid() else ifError(it).invalid()
    }
 
-
 fun <I, E> Parser<I, Double, E>.negative(ifError: (Double) -> E): Parser<I, Double, E> =
    flatMap {
       if (it < 0.0) it.valid() else ifError(it).invalid()
+   }
+
+/**
+ * Chains a [Parser] to convert String? -> non-negative Double.
+ */
+fun <I, E> Parser<I, Double, E>.nonNegative(ifError: (Double) -> E): Parser<I, Double, E> =
+   this.filter({ it >= 0 }, ifError)
+
+fun <I, E> Parser<I, Double, E>.inrange(
+   range: ClosedFloatingPointRange<Double>,
+   ifError: (Double) -> E,
+): Parser<I, Double, E> =
+   flatMap {
+      if (it in range) it.valid() else ifError(it).invalid()
    }
