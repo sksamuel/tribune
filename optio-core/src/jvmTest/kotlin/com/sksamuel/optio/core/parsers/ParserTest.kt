@@ -1,12 +1,6 @@
 package com.sksamuel.optio.core.parsers
 
 import arrow.core.Validated
-import com.sksamuel.optio.core.parsers.Parser
-import com.sksamuel.optio.core.parsers.filter
-import com.sksamuel.optio.core.parsers.getErrorsOrThrow
-import com.sksamuel.optio.core.parsers.getOrThrow
-import com.sksamuel.optio.core.parsers.invalid
-import com.sksamuel.optio.core.parsers.valid
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
@@ -123,7 +117,7 @@ class ValidatedTest : FunSpec() {
             .int { "Age must be a number" }
             .map { ValidAge(it) }
 
-         val parser = Parser.compose(nameParser, ageParser)
+         val parser = Parser.zip(nameParser, ageParser)
          val result = parser.parse(UpdateRequest("a", "b"))
       }
    }
