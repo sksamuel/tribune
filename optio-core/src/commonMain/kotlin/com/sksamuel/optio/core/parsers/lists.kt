@@ -1,6 +1,6 @@
 package com.sksamuel.optio.core.parsers
 
-import arrow.core.sequenceValidated
+import arrow.core.sequence
 
 /**
  * Lifts an existing [Parser] to support lists of the input types supported by
@@ -12,7 +12,7 @@ import arrow.core.sequenceValidated
  */
 fun <I, A, E> Parser<I, A, E>.repeated(): Parser<List<I>, List<A>, E> {
    return Parser { input ->
-      input.map { this@repeated.parse(it) }.sequenceValidated()
+      input.map { this@repeated.parse(it) }.sequence()
    }
 }
 
@@ -34,7 +34,7 @@ fun <I, A, E> Parser<I, A, E>.repeated(
    ifInvalidSize: (Int) -> E
 ): Parser<List<I>, List<A>, E> {
    return Parser { input ->
-      if ((min..max).contains(input.size)) input.map { this@repeated.parse(it) }.sequenceValidated()
+      if ((min..max).contains(input.size)) input.map { this@repeated.parse(it) }.sequence()
       else ifInvalidSize(input.size).invalid()
    }
 }
