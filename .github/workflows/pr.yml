@@ -11,12 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Setup JDK
-        uses: actions/setup-java@v1
+     -  name: Setup JDK
+        uses: actions/setup-java@v3
         with:
-          java-version: '8'
+           distribution: 'zulu'
+           java-version: '11'
 
       - name: Run tests
         run: ./gradlew check
