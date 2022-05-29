@@ -5,3 +5,5 @@ plugins {
 
 include("optio-core")
 include("optio-datetime")
+include("optio-examples")
+include("optio-ktor")
