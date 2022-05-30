@@ -12,11 +12,11 @@ import com.sksamuel.optio.core.invalid
 import com.sksamuel.optio.core.long
 import com.sksamuel.optio.core.map
 import com.sksamuel.optio.core.mapIfNotNull
-import com.sksamuel.optio.core.minlen
-import com.sksamuel.optio.core.notBlank
+import com.sksamuel.optio.core.strings.notBlank
 import com.sksamuel.optio.core.notNull
 import com.sksamuel.optio.core.oneOf
 import com.sksamuel.optio.core.collections.repeated
+import com.sksamuel.optio.core.strings.minlen
 import com.sksamuel.optio.core.valid
 import com.sksamuel.optio.core.withDefault
 import com.sksamuel.optio.core.zip

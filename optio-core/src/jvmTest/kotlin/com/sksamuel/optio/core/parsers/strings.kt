@@ -3,17 +3,17 @@ package com.sksamuel.optio.core.parsers
 import com.sksamuel.optio.core.Parser
 import com.sksamuel.optio.core.allowNulls
 import com.sksamuel.optio.core.invalid
-import com.sksamuel.optio.core.length
-import com.sksamuel.optio.core.lowercase
 import com.sksamuel.optio.core.map
-import com.sksamuel.optio.core.match
-import com.sksamuel.optio.core.maxlen
-import com.sksamuel.optio.core.minlen
+import com.sksamuel.optio.core.strings.match
 import com.sksamuel.optio.core.notNull
-import com.sksamuel.optio.core.notNullOrBlank
-import com.sksamuel.optio.core.strip
-import com.sksamuel.optio.core.trim
-import com.sksamuel.optio.core.uppercase
+import com.sksamuel.optio.core.strings.length
+import com.sksamuel.optio.core.strings.maxlen
+import com.sksamuel.optio.core.strings.minlen
+import com.sksamuel.optio.core.strings.notNullOrBlank
+import com.sksamuel.optio.core.strings.strip
+import com.sksamuel.optio.core.strings.toLowercase
+import com.sksamuel.optio.core.strings.toUppercase
+import com.sksamuel.optio.core.strings.trim
 import com.sksamuel.optio.core.valid
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -60,12 +60,12 @@ class StringTest : FunSpec() {
       }
 
       test("uppercase") {
-         val p = Parser<String>().uppercase().map { Foo(it) }
+         val p = Parser<String>().toUppercase().map { Foo(it) }
          p.parse("abcd") shouldBe Foo("ABCD").valid()
       }
 
       test("lowercase") {
-         val p = Parser<String>().lowercase().map { Foo(it) }
+         val p = Parser<String>().toLowercase().map { Foo(it) }
          p.parse("ABCD") shouldBe Foo("abcd").valid()
       }
 

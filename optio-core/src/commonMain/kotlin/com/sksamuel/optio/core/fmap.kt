@@ -17,10 +17,9 @@ fun <I, A, B, E> Parser<I, A, E>.map(f: (A) -> B): Parser<I, B, E> =
    Parser { this@map.parse(it).map(f) }
 
 /**
- * Returns a [Parser] that maps the non-null results of a nullable parser.
- *
- * If the output of the underlying parser is null, then it is passed through unchained.
- * Otherwise, the result A is transformed by the function [f] to B.
+ * Maps a [Parser] that returns A? to a parser that returns B? by applying a function [f]
+ * if the output is not null. If the output of the underlying parser is null, then null is
+ * returned.
  *
  * @param f the function invoked to map the non-null output of the underlying parser.
  *

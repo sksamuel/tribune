@@ -5,7 +5,7 @@ import com.sksamuel.optio.core.allowNulls
 import com.sksamuel.optio.core.filter
 import com.sksamuel.optio.core.collections.list
 import com.sksamuel.optio.core.map
-import com.sksamuel.optio.core.notNullOrBlank
+import com.sksamuel.optio.core.strings.notNullOrBlank
 
 data class HashTagsInput(
    val tags: List<String?>?,
