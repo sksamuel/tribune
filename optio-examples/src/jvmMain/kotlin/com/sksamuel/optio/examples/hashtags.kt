@@ -12,7 +12,7 @@ data class HashTagsInput(
 )
 
 data class HashTag(val value: String)
-data class ParsedHashTags(val tags: HashTag)
+data class ParsedHashTags(val tags: Set<HashTag>)
 
 val hashtagParser: Parser<String?, HashTag, String> =
    Parser.from<String?>()
@@ -20,6 +20,12 @@ val hashtagParser: Parser<String?, HashTag, String> =
       .filter({ it.startsWith("#") }) { "Author must be at least two names" }
       .map { HashTag(it) }
 
-val hashtagsParser: Parser<List<String?>?, List<HashTag>?, String> =
+val hashtagsParser: Parser<List<String?>?, ParsedHashTags, String> =
    Parser.list(hashtagParser)
       .allowNulls()
+      .map { ParsedHashTags(it?.toSet() ?: emptySet()) }
+
+fun main() {
+   println(hashtagsParser.parse(listOf(null, null, null, "foo")))
+   println(hashtagsParser.parse(listOf("foo", "bar")))
+}
