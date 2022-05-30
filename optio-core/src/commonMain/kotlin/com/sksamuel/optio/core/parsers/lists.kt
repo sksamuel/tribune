@@ -16,6 +16,12 @@ fun <I, A, E> Parser<I, A, E>.repeated(): Parser<List<I>, List<A>, E> {
    }
 }
 
+fun <I, A, E> Parser.Companion.list(elementParser: Parser<I, A, E>): Parser<List<I>, List<A>, E> {
+   return Parser { input ->
+      input.map { elementParser.parse(it) }.sequence()
+   }
+}
+
 /**
  * Lifts an existing [Parser] to support lists of the input types supported by
  * the underlying parser. This version of repeated supports upper and lower bounds
