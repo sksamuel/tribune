@@ -47,7 +47,6 @@ jobs:
    mac:
       runs-on: macos-11
       strategy:
-         max-parallel: 4
          fail-fast: false
          matrix:
             target:
