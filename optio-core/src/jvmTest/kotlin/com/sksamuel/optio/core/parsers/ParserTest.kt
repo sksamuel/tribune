@@ -1,6 +1,8 @@
 package com.sksamuel.optio.core.parsers
 
 import arrow.core.Validated
+import arrow.core.invalidNel
+import arrow.core.validNel
 import com.sksamuel.optio.core.Parser
 import com.sksamuel.optio.core.boolean
 import com.sksamuel.optio.core.filter
@@ -8,7 +10,6 @@ import com.sksamuel.optio.core.float
 import com.sksamuel.optio.core.getErrorsOrThrow
 import com.sksamuel.optio.core.getOrThrow
 import com.sksamuel.optio.core.int
-import com.sksamuel.optio.core.invalid
 import com.sksamuel.optio.core.long
 import com.sksamuel.optio.core.map
 import com.sksamuel.optio.core.mapIfNotNull
@@ -17,7 +18,6 @@ import com.sksamuel.optio.core.notNull
 import com.sksamuel.optio.core.oneOf
 import com.sksamuel.optio.core.collections.repeated
 import com.sksamuel.optio.core.strings.minlen
-import com.sksamuel.optio.core.valid
 import com.sksamuel.optio.core.withDefault
 import com.sksamuel.optio.core.zip
 import io.kotest.core.spec.style.FunSpec
@@ -33,7 +33,7 @@ class ValidatedTest : FunSpec() {
    init {
 
       test("parsing strings to domain object") {
-         Parser<String>().parse("input").map { Foo("input") } shouldBe Foo("input").valid()
+         Parser<String>().parse("input").map { Foo("input") } shouldBe Foo("input").validNel()
       }
 
       test("parsing non blank strings to domain object") {
@@ -78,27 +78,27 @@ class ValidatedTest : FunSpec() {
 
       test("repeated parser") {
          val ps = Parser<String>().map { Foo(it) }.repeated()
-         ps.parse(listOf("a", "b")) shouldBe listOf(Foo("a"), Foo("b")).valid()
+         ps.parse(listOf("a", "b")) shouldBe listOf(Foo("a"), Foo("b")).validNel()
       }
 
       test("repeated with min length") {
          val ps = Parser<String>().map { Foo(it) }.repeated(min = 2) { "Must have at least two elements" }
-         ps.parse(listOf("a", "b")) shouldBe listOf(Foo("a"), Foo("b")).valid()
-         ps.parse(listOf("a")) shouldBe "Must have at least two elements".invalid()
+         ps.parse(listOf("a", "b")) shouldBe listOf(Foo("a"), Foo("b")).validNel()
+         ps.parse(listOf("a")) shouldBe "Must have at least two elements".invalidNel()
       }
 
       test("filter") {
          val p = Parser<String>().filter(String::isNotEmpty) { "boom" }.map { Foo(it) }
-         p.parse("") shouldBe "boom".invalid()
-         p.parse("abc") shouldBe Foo("abc").valid()
+         p.parse("") shouldBe "boom".invalidNel()
+         p.parse("abc") shouldBe Foo("abc").validNel()
       }
 
       test("contains") {
          val p = Parser<String>().oneOf(listOf("a", "b")) { "boom" }.map { Foo(it) }
-         p.parse("") shouldBe "boom".invalid()
-         p.parse("c") shouldBe "boom".invalid()
-         p.parse("a") shouldBe Foo("a").valid()
-         p.parse("b") shouldBe Foo("b").valid()
+         p.parse("") shouldBe "boom".invalidNel()
+         p.parse("c") shouldBe "boom".invalidNel()
+         p.parse("a") shouldBe Foo("a").validNel()
+         p.parse("b") shouldBe Foo("b").validNel()
       }
 
       test("composite parser") {

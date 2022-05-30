@@ -1,12 +1,15 @@
 package com.sksamuel.optio.core
 
+import arrow.core.invalidNel
+import arrow.core.validNel
+
 /**
  * Chains a [Parser] to convert String -> Int.
  */
 fun <I, E> Parser<I, String, E>.int(ifError: (String) -> E): Parser<I, Int, E> =
    flatMap {
       val i = it.toIntOrNull()
-      i?.valid() ?: ifError(it).invalid()
+      i?.validNel() ?: ifError(it).invalidNel()
    }
 
 /**
@@ -24,22 +27,22 @@ fun <I, E> Parser<I, Int, E>.nonNegative(ifError: (Int) -> E): Parser<I, Int, E>
 
 fun <I, E> Parser<I, Int, E>.negative(ifError: (Int) -> E): Parser<I, Int, E> =
    flatMap {
-      if (it < 0) it.valid() else ifError(it).invalid()
+      if (it < 0) it.validNel() else ifError(it).invalidNel()
    }
 
 fun <I, E> Parser<I, Int, E>.inrange(range: IntRange, ifError: (Int) -> E): Parser<I, Int, E> =
    flatMap {
-      if (it in range) it.valid() else ifError(it).invalid()
+      if (it in range) it.validNel() else ifError(it).invalidNel()
    }
 
 fun <I, E> Parser<I, Int, E>.min(min: Int, ifError: (Int) -> E): Parser<I, Int, E> =
    flatMap {
-      if (it >= min) it.valid() else ifError(it).invalid()
+      if (it >= min) it.validNel() else ifError(it).invalidNel()
    }
 
 fun <I, E> Parser<I, Int, E>.max(min: Int, ifError: (Int) -> E): Parser<I, Int, E> =
    flatMap {
-      if (it >= min) it.valid() else ifError(it).invalid()
+      if (it >= min) it.validNel() else ifError(it).invalidNel()
    }
 
 

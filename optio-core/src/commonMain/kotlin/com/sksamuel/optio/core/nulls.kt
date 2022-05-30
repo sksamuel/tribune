@@ -3,6 +3,7 @@ package com.sksamuel.optio.core
 import arrow.core.Validated
 import arrow.core.andThen
 import arrow.core.invalidNel
+import arrow.core.validNel
 
 /**
  * Maps a [Parser] that produces a nullable output, to one that produces a non-nullable
@@ -35,7 +36,7 @@ fun <I, A, E> Parser<I, A, E>.allowNulls(): Parser<I?, A?, E> {
  */
 fun <I, A, E> Parser<I, A?, E>.notNull(ifNull: () -> E): Parser<I, A, E> {
    return Parser { input: I ->
-      this@notNull.parse(input).andThen { it?.valid() ?: ifNull().invalidNel() }
+      this@notNull.parse(input).andThen { it?.validNel() ?: ifNull().invalidNel() }
    }
 }
 
@@ -43,5 +44,5 @@ fun <I, A, E> Parser<I, A?, E>.notNull(ifNull: () -> E): Parser<I, A, E> {
  * Composes this [Parser] to never fail, by replacing any failing values with null.
  */
 fun <I, A, E> Parser<I, A, E>.failAsNull(): Parser<I, A?, Nothing> {
-   return Parser { input: I -> this@failAsNull.parse(input).fold({ Validated.Valid(null) }, { it.valid() }) }
+   return Parser { input: I -> this@failAsNull.parse(input).fold({ Validated.validNel(null) }, { it.validNel() }) }
 }

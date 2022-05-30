@@ -1,18 +1,18 @@
 package com.sksamuel.optio.core.parsers
 
+import arrow.core.invalidNel
+import arrow.core.validNel
 import com.sksamuel.optio.core.Parser
 import com.sksamuel.optio.core.allowNulls
 import com.sksamuel.optio.core.double
 import com.sksamuel.optio.core.getErrorsOrThrow
 import com.sksamuel.optio.core.getOrThrow
 import com.sksamuel.optio.core.inrange
-import com.sksamuel.optio.core.invalid
 import com.sksamuel.optio.core.map
 import com.sksamuel.optio.core.negative
 import com.sksamuel.optio.core.nonNegative
 import com.sksamuel.optio.core.notNull
 import com.sksamuel.optio.core.positive
-import com.sksamuel.optio.core.valid
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
@@ -21,10 +21,10 @@ class DoubleTest : FunSpec() {
 
       test("in range") {
          val p = Parser<Double>().inrange(1.0..200.0) { "suck!" }
-         p.parse(1.0) shouldBe 1.0.valid()
-         p.parse(200.0) shouldBe 200.0.valid()
-         p.parse(0.0) shouldBe "suck!".invalid()
-         p.parse(201.0) shouldBe "suck!".invalid()
+         p.parse(1.0) shouldBe 1.0.validNel()
+         p.parse(200.0) shouldBe 200.0.validNel()
+         p.parse(0.0) shouldBe "suck!".invalidNel()
+         p.parse(201.0) shouldBe "suck!".invalidNel()
       }
 
       test("parser should support converting to doubles from strings") {
@@ -47,23 +47,23 @@ class DoubleTest : FunSpec() {
 
       test("non neg") {
          val p = Parser<String>().double { "must be int" }.nonNegative { "must be >= 0" }
-         p.parse("-1") shouldBe "must be >= 0".invalid()
-         p.parse("0") shouldBe 0.0.valid()
-         p.parse("1") shouldBe 1.0.valid()
+         p.parse("-1") shouldBe "must be >= 0".invalidNel()
+         p.parse("0") shouldBe 0.0.validNel()
+         p.parse("1") shouldBe 1.0.validNel()
       }
 
       test("positive") {
          val p = Parser<String>().double { "must be int" }.positive { "must be > 0" }
-         p.parse("0") shouldBe "must be > 0".invalid()
-         p.parse("-1") shouldBe "must be > 0".invalid()
-         p.parse("1") shouldBe 1.0.valid()
+         p.parse("0") shouldBe "must be > 0".invalidNel()
+         p.parse("-1") shouldBe "must be > 0".invalidNel()
+         p.parse("1") shouldBe 1.0.validNel()
       }
 
       test("negative") {
          val p = Parser<String>().double { "must be int" }.negative { "must be < 0" }
-         p.parse("0") shouldBe "must be < 0".invalid()
-         p.parse("-1") shouldBe (-1.0).valid()
-         p.parse("1") shouldBe "must be < 0".invalid()
+         p.parse("0") shouldBe "must be < 0".invalidNel()
+         p.parse("-1") shouldBe (-1.0).validNel()
+         p.parse("1") shouldBe "must be < 0".invalidNel()
       }
    }
 }

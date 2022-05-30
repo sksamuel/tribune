@@ -1,11 +1,10 @@
 package com.sksamuel.optio.core.strings
 
 import arrow.core.invalidNel
+import arrow.core.valid
 import arrow.core.validNel
 import com.sksamuel.optio.core.Parser
 import com.sksamuel.optio.core.flatMap
-import com.sksamuel.optio.core.invalid
-import com.sksamuel.optio.core.valid
 
 /**
  * Narrows an existing String -> String [Parser] by enforcing an exact length on the input string.
@@ -21,8 +20,8 @@ import com.sksamuel.optio.core.valid
 fun <I, E> Parser<I, String, E>.length(len: Int, ifError: (String) -> E): Parser<I, String, E> =
    flatMap {
       when (it.length) {
-         len -> it.valid()
-         else -> ifError(it).invalid()
+         len -> it.validNel()
+         else -> ifError(it).invalidNel()
       }
    }
 
@@ -54,7 +53,7 @@ fun <I, E> Parser<I, String, E>.length(f: (Int) -> Boolean, ifError: (String) ->
 fun <I, E> Parser<I, String, E>.maxlen(len: Int, ifError: (String) -> E): Parser<I, String, E> =
    flatMap {
       when {
-         it.length > len -> ifError(it).invalid()
+         it.length > len -> ifError(it).invalidNel()
          else -> it.valid()
       }
    }
@@ -74,7 +73,7 @@ fun <I, E> Parser<I, String, E>.maxlen(len: Int, ifError: (String) -> E): Parser
 fun <I, E> Parser<I, String, E>.minlen(len: Int, ifError: (String) -> E): Parser<I, String, E> =
    flatMap {
       when {
-         it.length < len -> ifError(it).invalid()
+         it.length < len -> ifError(it).invalidNel()
          else -> it.valid()
       }
    }

@@ -1,5 +1,8 @@
 package com.sksamuel.optio.core
 
+import arrow.core.invalidNel
+import arrow.core.validNel
+
 /**
  * Returns a [Parser] that rejects the output of this parser if the output is not one
  * of the given acceptable values. In the case of rejection, the error message
@@ -11,6 +14,6 @@ package com.sksamuel.optio.core
  * @return a parser which rejects input if not in the allowed list.
  */
 fun <I, A, E> Parser<I, A, E>.oneOf(values: List<A>, ifFalse: (A) -> E): Parser<I, A, E> {
-   return flatMap { if (values.contains(it)) it.valid() else ifFalse(it).invalid() }
+   return flatMap { if (values.contains(it)) it.validNel() else ifFalse(it).invalidNel() }
 }
 

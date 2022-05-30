@@ -1,11 +1,11 @@
 package com.sksamuel.optio.core.strings
 
+import arrow.core.invalidNel
+import arrow.core.validNel
 import com.sksamuel.optio.core.Parser
 import com.sksamuel.optio.core.filter
 import com.sksamuel.optio.core.flatMap
-import com.sksamuel.optio.core.invalid
 import com.sksamuel.optio.core.map
-import com.sksamuel.optio.core.valid
 
 fun <E> Parser.Companion.nonBlankString(ifError: () -> E): Parser<String?, String, E> =
    from<String?>().notNullOrBlank(ifError)
@@ -40,7 +40,7 @@ fun <I, E> Parser<I, String, E>.match(regex: Regex, ifError: (String) -> E): Par
  * @return valid if the input string is not null and not blank, otherwise invalid
  */
 fun <I, E> Parser<I, String?, E>.notNullOrBlank(ifError: () -> E): Parser<I, String, E> {
-   return flatMap { if (it.isNullOrBlank()) ifError().invalid() else it.valid() }
+   return flatMap { if (it.isNullOrBlank()) ifError().invalidNel() else it.validNel() }
 }
 
 /**
@@ -53,7 +53,7 @@ fun <I, E> Parser<I, String?, E>.notNullOrBlank(ifError: () -> E): Parser<I, Str
  */
 fun <I, E> Parser<I, String, E>.notBlank(ifBlank: () -> E): Parser<I, String, E> {
    return flatMap {
-      if (it.isBlank()) ifBlank().invalid() else it.valid()
+      if (it.isBlank()) ifBlank().invalidNel() else it.validNel()
    }
 }
 
@@ -69,6 +69,6 @@ fun <I, E> Parser<I, String, E>.notBlank(ifBlank: () -> E): Parser<I, String, E>
  */
 fun <I, E> Parser<I, String?, E>.nullOrNotBlank(ifBlank: () -> E): Parser<I, String?, E> {
    return flatMap {
-      if (it == null) null.valid() else if (it.isBlank()) ifBlank().invalid() else it.valid()
+      if (it == null) null.validNel() else if (it.isBlank()) ifBlank().invalidNel() else it.validNel()
    }
 }

@@ -1,8 +1,8 @@
 package com.sksamuel.optio.core.collections
 
+import arrow.core.invalidNel
 import arrow.core.sequence
 import com.sksamuel.optio.core.Parser
-import com.sksamuel.optio.core.invalid
 
 /**
  * Lifts an existing [Parser] to support lists of the input types supported by
@@ -43,6 +43,6 @@ fun <I, A, E> Parser<I, A, E>.repeated(
 ): Parser<List<I>, List<A>, E> {
    return Parser { input ->
       if ((min..max).contains(input.size)) input.map { this@repeated.parse(it) }.sequence()
-      else ifInvalidSize(input.size).invalid()
+      else ifInvalidSize(input.size).invalidNel()
    }
 }
