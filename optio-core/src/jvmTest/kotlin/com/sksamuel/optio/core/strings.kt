@@ -1,12 +1,8 @@
-package com.sksamuel.optio.core.parsers
+package com.sksamuel.optio.core
 
 import arrow.core.invalidNel
 import arrow.core.validNel
-import com.sksamuel.optio.core.Parser
-import com.sksamuel.optio.core.allowNulls
-import com.sksamuel.optio.core.map
 import com.sksamuel.optio.core.strings.match
-import com.sksamuel.optio.core.notNull
 import com.sksamuel.optio.core.strings.length
 import com.sksamuel.optio.core.strings.maxlen
 import com.sksamuel.optio.core.strings.minlen

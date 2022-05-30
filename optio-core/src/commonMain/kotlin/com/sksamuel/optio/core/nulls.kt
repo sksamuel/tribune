@@ -18,7 +18,7 @@ fun <I, A, E> Parser<I, A?, E>.withDefault(ifNull: () -> A): Parser<I, A, E> {
 }
 
 /**
- * Composes an existing non-nullable [Parser] to accept null inputs which are returned as valid.
+ * Widens an existing non-nullable [Parser] I => A to accept null inputs, I? => A?
  */
 fun <I, A, E> Parser<I, A, E>.allowNulls(): Parser<I?, A?, E> {
    return Parser { input ->

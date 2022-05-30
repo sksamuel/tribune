@@ -39,7 +39,3 @@ fun interface Parser<in I, out A, out E> {
       Parser { this@Parser.parse(f(it)) }
 
 }
-
-// helper functions for validated
-fun <E, A> ValidatedNel<E, A>.getOrThrow(): A = fold({ error(it) }, { it })
-fun <E, A> ValidatedNel<E, A>.getErrorsOrThrow(): NonEmptyList<E> = fold({ it }, { error(it.toString()) })

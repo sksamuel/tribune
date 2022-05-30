@@ -1,25 +1,10 @@
-package com.sksamuel.optio.core.parsers
+package com.sksamuel.optio.core
 
 import arrow.core.Validated
 import arrow.core.invalidNel
 import arrow.core.validNel
-import com.sksamuel.optio.core.Parser
-import com.sksamuel.optio.core.boolean
-import com.sksamuel.optio.core.filter
-import com.sksamuel.optio.core.float
-import com.sksamuel.optio.core.getErrorsOrThrow
-import com.sksamuel.optio.core.getOrThrow
-import com.sksamuel.optio.core.int
-import com.sksamuel.optio.core.long
-import com.sksamuel.optio.core.map
-import com.sksamuel.optio.core.mapIfNotNull
-import com.sksamuel.optio.core.strings.notBlank
-import com.sksamuel.optio.core.notNull
-import com.sksamuel.optio.core.oneOf
-import com.sksamuel.optio.core.collections.repeated
 import com.sksamuel.optio.core.strings.minlen
-import com.sksamuel.optio.core.withDefault
-import com.sksamuel.optio.core.zip
+import com.sksamuel.optio.core.strings.notBlank
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
@@ -74,17 +59,6 @@ class ValidatedTest : FunSpec() {
          val p = Parser<String>().float { "not a float" }
          p.parse("foo").getErrorsOrThrow() shouldBe listOf("not a float")
          p.parse("123.45").getOrThrow() shouldBe 123.45F
-      }
-
-      test("repeated parser") {
-         val ps = Parser<String>().map { Foo(it) }.repeated()
-         ps.parse(listOf("a", "b")) shouldBe listOf(Foo("a"), Foo("b")).validNel()
-      }
-
-      test("repeated with min length") {
-         val ps = Parser<String>().map { Foo(it) }.repeated(min = 2) { "Must have at least two elements" }
-         ps.parse(listOf("a", "b")) shouldBe listOf(Foo("a"), Foo("b")).validNel()
-         ps.parse(listOf("a")) shouldBe "Must have at least two elements".invalidNel()
       }
 
       test("filter") {

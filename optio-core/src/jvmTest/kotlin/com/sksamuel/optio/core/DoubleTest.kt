@@ -1,18 +1,7 @@
-package com.sksamuel.optio.core.parsers
+package com.sksamuel.optio.core
 
 import arrow.core.invalidNel
 import arrow.core.validNel
-import com.sksamuel.optio.core.Parser
-import com.sksamuel.optio.core.allowNulls
-import com.sksamuel.optio.core.double
-import com.sksamuel.optio.core.getErrorsOrThrow
-import com.sksamuel.optio.core.getOrThrow
-import com.sksamuel.optio.core.inrange
-import com.sksamuel.optio.core.map
-import com.sksamuel.optio.core.negative
-import com.sksamuel.optio.core.nonNegative
-import com.sksamuel.optio.core.notNull
-import com.sksamuel.optio.core.positive
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
@@ -30,7 +19,7 @@ class DoubleTest : FunSpec() {
       test("parser should support converting to doubles from strings") {
          val p = Parser<String>().double { "not a double" }.map { Width(it) }
          p.parse("foo").getErrorsOrThrow() shouldBe listOf("not a double")
-         p.parse("123.45").getOrThrow() shouldBe Width(123.45)
+         p.parse("123.45").getErrorsOrThrow()
       }
 
       test("parser should support doubles with nullable pass through") {

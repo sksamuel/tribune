@@ -12,9 +12,9 @@ import com.sksamuel.optio.core.Parser
  *
  * @return a parser that accepts lists
  */
-fun <I, A, E> Parser<I, A, E>.repeated(): Parser<List<I>, List<A>, E> {
+fun <I, A, E> Parser<I, A, E>.asList(): Parser<List<I>, List<A>, E> {
    return Parser { input ->
-      input.map { this@repeated.parse(it) }.sequence()
+      input.map { this@asList.parse(it) }.sequence()
    }
 }
 
@@ -36,13 +36,13 @@ fun <I, A, E> Parser.Companion.list(elementParser: Parser<I, A, E>): Parser<Coll
  *
  * @return a parser that accepts lists
  */
-fun <I, A, E> Parser<I, A, E>.repeated(
+fun <I, A, E> Parser<I, A, E>.asList(
    min: Int = 0,
    max: Int = Int.MAX_VALUE,
    ifInvalidSize: (Int) -> E
 ): Parser<List<I>, List<A>, E> {
    return Parser { input ->
-      if ((min..max).contains(input.size)) input.map { this@repeated.parse(it) }.sequence()
+      if ((min..max).contains(input.size)) input.map { this@asList.parse(it) }.sequence()
       else ifInvalidSize(input.size).invalidNel()
    }
 }

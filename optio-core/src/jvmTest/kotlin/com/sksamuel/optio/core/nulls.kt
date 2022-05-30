@@ -1,9 +1,6 @@
-package com.sksamuel.optio.core.parsers
+package com.sksamuel.optio.core
 
 import arrow.core.validNel
-import com.sksamuel.optio.core.Parser
-import com.sksamuel.optio.core.allowNulls
-import com.sksamuel.optio.core.withDefault
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
