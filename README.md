@@ -14,6 +14,8 @@ _parse don't validate_ for Kotlin.
 #### 1.2.1
 
 * Added set parser
+* Renamed .repeated to .asList
+* Removed internal custom valid/invalid extensions
 
 #### 1.2.0
 
