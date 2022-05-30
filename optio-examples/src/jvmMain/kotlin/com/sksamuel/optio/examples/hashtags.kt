@@ -2,8 +2,8 @@ package com.sksamuel.optio.examples
 
 import com.sksamuel.optio.core.Parser
 import com.sksamuel.optio.core.allowNulls
+import com.sksamuel.optio.core.collections.asList
 import com.sksamuel.optio.core.filter
-import com.sksamuel.optio.core.collections.list
 import com.sksamuel.optio.core.map
 import com.sksamuel.optio.core.strings.notNullOrBlank
 
@@ -20,12 +20,14 @@ val hashtagParser: Parser<String?, HashTag, String> =
       .filter({ it.startsWith("#") }) { "Author must be at least two names" }
       .map { HashTag(it) }
 
-val hashtagsParser: Parser<List<String?>?, ParsedHashTags, String> =
-   Parser.list(hashtagParser)
+val hashtagsParser: Parser<HashTagsInput, ParsedHashTags, String> =
+   hashtagParser.asList()
       .allowNulls()
       .map { ParsedHashTags(it?.toSet() ?: emptySet()) }
+      .contramap { it.tags }
 
 fun main() {
-   println(hashtagsParser.parse(listOf(null, null, null, "foo")))
-   println(hashtagsParser.parse(listOf("foo", "bar")))
+   println(hashtagsParser.parse(HashTagsInput(listOf(null, null, null, "foo"))))
+   println(hashtagsParser.parse(HashTagsInput(listOf("foo", "bar"))))
+   println(hashtagsParser.parse(HashTagsInput(listOf("foo", "bar"))))
 }

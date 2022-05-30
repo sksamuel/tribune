@@ -12,17 +12,14 @@ import com.sksamuel.optio.core.Parser
  *
  * @return a parser that accepts lists
  */
-fun <I, A, E> Parser<I, A, E>.asList(): Parser<List<I>, List<A>, E> {
+fun <I, A, E> Parser<I, A, E>.asList(): Parser<Collection<I>, List<A>, E> {
    return Parser { input ->
       input.map { this@asList.parse(it) }.sequence()
    }
 }
 
-fun <I, A, E> Parser.Companion.list(elementParser: Parser<I, A, E>): Parser<Collection<I>, List<A>, E> {
-   return Parser { input ->
-      input.map { elementParser.parse(it) }.sequence()
-   }
-}
+fun <I, A, E> Parser.Companion.list(elementParser: Parser<I, A, E>): Parser<Collection<I>, List<A>, E> =
+   elementParser.asList()
 
 /**
  * Lifts an existing [Parser] to support lists of the input types supported by
