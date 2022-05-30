@@ -11,11 +11,19 @@ _parse don't validate_ for Kotlin.
 
 ### Changelog
 
-1.1.1
+#### 1.2.1
+
+* Added set parser
+
+#### 1.2.0
+
+* Package renames
+
+#### 1.1.1
 
 * Added ktor output handler
 
-1.1.0
+#### 1.1.0
 
 * Renamed project to Optio
 * Added datetime module
