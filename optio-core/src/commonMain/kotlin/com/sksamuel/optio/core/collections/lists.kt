@@ -1,6 +1,8 @@
-package com.sksamuel.optio.core
+package com.sksamuel.optio.core.collections
 
 import arrow.core.sequence
+import com.sksamuel.optio.core.Parser
+import com.sksamuel.optio.core.invalid
 
 /**
  * Lifts an existing [Parser] to support lists of the input types supported by
@@ -16,7 +18,7 @@ fun <I, A, E> Parser<I, A, E>.repeated(): Parser<List<I>, List<A>, E> {
    }
 }
 
-fun <I, A, E> Parser.Companion.list(elementParser: Parser<I, A, E>): Parser<List<I>, List<A>, E> {
+fun <I, A, E> Parser.Companion.list(elementParser: Parser<I, A, E>): Parser<Collection<I>, List<A>, E> {
    return Parser { input ->
       input.map { elementParser.parse(it) }.sequence()
    }

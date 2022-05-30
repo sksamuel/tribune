@@ -3,7 +3,7 @@ package com.sksamuel.optio.examples
 import com.sksamuel.optio.core.Parser
 import com.sksamuel.optio.core.allowNulls
 import com.sksamuel.optio.core.filter
-import com.sksamuel.optio.core.list
+import com.sksamuel.optio.core.collections.list
 import com.sksamuel.optio.core.map
 import com.sksamuel.optio.core.notNullOrBlank
 

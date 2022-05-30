@@ -16,7 +16,7 @@ import com.sksamuel.optio.core.minlen
 import com.sksamuel.optio.core.notBlank
 import com.sksamuel.optio.core.notNull
 import com.sksamuel.optio.core.oneOf
-import com.sksamuel.optio.core.repeated
+import com.sksamuel.optio.core.collections.repeated
 import com.sksamuel.optio.core.valid
 import com.sksamuel.optio.core.withDefault
 import com.sksamuel.optio.core.zip
