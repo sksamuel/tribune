@@ -1,4 +1,4 @@
-package com.sksamuel.optio.core.parsers
+package com.sksamuel.optio.core
 
 import arrow.core.Nel
 import arrow.core.NonEmptyList

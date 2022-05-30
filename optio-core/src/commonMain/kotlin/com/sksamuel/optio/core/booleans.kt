@@ -1,4 +1,4 @@
-package com.sksamuel.optio.core.parsers
+package com.sksamuel.optio.core
 
 fun <I, E> Parser<I, String, E>.boolean(ifError: (String) -> E): Parser<I, Boolean, E> =
    flatMap {

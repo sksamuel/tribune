@@ -2,8 +2,8 @@ package com.sksamuel.optio.datetime
 
 import arrow.core.invalidNel
 import arrow.core.validNel
-import com.sksamuel.optio.core.parsers.Parser
-import com.sksamuel.optio.core.parsers.flatMap
+import com.sksamuel.optio.core.Parser
+import com.sksamuel.optio.core.flatMap
 import kotlinx.datetime.LocalDateTime
 
 /**

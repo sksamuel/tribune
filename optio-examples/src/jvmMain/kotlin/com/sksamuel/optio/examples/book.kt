@@ -1,12 +1,12 @@
 package com.sksamuel.optio.examples
 
-import com.sksamuel.optio.core.parsers.Parser
-import com.sksamuel.optio.core.parsers.compose
-import com.sksamuel.optio.core.parsers.filter
-import com.sksamuel.optio.core.parsers.length
-import com.sksamuel.optio.core.parsers.map
-import com.sksamuel.optio.core.parsers.nonBlankString
-import com.sksamuel.optio.core.parsers.notNullOrBlank
+import com.sksamuel.optio.core.Parser
+import com.sksamuel.optio.core.compose
+import com.sksamuel.optio.core.filter
+import com.sksamuel.optio.core.length
+import com.sksamuel.optio.core.map
+import com.sksamuel.optio.core.nonBlankString
+import com.sksamuel.optio.core.notNullOrBlank
 
 data class BookInput(
    val title: String?,

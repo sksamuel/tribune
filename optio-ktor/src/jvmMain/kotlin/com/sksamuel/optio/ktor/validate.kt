@@ -1,7 +1,7 @@
 package com.sksamuel.optio.ktor
 
 import arrow.core.NonEmptyList
-import com.sksamuel.optio.core.parsers.Parser
+import com.sksamuel.optio.core.Parser
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall

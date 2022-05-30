@@ -1,11 +1,11 @@
 package com.sksamuel.optio.examples
 
-import com.sksamuel.optio.core.parsers.Parser
-import com.sksamuel.optio.core.parsers.allowNulls
-import com.sksamuel.optio.core.parsers.filter
-import com.sksamuel.optio.core.parsers.list
-import com.sksamuel.optio.core.parsers.map
-import com.sksamuel.optio.core.parsers.notNullOrBlank
+import com.sksamuel.optio.core.Parser
+import com.sksamuel.optio.core.allowNulls
+import com.sksamuel.optio.core.filter
+import com.sksamuel.optio.core.list
+import com.sksamuel.optio.core.map
+import com.sksamuel.optio.core.notNullOrBlank
 
 data class HashTagsInput(
    val tags: List<String?>?,

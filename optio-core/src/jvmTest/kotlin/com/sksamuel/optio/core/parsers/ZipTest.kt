@@ -2,6 +2,11 @@ package com.sksamuel.optio.core.parsers
 
 import arrow.core.nonEmptyListOf
 import arrow.core.validNel
+import com.sksamuel.optio.core.Parser
+import com.sksamuel.optio.core.invalid
+import com.sksamuel.optio.core.minlen
+import com.sksamuel.optio.core.notNullOrBlank
+import com.sksamuel.optio.core.zip
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 

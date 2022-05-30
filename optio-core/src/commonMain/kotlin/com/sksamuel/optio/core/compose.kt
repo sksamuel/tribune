@@ -1,4 +1,4 @@
-package com.sksamuel.optio.core.parsers
+package com.sksamuel.optio.core
 
 
 fun <INPUT, OUTPUT, A, B, ERROR> Parser.Companion.compose(

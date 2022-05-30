@@ -1,4 +1,4 @@
-package com.sksamuel.optio.core.parsers
+package com.sksamuel.optio.core
 
 /**
  * Extends a [Parser] of output type string to parse that string into a double.

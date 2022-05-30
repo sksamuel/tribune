@@ -1,4 +1,4 @@
-package com.sksamuel.optio.core.parsers
+package com.sksamuel.optio.core
 
 /**
  * Chains a [Parser] to convert String -> Int.

@@ -1,4 +1,4 @@
-package com.sksamuel.optio.core.parsers
+package com.sksamuel.optio.core
 
 /**
  * Returns a [Parser] that rejects the output of this parser if the output is not one
