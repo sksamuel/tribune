@@ -19,7 +19,7 @@ allprojects {
       mavenCentral()
    }
 
-   group = "com.sksamuel.optio"
+   group = "com.sksamuel.tribune"
    version = Ci.publishVersion
 
    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

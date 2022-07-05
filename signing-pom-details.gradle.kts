@@ -47,14 +47,14 @@ publishing {
       it.apply {
          //if (Ci.isRelease)
          pom {
-            name.set("optio")
+            name.set("tribune")
             description.set("Multiplatform Kotlin Validation")
-            url.set("http://www.github.com/sksamuel/optio")
+            url.set("http://www.github.com/sksamuel/tribune")
 
             scm {
-               connection.set("scm:git:http://www.github.com/sksamuel/optio")
+               connection.set("scm:git:http://www.github.com/sksamuel/tribune")
                developerConnection.set("scm:git:http://github.com/sksamuel")
-               url.set("http://www.github.com/sksamuel/optio")
+               url.set("http://www.github.com/sksamuel/tribune")
             }
 
             licenses {
