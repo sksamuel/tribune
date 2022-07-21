@@ -25,6 +25,7 @@ fun Route.endpoints() {
    put("book") {
       withParsedInput(bookParser, jsonHandler) {
          println("Saving book $it")
+         println(it.isbn.asString)
          call.respond(HttpStatusCode.Created, "Book created")
       }
    }
@@ -32,7 +33,7 @@ fun Route.endpoints() {
 
 suspend fun main() {
 
-   val server = embeddedServer(Netty, port = 8080) {
+   val server = embeddedServer(Netty, port = 8080, host = "127.0.0.1") {
       install(ContentNegotiation) { jackson() }
       routing {
          endpoints()
@@ -43,27 +44,27 @@ suspend fun main() {
       install(io.ktor.client.plugins.contentnegotiation.ContentNegotiation) { jackson() }
    }
 
-   client.put("http://localhost:8080/book") {
+   client.put("http://127.0.0.1:8080/book") {
       contentType(ContentType.Application.Json)
       setBody(BookInput(null, null, null))
    }.apply { println(this.bodyAsText()) }
 
-   client.put("http://localhost:8080/book") {
+   client.put("http://127.0.0.1:8080/book") {
       contentType(ContentType.Application.Json)
       setBody(BookInput("my book", null, null))
    }.apply { println(this.bodyAsText()) }
 
-   client.put("http://localhost:8080/book") {
+   client.put("http://127.0.0.1:8080/book") {
       contentType(ContentType.Application.Json)
       setBody(BookInput(null, "some author", null))
    }.apply { println(this.bodyAsText()) }
 
-   client.put("http://localhost:8080/book") {
+   client.put("http://127.0.0.1:8080/book") {
       contentType(ContentType.Application.Json)
       setBody(BookInput(null, null, "9375556123"))
    }.apply { println(this.bodyAsText()) }
 
-   client.put("http://localhost:8080/book") {
+   client.put("http://127.0.0.1:8080/book") {
       contentType(ContentType.Application.Json)
       setBody(BookInput("my title", "some author", "9375556123"))
    }.apply { println(this.bodyAsText()) }

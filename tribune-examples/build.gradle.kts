@@ -25,6 +25,7 @@ kotlin {
       val commonMain by getting {
          dependencies {
             api(project(":tribune-core"))
+            implementation(project(":tribune-examples-model"))
          }
       }
 
