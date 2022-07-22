@@ -25,7 +25,6 @@ kotlin {
       val commonMain by getting {
          dependencies {
             api(project(":tribune-core"))
-            implementation(project(":tribune-examples-model"))
          }
       }
 
@@ -37,6 +36,7 @@ kotlin {
             api("io.ktor:ktor-serialization-jackson:_")
             api("io.ktor:ktor-server-content-negotiation:_")
             api("io.ktor:ktor-client-content-negotiation:_")
+            implementation(project(":tribune-examples-model"))
          }
       }
 

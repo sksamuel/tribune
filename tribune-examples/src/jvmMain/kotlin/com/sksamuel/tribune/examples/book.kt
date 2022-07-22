@@ -2,11 +2,10 @@ package com.sksamuel.tribune.examples
 
 import com.sksamuel.tribune.core.Parser
 import com.sksamuel.tribune.core.compose
-import com.sksamuel.tribune.core.filter
-import com.sksamuel.tribune.core.map
-import com.sksamuel.tribune.core.strings.length
-import com.sksamuel.tribune.core.strings.nonBlankString
-import com.sksamuel.tribune.core.strings.notNullOrBlank
+import com.sksamuel.tribune.examples.opaque.value.ParsedBook
+import com.sksamuel.tribune.examples.opaque.value.authorParser
+import com.sksamuel.tribune.examples.opaque.value.isbnParser
+import com.sksamuel.tribune.examples.opaque.value.titleParser
 
 data class BookInput(
    val title: String?,
