@@ -27,8 +27,8 @@ suspend fun main() {
       }
       put("bookdata") {
          withParsedInput(bookParserPrimitive, jsonHandler) {
-            val (author, title, isbn) = it
-            println("Saving book (data class with primitives) $author, $title, $isbn")
+            val (bookauthor, booktitle, bookisbn) = it
+            println("Saving book (data class with primitives) $bookauthor, $booktitle, $bookisbn")
             call.respond(HttpStatusCode.Created, "Book created")
          }
       }
