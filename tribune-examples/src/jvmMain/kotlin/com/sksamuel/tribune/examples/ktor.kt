@@ -1,6 +1,7 @@
 package com.sksamuel.tribune.examples
 
-import com.sksamuel.tribune.examples.opaque.dataclass.bookParserPrimitive
+import com.sksamuel.tribune.examples.opaque.dataclass.bookParserDataclass
+import com.sksamuel.tribune.examples.opaque.value.bookParser
 import com.sksamuel.tribune.ktor.jsonHandler
 import com.sksamuel.tribune.ktor.withParsedInput
 import io.ktor.client.*
@@ -26,7 +27,7 @@ suspend fun main() {
          }
       }
       put("bookdata") {
-         withParsedInput(bookParserPrimitive, jsonHandler) {
+         withParsedInput(bookParserDataclass, jsonHandler) {
             val (bookauthor, booktitle, bookisbn) = it
             println("Saving book (data class with primitives) $bookauthor, $booktitle, $bookisbn")
             call.respond(HttpStatusCode.Created, "Book created")
