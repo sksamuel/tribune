@@ -45,7 +45,6 @@ publishing {
 
    publications.withType<MavenPublication>().forEach {
       it.apply {
-         //if (Ci.isRelease)
          pom {
             name.set("tribune")
             description.set("Multiplatform Kotlin Validation")

@@ -1,26 +1,12 @@
 plugins {
-   id("java")
-   kotlin("multiplatform")
-   id("java-library")
    id("org.jetbrains.kotlinx.kover") version "0.5.1"
-}
-
-repositories {
-   mavenCentral()
 }
 
 kotlin {
 
    targets {
 
-      jvm {
-         compilations.all {
-            kotlinOptions {
-               jvmTarget = "11"
-            }
-         }
-      }
-
+      jvm()
       js(IR) {
          browser()
          nodejs()

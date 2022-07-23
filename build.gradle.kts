@@ -5,7 +5,6 @@ buildscript {
    }
 }
 
-
 plugins {
    kotlin("multiplatform")
    id("java-library")
@@ -22,21 +21,35 @@ allprojects {
    group = "com.sksamuel.tribune"
    version = Ci.publishVersion
 
-   tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-      kotlinOptions.jvmTarget = "11"
-      kotlinOptions.apiVersion = "1.6"
-      kotlinOptions.languageVersion = "1.6"
-   }
-}
+   apply(plugin = "org.jetbrains.kotlin.multiplatform")
 
-kotlin {
-   targets {
-      jvm {
-         compilations.all {
-            kotlinOptions {
-               jvmTarget = "1.8"
-            }
-         }
+   kotlin {
+      targets {
+         jvm()
+      }
+   }
+
+   tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+      kotlinOptions {
+         jvmTarget = "11"
+         apiVersion = "1.6"
+         languageVersion = "1.6"
+      }
+   }
+
+   tasks.named<Test>("jvmTest") {
+      useJUnitPlatform()
+      filter {
+         isFailOnNoMatchingTests = false
+      }
+      testLogging {
+         showExceptions = true
+         showStandardStreams = true
+         events = setOf(
+            org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED,
+            org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
+         )
+         exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
       }
    }
 }
