@@ -2,12 +2,12 @@ package com.sksamuel.tribune.examples
 
 import arrow.core.invalidNel
 import arrow.core.validNel
-import com.sksamuel.tribune.examples.opaque.value.Author
-import com.sksamuel.tribune.examples.opaque.value.Isbn
-import com.sksamuel.tribune.examples.opaque.value.Title
-import com.sksamuel.tribune.examples.opaque.value.authorParser
-import com.sksamuel.tribune.examples.opaque.value.isbnParser
-import com.sksamuel.tribune.examples.opaque.value.titleParser
+import com.sksamuel.tribune.examples.valueclass.Author
+import com.sksamuel.tribune.examples.valueclass.Isbn
+import com.sksamuel.tribune.examples.valueclass.Title
+import com.sksamuel.tribune.examples.valueclass.authorParser
+import com.sksamuel.tribune.examples.valueclass.isbnParser
+import com.sksamuel.tribune.examples.valueclass.titleParser
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 

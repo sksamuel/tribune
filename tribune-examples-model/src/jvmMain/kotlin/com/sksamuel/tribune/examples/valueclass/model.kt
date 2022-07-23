@@ -1,11 +1,13 @@
-package com.sksamuel.tribune.examples.opaque.value
+package com.sksamuel.tribune.examples.valueclass
 
 import com.sksamuel.tribune.core.Parser
+import com.sksamuel.tribune.core.compose
 import com.sksamuel.tribune.core.filter
 import com.sksamuel.tribune.core.map
 import com.sksamuel.tribune.core.strings.length
 import com.sksamuel.tribune.core.strings.nonBlankString
 import com.sksamuel.tribune.core.strings.notNullOrBlank
+import com.sksamuel.tribune.examples.BookInput
 
 data class ParsedBook(
    val title: Title,
@@ -46,3 +48,10 @@ val isbnParser: Parser<String?, Isbn, String> =
       .filter({ it.length == 10 || it.startsWith("9") }, { "13 Digit ISBNs must start with 9" })
       .map { Isbn(it) }
 
+val bookParser: Parser<BookInput, ParsedBook, String> =
+   Parser.compose(
+      titleParser.contramap { it.title },
+      authorParser.contramap { it.author },
+      isbnParser.contramap { it.isbn },
+      ::ParsedBook,
+   )
