@@ -36,6 +36,6 @@ fun interface Parser<in I, out A, out E> {
    fun parse(input: I): Validated<NonEmptyList<E>, A>
 
    fun <J> contramap(f: (J) -> I): Parser<J, A, E> =
-      Parser { this@Parser.parse(f(it)) }
+      Parser { parse(f(it)) }
 
 }

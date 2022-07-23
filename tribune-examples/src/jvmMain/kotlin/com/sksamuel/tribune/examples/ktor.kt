@@ -1,36 +1,38 @@
 package com.sksamuel.tribune.examples
 
+import com.sksamuel.tribune.examples.opaque.dataclass.bookParserPrimitive
 import com.sksamuel.tribune.ktor.jsonHandler
 import com.sksamuel.tribune.ktor.withParsedInput
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.request.put
-import io.ktor.client.request.setBody
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.contentType
-import io.ktor.serialization.jackson.jackson
-import io.ktor.server.application.call
-import io.ktor.server.application.install
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.server.response.respond
-import io.ktor.server.routing.Route
-import io.ktor.server.routing.put
-import io.ktor.server.routing.routing
-
-fun Route.endpoints() {
-   put("book") {
-      withParsedInput(bookParser, jsonHandler) {
-         println("Saving book $it")
-         call.respond(HttpStatusCode.Created, "Book created")
-      }
-   }
-}
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.serialization.jackson.*
+import io.ktor.server.application.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 
 suspend fun main() {
+
+   fun Route.endpoints() {
+      put("book") {
+         withParsedInput(bookParser, jsonHandler) {
+            println("Saving book $it")
+            call.respond(HttpStatusCode.Created, "Book created")
+         }
+      }
+      put("bookdata") {
+         withParsedInput(bookParserPrimitive, jsonHandler) {
+            val (bookauthor, booktitle, bookisbn) = it
+            println("Saving book (data class with primitives) $bookauthor, $booktitle, $bookisbn")
+            call.respond(HttpStatusCode.Created, "Book created")
+         }
+      }
+   }
 
    val server = embeddedServer(Netty, port = 8080) {
       install(ContentNegotiation) { jackson() }
@@ -64,6 +66,11 @@ suspend fun main() {
    }.apply { println(this.bodyAsText()) }
 
    client.put("http://localhost:8080/book") {
+      contentType(ContentType.Application.Json)
+      setBody(BookInput("my title", "some author", "9375556123"))
+   }.apply { println(this.bodyAsText()) }
+
+   client.put("http://localhost:8080/bookdata") {
       contentType(ContentType.Application.Json)
       setBody(BookInput("my title", "some author", "9375556123"))
    }.apply { println(this.bodyAsText()) }

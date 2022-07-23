@@ -2,6 +2,7 @@ plugins {
    id("java")
    kotlin("multiplatform")
    id("java-library")
+   id("org.jetbrains.kotlinx.kover") version "0.5.1"
 }
 
 repositories {
@@ -22,21 +23,16 @@ kotlin {
 
    sourceSets {
 
-      val commonMain by getting {
+      val jvmMain by getting {
          dependencies {
             api(project(":tribune-core"))
          }
       }
 
-      val jvmMain by getting {
+      val jvmTest by getting {
          dependencies {
-            implementation(project(":tribune-ktor"))
-            implementation(Ktor.server.netty)
-            implementation(Ktor.client.cio)
-            api("io.ktor:ktor-serialization-jackson:_")
-            api("io.ktor:ktor-server-content-negotiation:_")
-            api("io.ktor:ktor-client-content-negotiation:_")
-            implementation(project(":tribune-examples-model"))
+            implementation(Testing.kotest.assertions.core)
+            implementation(Testing.kotest.runner.junit5)
          }
       }
 
@@ -44,6 +40,11 @@ kotlin {
          languageSettings.optIn("kotlin.OverloadResolutionByLambdaReturnType")
       }
    }
+}
+
+dependencies {
+   testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
 }
 
 tasks.named<Test>("jvmTest") {
@@ -60,6 +61,9 @@ tasks.named<Test>("jvmTest") {
       )
       exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
    }
+   extensions.configure(kotlinx.kover.api.KoverTaskExtension::class) {
+      isDisabled = false
+      includes = listOf("com.sksamuel.*")
+      excludes = listOf("com.sksamuel.examples.parser.*")
+   }
 }
-
-apply(from = "../publish-mpp.gradle.kts")
