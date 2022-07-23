@@ -1,7 +1,7 @@
 package com.sksamuel.tribune.examples
 
-import com.sksamuel.tribune.examples.opaque.dataclass.bookParserDataclass
-import com.sksamuel.tribune.examples.opaque.value.bookParser
+import com.sksamuel.tribune.examples.dataclass.bookParserDataclass
+import com.sksamuel.tribune.examples.valueclass.bookParser
 import com.sksamuel.tribune.ktor.jsonHandler
 import com.sksamuel.tribune.ktor.withParsedInput
 import io.ktor.client.*

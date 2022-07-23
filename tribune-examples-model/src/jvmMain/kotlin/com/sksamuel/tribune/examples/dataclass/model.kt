@@ -1,4 +1,4 @@
-package com.sksamuel.tribune.examples.opaque.dataclass
+package com.sksamuel.tribune.examples.dataclass
 
 import com.sksamuel.tribune.core.Parser
 import com.sksamuel.tribune.core.compose
@@ -6,7 +6,7 @@ import com.sksamuel.tribune.core.filter
 import com.sksamuel.tribune.core.strings.length
 import com.sksamuel.tribune.core.strings.nonBlankString
 import com.sksamuel.tribune.core.strings.notNullOrBlank
-import com.sksamuel.tribune.examples.opaque.input.BookInputData
+import com.sksamuel.tribune.examples.BookInput
 
 data class Book internal constructor(
    val title: String,
@@ -29,10 +29,11 @@ val bookIsbnParser: Parser<String?, String, String> =
       .length({ it == 10 || it == 13 }) { "Valid ISBNs have length 10 or 13" }
       .filter({ it.length == 10 || it.startsWith("9") }, { "13 Digit ISBNs must start with 9" })
 
-val bookParserDataclass: Parser<BookInputData, Book, String> =
+val bookParserDataclass: Parser<BookInput, Book, String> =
    Parser.compose(
       bookTitleParser.contramap { it.title },
       bookAuthorParser.contramap { it.author },
       bookIsbnParser.contramap { it.isbn },
       ::Book,
    )
+
