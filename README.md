@@ -11,6 +11,10 @@ _parse don't validate_ for Kotlin.
 
 ### Changelog
 
+#### 1.2.3
+
+* Updated to Ktor2
+
 #### 1.2.2
 
 * Renamed to Tribune
