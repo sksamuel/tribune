@@ -7,22 +7,28 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
 import io.ktor.server.request.receive
-import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.util.pipeline.PipelineContext
 
 typealias Handler<E> = suspend (ApplicationCall, NonEmptyList<E>) -> Unit
 
 val defaultHandler: Handler<*> = { call, errors ->
-   call.respond(HttpStatusCode.BadRequest, errors.joinToString(", "))
+   call.respondText(
+      status = HttpStatusCode.BadRequest,
+      text = errors.joinToString(", "),
+      contentType = ContentType.Text.Plain,
+   )
 }
 
 val jsonHandler: Handler<String> = { call, errors ->
    val newline = System.lineSeparator()
    val errorLines = errors.joinToString("\",$newline\"", "\"", "\"") { it.replace("\"", "\\\"") }
    val json = """[$newline$errorLines$newline]"""
-   call.respondText(json, ContentType.Application.Json)
-   call.respond(HttpStatusCode.BadRequest, json)
+   call.respondText(
+      status = HttpStatusCode.BadRequest,
+      text = json,
+      contentType = ContentType.Application.Json,
+   )
 }
 
 suspend inline fun <reified I : Any, A, E> PipelineContext<Unit, ApplicationCall>.withParsedInput(
