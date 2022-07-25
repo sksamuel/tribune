@@ -2,7 +2,7 @@ plugins {
    id("java")
    kotlin("multiplatform")
    id("java-library")
-   id("org.jetbrains.kotlinx.kover") version "0.5.1"
+   id("org.jetbrains.kotlinx.kover")
 }
 
 repositories {
@@ -43,8 +43,8 @@ kotlin {
 }
 
 dependencies {
-   testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
-   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+   testImplementation(Testing.junit.jupiter.api)
+   testRuntimeOnly(Testing.junit.jupiter.engine)
 }
 
 tasks.named<Test>("jvmTest") {

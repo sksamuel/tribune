@@ -1,5 +1,5 @@
 plugins {
-   id("org.jetbrains.kotlinx.kover") version "0.5.1"
+   id("org.jetbrains.kotlinx.kover")
 }
 
 kotlin {

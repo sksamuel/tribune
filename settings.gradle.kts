@@ -3,6 +3,10 @@ plugins {
    id("de.fayard.refreshVersions") version "0.40.2"
 }
 
+refreshVersions {
+   enableBuildSrcLibs()
+}
+
 include("tribune-core")
 include("tribune-datetime")
 include("tribune-examples-model")
