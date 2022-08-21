@@ -31,6 +31,8 @@ fun interface Parser<in I, out A, out E> {
        * Synonym for invoke.
        */
       fun <I> from() = invoke<I>()
+
+      fun fromNullableString() = from<String?>()
    }
 
    fun parse(input: I): Validated<NonEmptyList<E>, A>

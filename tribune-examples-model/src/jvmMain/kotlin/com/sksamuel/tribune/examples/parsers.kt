@@ -51,12 +51,11 @@ val titleParser: Parser<String?, Title, String> =
       .map { Title(it) }
 
 // must be 10 or 13 characters
-val isbnParser: Parser<String?, Isbn, String> =
-   Parser.from<String?>()
-      .notNullOrBlank { "ISBN must be provided" }
-      .length({ it == 10 || it == 13 }) { "Valid ISBNs have length 10 or 13" }
-      .filter({ it.length == 10 || it.startsWith("9") }, { "13 Digit ISBNs must start with 9" })
-      .map { Isbn(it) }
+val isbnParser = Parser.fromNullableString()
+   .notNullOrBlank { "ISBN must be provided" }
+   .length({ it == 10 || it == 13 }) { "Valid ISBNs have length 10 or 13" }
+   .filter({ it.length == 10 || it.startsWith("9") }, { "13 Digit ISBNs must start with 9" })
+   .map { Isbn(it) }
 
 val bookParser: Parser<BookInput, ParsedBook, String> =
    Parser.compose(
