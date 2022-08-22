@@ -61,7 +61,40 @@ a parser and an optional error handler. The request body is retrieved as an inst
 and then passed to the parser.
 
 If the parser returns errors, the error handler is invoked to return an error response to the caller. Tribune provides
-several error handlers out of the box. A full list of provided handlers is in the following table:
+several error handlers out of the box. A full list of provided handlers is provided further in this document.
+
+Here is a full example of `withParsedBody`.
+
+Firstly, we will create a parser for ISBN book codes. They must be 10 or 13 digit ISBN strings, and 13 digit
+codes must start with a 9. The parsed type is `Isbn`.
+
+
+```kotlin
+data class Isbn(val value:String)
+
+val isbnParser =
+   Parser.fromNullableString()
+      .notNullOrBlank { "ISBN must be provided" }
+      .length({ it == 10 || it == 13 }) { "Valid ISBNs have length 10 or 13" }
+      .filter({ it.length == 10 || it.startsWith("9") }, { "13 Digit ISBNs must start with 9" })
+      .map { Isbn(it) }
+```
+
+This parser is then used inside a POST endpoint and if valid, we respond with a 201, otherwise the default
+handler is used (returns a 400 Bad Request).
+
+```kotlin
+routing {
+   post("/isbn") {
+      withParsedInput(isbnParser) { isbn ->
+         println("Parsed ISBN $isbn")
+         call.respond(HttpStatusCode.Created)
+      }
+   }
+}
+```
+
+This table lists the handlers provided out of the box:
 
 | Handler             | Description                                                                                                                                                              |
 |---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -69,6 +102,7 @@ several error handlers out of the box. A full list of provided handlers is in th
 | `textPlainHandler`  | Returns a 400 Bad Request with a text/plain body, which is the list of errors concatented into a simple string                                                           |
 | `loggingHandler`    | Writes the errors to info level logging, and does not return a response or body. This should be composed with another handler.                                           |
 | `badRequestHandler` | Returns an error response as a 400 Bad Request without a body. This is suitable for when we don't want to return error details to the caller.                            |
+
 
 Handlers can be composed together using the `compose` extension function on a handler.
 Eg, to use the logging handler with the json handler, we can do:
@@ -115,39 +149,13 @@ val addressParser = Parser.compose(
 )
 ```
 
-### Ktor Integration
-
-In the following example, we parse input using the `isbnParser` which requires 10 or 13 digit ISBN codes, and 13 digit
-codes must start with a 9.
-
-This parser is then used inside a POST endpoint and if valid, we respond with a 201.
-
-```kotlin
-val isbnParser =
-   Parser.fromNullableString()
-      .notNullOrBlank { "ISBN must be provided" }
-      .length({ it == 10 || it == 13 }) { "Valid ISBNs have length 10 or 13" }
-      .filter({ it.length == 10 || it.startsWith("9") }, { "13 Digit ISBNs must start with 9" })
-      .map { Isbn(it) }
-```
-
-```kotlin
-routing {
-   post("myendpoint") {
-      withParsedInput(isbnParser) { parsed ->
-         println("Parsed input $parsed")
-         call.respond(HttpStatusCode.Created)
-      }
-   }
-}
-```
-
 ### Changelog
 
 ### 1.2.4 (Pending)
 
 * Added `fromNullableString` to Parser.
 * Renamed `withParsedInput` to `withParsedBody`
+* Added handler `compose`, `loggingHandler` and `badRequestHandler`.
 
 #### 1.2.3
 
