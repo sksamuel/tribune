@@ -42,11 +42,6 @@ kotlin {
    }
 }
 
-dependencies {
-   testImplementation(Testing.junit.jupiter.api)
-   testRuntimeOnly(Testing.junit.jupiter.engine)
-}
-
 tasks.named<Test>("jvmTest") {
    useJUnitPlatform()
    filter {
