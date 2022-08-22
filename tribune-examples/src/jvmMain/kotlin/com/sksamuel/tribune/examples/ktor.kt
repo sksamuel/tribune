@@ -1,7 +1,7 @@
 package com.sksamuel.tribune.examples
 
 import com.sksamuel.tribune.ktor.jsonHandler
-import com.sksamuel.tribune.ktor.withParsedInput
+import com.sksamuel.tribune.ktor.withParsedBody
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
@@ -19,13 +19,13 @@ suspend fun main() {
 
    fun Route.endpoints() {
       put("book") {
-         withParsedInput(bookParser, jsonHandler) {
+         withParsedBody(bookParser, jsonHandler) {
             println("Saving book $it")
             call.respond(HttpStatusCode.Created, "Book created")
          }
       }
       put("bookdata") {
-         withParsedInput(bookParserDataclass, jsonHandler) {
+         withParsedBody(bookParserDataclass, jsonHandler) {
             val (bookauthor, booktitle, bookisbn) = it
             println("Saving book (data class with primitives) $bookauthor, $booktitle, $bookisbn")
             call.respond(HttpStatusCode.Created, "Book created")

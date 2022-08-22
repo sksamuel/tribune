@@ -29,7 +29,7 @@ class WithParsedInputTest : FunSpec() {
             install(ContentNegotiation) { jackson() }
             routing {
                post("/foo") {
-                  withParsedInput(bookParser, jsonHandler) {
+                  withParsedBody(bookParser, jsonHandler) {
                      call.respond(HttpStatusCode.Created, "Book created")
                   }
                }
@@ -47,7 +47,7 @@ class WithParsedInputTest : FunSpec() {
             install(ContentNegotiation) { jackson() }
             routing {
                post("/foo") {
-                  withParsedInput(bookParser) {
+                  withParsedBody(bookParser) {
                      call.respond(HttpStatusCode.Created, "Book created")
                   }
                }
@@ -66,7 +66,7 @@ class WithParsedInputTest : FunSpec() {
             install(ContentNegotiation) { jackson() }
             routing {
                post("/foo") {
-                  withParsedInput(bookParser, jsonHandler) {
+                  withParsedBody(bookParser, jsonHandler) {
                      call.respond(HttpStatusCode.Created, "Book created")
                   }
                }

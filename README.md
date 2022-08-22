@@ -124,6 +124,7 @@ routing {
 ### 1.2.4 (Pending)
 
 * Added `fromNullableString` to Parser.
+* Renamed `withParsedInput` to `withParsedBody`
 
 #### 1.2.3
 
