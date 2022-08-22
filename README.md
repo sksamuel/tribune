@@ -12,8 +12,10 @@ library provides a toolset for creating simple parsers from raw _input_ types, t
 
 ### Rationale
 
-Normally, when we have a system that accepts input, we validate or sanitize that input. That is, we run some checks on the inputs,
-return some kind of error if they don't meet our requirements. For example, we want emails to contain an '@' and a zip code to be digits.
+Normally, when we have a system that accepts input, we validate or sanitize that input. That is, we run some checks on
+the inputs,
+return some kind of error if they don't meet our requirements. For example, we want emails to contain an '@' and a zip
+code to be digits.
 Then we continue with the request safe in the knowledge that we've done our due diligence.
 
 Here is an extremely simplified example.
@@ -33,7 +35,8 @@ fun handleRequest(email: String) {
 
 But the ultimate actioner of the input (`persist` in the above example) has to take it on faith that the input was
 validated, or it has to perform the validation again itself. Obviously in the 6 line example above, it is easy to see
-that validation is taking place but as a code base grows in complexity, and the validation code drifts from the use site,
+that validation is taking place but as a code base grows in complexity, and the validation code drifts from the use
+site,
 it becomes less obvious what validation is taking place and where.
 
 In my experience, as codebases grow, our 'service' methods performing the 'logic' end up being called from
@@ -44,7 +47,8 @@ places, for all the appropriate code paths?
 
 Sometimes we do the validation again, "just to be sure". We don't trust that the callers of our code are giving us
 properly validated types, so we check again, just in case. Never can be too safe amirite? In these situations developers
-have moved the validation into the 'logic' method itself, now resulting in methods doing validation as well as processing.
+have moved the validation into the 'logic' method itself, now resulting in methods doing validation as well as
+processing.
 
 As input validation often results in errors being returned to the caller, the deeper in the stack we perform these
 operations, the more boilerplate we need to bubble them back out. We can throw an exception and let it propagate out,
@@ -56,20 +60,21 @@ you have to use faith and a solid test suite. But we're using a compiled languag
 supposed to leverage the compiler to create more robust code?
 
 When we validate something, we are adding information. If we validate that a string is a valid email, we have added
-the "is valid" assertion to the original string. When we validate and then continue with the original types,
+the "is an email" assertion to the original string. When we validate and then continue with the original types,
 we are not passing that extra information to the caller. Why aren't we using the rich type system of a compiled language
-to help us catch validation errors.
+to help us catch validation errors?
 
-If we could indicate through types that our input had already been validated, then we could trust that
+If we indicate through types that our input had already been validated, then we could trust that
 input. One way to do this is to have a type that represents the "checked and validated" result of the original input.
 
 This is what we mean when we say _parsing not validating_.
 
-
 ### Parsers
 
 In Tribune, a parser is a function
-from an input type to a valid or invalid result. A valid result contains the `Validated` type, and an invalid result
+from an input type to a valid or invalid result. A valid result contains the _parsed_ type and should be a wrapper type
+that indicates the extra validation that has been performed.
+An invalid result
 contains one or more errors in the form of a `NonEmptyList`. Note that _Validated_ and _NonEmptyList_
 are [Arrow](https://arrow-kt.io/) types.
 
@@ -163,7 +168,6 @@ isbnParser.parse("ABC-3-16-148410-0") // bad!
 isbnParser.parse("978-3-16-148410") // bad!
 ```
 
-
 ### Ktor Integration
 
 Tribune provides [Ktor](https://ktor.io) integration through the optional `tribune-ktor` module.
@@ -178,8 +182,6 @@ several error handlers out of the box. A full list of provided handlers is provi
 Here is a full example of `withParsedBody`.
 
 Firstly, we will create a parser for ISBN book codes.
-
-
 
 This parser is then used inside a POST endpoint and if valid, we respond with a 201, otherwise the default
 handler is used (returns a 400 Bad Request).
@@ -203,7 +205,6 @@ This table lists the handlers provided out of the box:
 | `textPlainHandler`  | Returns a 400 Bad Request with a text/plain body, which is the list of errors concatented into a simple string                                                           |
 | `loggingHandler`    | Writes the errors to info level logging, and does not return a response or body. This should be composed with another handler.                                           |
 | `badRequestHandler` | Returns an error response as a 400 Bad Request without a body. This is suitable for when we don't want to return error details to the caller.                            |
-
 
 Handlers can be composed together using the `compose` extension function on a handler.
 Eg, to use the logging handler with the json handler, we can do:

@@ -42,12 +42,12 @@ class WithParsedInputTest : FunSpec() {
          }
       }
 
-      test("unhappy path with default handler") {
+      test("unhappy path with textPlainHandler handler") {
          testApplication {
             install(ContentNegotiation) { jackson() }
             routing {
                post("/foo") {
-                  withParsedBody(bookParser) {
+                  withParsedBody(bookParser, textPlainHandler) {
                      call.respond(HttpStatusCode.Created, "Book created")
                   }
                }
