@@ -53,6 +53,7 @@ val titleParser: Parser<String?, Title, String> =
 // must be 10 or 13 characters
 val isbnParser = Parser.fromNullableString()
    .notNullOrBlank { "ISBN must be provided" }
+   .map { it.replace("-", "") }
    .length({ it == 10 || it == 13 }) { "Valid ISBNs have length 10 or 13" }
    .filter({ it.length == 10 || it.startsWith("9") }, { "13 Digit ISBNs must start with 9" })
    .map { Isbn(it) }

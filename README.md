@@ -4,8 +4,7 @@ Tribune
 _parse don't validate_ for Kotlin.
 
 Inspired by [this blog post by Alexis King](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/), this
-library
-provides a toolset for creating simple parsers from raw _input_ types, to properly validated _parsed_ types.
+library provides a toolset for creating simple parsers from raw _input_ types, to properly validated _parsed_ types.
 
 ![master](https://github.com/sksamuel/tribune/workflows/master/badge.svg)
 [<img src="https://img.shields.io/maven-central/v/com.sksamuel.tribune/tribune-core.svg?label=latest%20release"/>](http://search.maven.org/#search%7Cga%7C1%7Ctribune)
@@ -13,44 +12,157 @@ provides a toolset for creating simple parsers from raw _input_ types, to proper
 
 ### Rationale
 
-Usually, when we have a system that accepts input, we validate that input. That is, we run some checks on the inputs,
-throwing an error if they don't meet our requirements. For example that a string has a max length or is not null, and so
-on. Then we continue with the original request safe in the knowledge that we've done our due diligence.
+Normally, when we have a system that accepts input, we validate or sanitize that input. That is, we run some checks on the inputs,
+return some kind of error if they don't meet our requirements. For example, we want emails to contain an '@' and a zip code to be digits.
+Then we continue with the request safe in the knowledge that we've done our due diligence.
 
 Here is an extremely simplified example.
 
 ```kotlin
 fun validate(email: String) = name.contains("@")
+
 fun persist(email: String) {
-   ... write to db ...
+   // write to db
 }
-fun process(email: String) {
+
+fun handleRequest(email: String) {
    if (!validate(email)) error("Not a real email")
    persist(email)
 }
 ```
 
-But the ultimate receiver of the input has to take it on faith that the input was validated.
-There's no compiler checks this is the case, since we are still using the original types. And since we use a compiled
-language to help us catch errors, why aren't we using it to help us catch validation errors.
+But the ultimate actioner of the input (`persist` in the above example) has to take it on faith that the input was
+validated, or it has to perform the validation again itself. Obviously in the 6 line example above, it is easy to see
+that validation is taking place but as a code base grows in complexity, and the validation code drifts from the use site,
+it becomes less obvious what validation is taking place and where.
 
-In larger systems, we sometimes find that validation is done in multiple places. As we go deeper into the stack, and our
-code grows more complex, we sometimes perform multiple validations 'just to be sure'. We don't trust that the callers of
-our code are giving us properly validated types, so we check again, just in case.
+In my experience, as codebases grow, our 'service' methods performing the 'logic' end up being called from
+more and more places. Perhaps new endpoints are added which ultimately call into the same service, or feature flags
+are added which result in multiple paths sharing functions. As new developers onboard, they can distrust the existing
+code or be unware of something added previously. How can we be sure that the validation is taking place at the right
+places, for all the appropriate code paths?
 
-If we could indicate through types that our input had already and categorically been validated, then we could trust that
+Sometimes we do the validation again, "just to be sure". We don't trust that the callers of our code are giving us
+properly validated types, so we check again, just in case. Never can be too safe amirite? In these situations developers
+have moved the validation into the 'logic' method itself, now resulting in methods doing validation as well as processing.
+
+As input validation often results in errors being returned to the caller, the deeper in the stack we perform these
+operations, the more boilerplate we need to bubble them back out. We can throw an exception and let it propagate out,
+or thread a `Result` instance back to the caller, but in both cases our entry point has to disambiguate parse errors
+from other errors, muddying the error handling.
+
+We can rely on tests. That's how it's done in dynamic languages where you don't know the data type you're getting, so
+you have to use faith and a solid test suite. But we're using a compiled language, and isn't a compiled language
+supposed to leverage the compiler to create more robust code?
+
+When we validate something, we are adding information. If we validate that a string is a valid email, we have added
+the "is valid" assertion to the original string. When we validate and then continue with the original types,
+we are not passing that extra information to the caller. Why aren't we using the rich type system of a compiled language
+to help us catch validation errors.
+
+If we could indicate through types that our input had already been validated, then we could trust that
 input. One way to do this is to have a type that represents the "checked and validated" result of the original input.
 
 This is what we mean when we say _parsing not validating_.
 
-### Getting Started
 
-Start by creating a parser from your raw type. This could be a string or another type marshalled from JSON for example.
-A possibly nullable string is a very common starting point, so let's use that, and ~~validate~~ parse to a full name.
+### Parsers
+
+In Tribune, a parser is a function
+from an input type to a valid or invalid result. A valid result contains the `Validated` type, and an invalid result
+contains one or more errors in the form of a `NonEmptyList`. Note that _Validated_ and _NonEmptyList_
+are [Arrow](https://arrow-kt.io/) types.
+
+A parser has three type parameters, the first being the input type, the second being the parsed type, and the third
+being the error type. The error type can be your own ADT or just plain strings. In this example we will use strings.
+The ADT approach is powerful when you want fine control over error handling, but if we are more interested in the
+robustness factor than how errors are reported, strings will suffice.
+
+We create a `Parser` from our input type - in this case a nullable `String`. Our initial parser is always
+a pass-through parser that just returns the input as-is and which allows us to add further constraints.
+Note that the error type is `Nothing` because on the pass through parser, we don't yet report errors.
 
 ```kotlin
-val parser: Parser<String?, Nothing, Nothing> = Parser.fromNullableString()
+val parser: Parser<String?, String?, Nothing> = Parser.fromNullableString()
 ```
+
+Next we can add more constraints with appropriate error messages. Each additional
+constraint we add narrows the output type. For example, if we constrain a nullable string to disallow nulls, then the
+parser's output type will narrow to be a non-nullable String. The input type does not change, because that is
+representing our initial raw input. Note that the error type will change to the type of the error you provide, in
+this case a string also.
+
+```kotlin
+val parser: Parser<String?, String, String> =
+   Parser.fromNullableString()
+      .notNullOrBlank { "Must be provided" }
+```
+
+We could further constrain this input to be an int:
+
+```kotlin
+val parser: Parser<String?, Int, String> =
+   Parser.fromNullableString()
+      .notNullOrBlank { "Must be provided" }
+      .int { "must be int" }
+```
+
+There are many methods available on a parser, eg `filter`, `minlen`, `enum`, `contramap` and so on.
+Explore in your IDE to see the full set.
+
+Once we're finished with validation, we want to then wrap in a parsed type. We can do this with `map`:
+
+```kotlin
+val parser: Parser<String?, Int, String> =
+   Parser.fromNullableString()
+      .notNullOrBlank { "Must be provided" }
+      .int { "must be int" }
+      .map { MyParsedType(it) }
+```
+
+Parsers are invoked using the `parse` method. Eg:
+
+```kotlin
+parser.parse("abc") // must be int
+parser.parser("123") // success!
+```
+
+### Full Example
+
+We start by creating a type to represent a validated and sanitized value. Let's say we want to validate that input
+strings are valid ISBN codes. They must be 10 or 13 digit codes, and 13 digit codes must start with a 9.
+The parsed type will be called `Isbn`.
+
+```kotlin
+data class Isbn(val value: String) {
+   init {
+      require(value.length == 10 || value.length == 13)
+      require(value.length == 10 || value.startsWith("9"))
+   }
+}
+```
+
+Next our parser will include the validation logic, ultimately wrapping in the `Isbn` type:
+
+```kotlin
+val isbnParser =
+   Parser.fromNullableString()
+      .notNullOrBlank { "ISBN must be provided" }
+      .map { it.replace("-", "") } // remove dashes
+      .length({ it == 10 || it == 13 }) { "Valid ISBNs have length 10 or 13" }
+      .filter({ it.length == 10 || it.startsWith("9") }, { "13 Digit ISBNs must start with 9" })
+      .map { Isbn(it) }
+```
+
+Then we can parse ISBN codes:
+
+```kotlin
+isbnParser.parse("9783161484100") // good!
+isbnParser.parse("978-3-16-148410-0") // good!
+isbnParser.parse("ABC-3-16-148410-0") // bad!
+isbnParser.parse("978-3-16-148410") // bad!
+```
+
 
 ### Ktor Integration
 
@@ -65,20 +177,9 @@ several error handlers out of the box. A full list of provided handlers is provi
 
 Here is a full example of `withParsedBody`.
 
-Firstly, we will create a parser for ISBN book codes. They must be 10 or 13 digit ISBN strings, and 13 digit
-codes must start with a 9. The parsed type is `Isbn`.
+Firstly, we will create a parser for ISBN book codes.
 
 
-```kotlin
-data class Isbn(val value:String)
-
-val isbnParser =
-   Parser.fromNullableString()
-      .notNullOrBlank { "ISBN must be provided" }
-      .length({ it == 10 || it == 13 }) { "Valid ISBNs have length 10 or 13" }
-      .filter({ it.length == 10 || it.startsWith("9") }, { "13 Digit ISBNs must start with 9" })
-      .map { Isbn(it) }
-```
 
 This parser is then used inside a POST endpoint and if valid, we respond with a 201, otherwise the default
 handler is used (returns a 400 Bad Request).

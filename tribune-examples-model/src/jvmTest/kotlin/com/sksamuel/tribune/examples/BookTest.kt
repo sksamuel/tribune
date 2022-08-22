@@ -21,6 +21,7 @@ class BookTest : FunSpec() {
 
       test("parses isbn") {
          isbnParser.parse("0123456789") shouldBe Isbn("0123456789").validNel()
+         isbnParser.parse("978-3-16-148410-0") shouldBe Isbn("9783161484100").validNel()
       }
 
       test("parses invalid isbn") {

@@ -17,13 +17,13 @@ class IntTest : FunSpec() {
       }
 
       test("parser should support ints") {
-         val p = Parser<String>().long { "not an int" }
+         val p = Parser<String>().int { "not an int" }
          p.parse("foo").getErrorsOrThrow() shouldBe listOf("not an int")
          p.parse("12345").getOrThrow() shouldBe 12345
       }
 
       test("parser should support ints with nullable pass through") {
-         val p = Parser<String>().long { "not an int" }.allowNulls()
+         val p = Parser<String>().int { "not an int" }.allowNulls()
          p.parse("12345").getOrThrow() shouldBe 12345
          p.parse(null).getOrThrow() shouldBe null
       }
