@@ -21,10 +21,12 @@ Here is an extremely simplified example.
 
 ```kotlin
 fun validate(email: String) = name.contains("@")
-fun persist(email: String) { ... write to db ... }
+fun persist(email: String) {
+   ... write to db ...
+}
 fun process(email: String) {
-  if (!validate(email)) error("Not a real email")
-  persist(email)
+   if (!validate(email)) error("Not a real email")
+   persist(email)
 }
 ```
 
@@ -48,6 +50,34 @@ A possibly nullable string is a very common starting point, so let's use that, a
 
 ```kotlin
 val parser: Parser<String?, Nothing, Nothing> = Parser.fromNullableString()
+```
+
+### Ktor Integration
+
+Tribune provides [Ktor](https://ktor.io) integration through the optional `tribune-ktor` module.
+
+Once this is added to your build, you can use `withParsedBody` inside your Ktor routes. This function requires
+a parser and an optional error handler. The request body is retrieved as an instance of the parser input type,
+and then passed to the parser.
+
+If the parser returns errors, the error handler is invoked to return an error response to the caller. Tribune provides
+several error handlers out of the box. A full list of provided handlers is in the following table:
+
+| Handler             | Description                                                                                                                                                              |
+|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `jsonHandler`       | Returns a 400 Bad Request with a JSON array, where each error is an element. Each error is converted to a String through .toString() before being included in the array. |
+| `textPlainHandler`  | Returns a 400 Bad Request with a text/plain body, which is the list of errors concatented into a simple string                                                           |
+| `loggingHandler`    | Writes the errors to info level logging, and does not return a response or body. This should be composed with another handler.                                           |
+| `badRequestHandler` | Returns an error response as a 400 Bad Request without a body. This is suitable for when we don't want to return error details to the caller.                            |
+
+Handlers can be composed together using the `compose` extension function on a handler.
+Eg, to use the logging handler with the json handler, we can do:
+
+```kotlin
+withParsedInput(parser, loggingHandler.compose(jsonHandler)) { parsed ->
+   println("Parsed input $parsed")
+   call.respond(HttpStatusCode.OK)
+}
 ```
 
 ### Examples
@@ -86,13 +116,6 @@ val addressParser = Parser.compose(
 ```
 
 ### Ktor Integration
-
-Tribune provides Ktor integration through the additional `tribune-ktor` module. Add this to your build
-and `withParsedInput`
-becomes available inside your Ktor routes. This method retrieves the request object as an instance of the parser input
-type,
-and then passes it to the parser. If any errors are returned, a handler is invoked to return a 400, otherwise the given
-function is invoked with the parse result.
 
 In the following example, we parse input using the `isbnParser` which requires 10 or 13 digit ISBN codes, and 13 digit
 codes must start with a 9.

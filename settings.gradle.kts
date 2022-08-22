@@ -5,6 +5,9 @@ plugins {
 
 refreshVersions {
    enableBuildSrcLibs()
+   rejectVersionIf {
+      candidate.stabilityLevel != de.fayard.refreshVersions.core.StabilityLevel.Stable
+   }
 }
 
 include("tribune-core")
