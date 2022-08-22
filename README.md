@@ -251,7 +251,7 @@ val addressParser = Parser.compose(
 
 ### Changelog
 
-### 1.2.4 (Pending)
+### 1.2.4
 
 * Added `fromNullableString` to Parser.
 * Renamed `withParsedInput` to `withParsedBody`
