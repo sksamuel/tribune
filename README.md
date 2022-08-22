@@ -173,18 +173,16 @@ isbnParser.parse("978-3-16-148410") // bad!
 Tribune provides [Ktor](https://ktor.io) integration through the optional `tribune-ktor` module.
 
 Once this is added to your build, you can use `withParsedBody` inside your Ktor routes. This function requires
-a parser and an optional error handler. The request body is retrieved as an instance of the parser input type,
+a parser and an optional _error handler_. The request body is retrieved as an instance of the parser input type,
 and then passed to the parser.
 
-If the parser returns errors, the error handler is invoked to return an error response to the caller. Tribune provides
-several error handlers out of the box. A full list of provided handlers is provided further in this document.
+If the parser returns errors, the _error handler_ is invoked to return an error response to the caller. Tribune provides
+several error handlers out of the box. A full list of provided error handlers is listed later in this document.
 
-Here is a full example of `withParsedBody`.
+Here is an example of `withParsedBody`, reusing the earlier parser for ISBN book codes.
 
-Firstly, we will create a parser for ISBN book codes.
-
-This parser is then used inside a POST endpoint and if valid, we respond with a 201, otherwise the default
-handler is used (returns a 400 Bad Request).
+This parser is used inside a POST endpoint and if valid, we respond with a 201, otherwise the default
+handler is used (returns 400 Bad Request with a JSON body of errors).
 
 ```kotlin
 routing {
