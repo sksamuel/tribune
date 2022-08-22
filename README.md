@@ -115,6 +115,8 @@ val parser: Parser<String?, Int, String> =
 There are many methods available on a parser, eg `filter`, `minlen`, `enum`, `contramap` and so on.
 Explore in your IDE to see the full set.
 
+#### Wrapping
+
 Once we're finished with validation, we want to then wrap in a parsed type. We can do this with `map`:
 
 ```kotlin
@@ -132,7 +134,8 @@ parser.parse("abc") // must be int
 parser.parser("123") // success!
 ```
 
-### Full Example
+
+#### Full Example
 
 We start by creating a type to represent a validated and sanitized value. Let's say we want to validate that input
 strings are valid ISBN codes. They must be 10 or 13 digit codes, and 13 digit codes must start with a 9.
@@ -166,6 +169,82 @@ isbnParser.parse("9783161484100") // good!
 isbnParser.parse("978-3-16-148410-0") // good!
 isbnParser.parse("ABC-3-16-148410-0") // bad!
 isbnParser.parse("978-3-16-148410") // bad!
+```
+
+
+#### Composing
+
+We've seen how we can have a parser for a simple type, but most of the time we have complex types, and we want
+to validate each field. We achieve this in Tribune using `Parser.compose`. This function accepts one or more parsers,
+and then a _mapping_ function which combines all the valid results into a single type. If any component parser fails,
+all
+the errors will be combined and returned.
+
+Note that this _mapping_ function can be the constructor of a data class for ease of use.
+
+We must also provide an input type which has all the individual inputs wrapped together. In HTTP services, this
+input type is often your deserialized type from the request.
+
+For example, we will create parsers for cities, zips and countries and then combine them into a single address parser.
+
+We start by creating a type to contain the non-validated inputs, and then the validated output type.
+
+```kotlin
+data class AddressInput(
+   val city: String?,
+   val zip: String?,
+   val country: String?,
+)
+
+data class Address(
+   val city: City,
+   val zip: Zipcode,
+   val country: CountryCode,
+)
+
+data class City(val value: String)
+data class Zipcode(val value: String)
+data class CountryCode(val value: String)
+```
+
+Next we create a parser for each field:
+
+```kotlin
+val cityParser = Parser
+   .nonBlankString { "City must be provided" }
+   .map { City(it) }
+
+val zipcodeParser = Parser
+   .nonBlankString { "Zipcode must be provided" }
+   .length(5) { "Zipcode should be 5 digits" }
+   .map { Zipcode(it) }
+
+val countryCodeParser = Parser
+   .nonBlankString { "CountryCode must be provided" }
+   .length(2) { "CountryCode should be 2 digits" }
+   .map { CountryCode(it) }
+```
+
+Finally, we combine these together. Note the use of contramap here, this is how we _extract_ the appropriate field
+from the input object to pass to each component parser.
+
+```kotlin
+val addressParser = Parser.compose(
+   cityParser.contramap { it.city },
+   zipcodeParser.contramap { it.zip },
+   countryCodeParser.contramap { it.country },
+   ::Address
+)
+```
+
+Now we can use this parser like:
+
+```kotlin
+addressParser.parse(AddressInput("Chicago", "60011", "US")) // valid!
+addressParser.parse(AddressInput("Chicago", "60ABC", "US")) // invalid!
+addressParser.parse(AddressInput("Chicago", "60011", "Krypton")) // invalid!
+addressParser.parse(AddressInput(null, "60011", "Krypton")) // invalid!
+addressParser.parse(AddressInput(null, null, null)) // invalid!
 ```
 
 ### Ktor Integration
@@ -214,40 +293,6 @@ withParsedInput(parser, loggingHandler.compose(jsonHandler)) { parsed ->
 }
 ```
 
-### Examples
-
-```kotlin
-data class Address(
-   val city: City,
-   val zip: Zipcode,
-   val country: CountryCode,
-)
-
-data class City(val value: String)
-data class Zipcode(val value: String)
-data class CountryCode(val value: String)
-
-val cityParser = Parser
-   .nonBlankString { "City must be provided" }
-   .map { City(it) }
-
-val zipcodeParser = Parser
-   .nonBlankString { "Zipcode must be provided" }
-   .length(5) { "Zipcode should be 5 digits" }
-   .map { Zipcode(it) }
-
-val countryCodeParser = Parser
-   .nonBlankString { "CountryCode must be provided" }
-   .length(2) { "CountryCode should be 2 digits" }
-   .map { CountryCode(it) }
-
-val addressParser = Parser.compose(
-   cityParser,
-   zipcodeParser,
-   countryCodeParser,
-   ::Address
-)
-```
 
 ### Changelog
 
