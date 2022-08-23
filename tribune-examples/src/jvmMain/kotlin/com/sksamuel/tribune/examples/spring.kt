@@ -31,8 +31,8 @@ class BookRestController() {
 }
 
 sealed interface ParsedResponse<R> {
-   data class ErrorResponse<R>(val message: String) : ParsedResponse<R>
-   data class SuccessResponse<R>(val parsedResult: R) : ParsedResponse<R>
+   data class ErrorResponse<R>(val error: String) : ParsedResponse<R>
+   data class SuccessResponse<R>(val result: R) : ParsedResponse<R>
 }
 
 val jsonResponseHandler: (NonEmptyList<String>) -> ResponseEntity<ParsedResponse<ParsedBook>> = { nel ->
