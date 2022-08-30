@@ -41,6 +41,8 @@ kotlin {
             api("io.ktor:ktor-serialization-jackson:_")
             api("io.ktor:ktor-server-content-negotiation:_")
             api("io.ktor:ktor-client-content-negotiation:_")
+
+            implementation(project(":tribune-spring"))
             implementation("org.springframework.boot:spring-boot-starter-web")
             implementation(project(":tribune-examples-model"))
          }
