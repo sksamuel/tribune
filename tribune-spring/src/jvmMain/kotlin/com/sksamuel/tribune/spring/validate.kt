@@ -17,7 +17,7 @@ fun jsonResponseHandler(nel: Nel<String>): ResponseEntity<ResponseType.ErrorResp
 }
 
 private fun errorsToJsonString(nel: Nel<String>): String =
-   nel.joinToString()
+   nel.toList().joinToString()
 
 fun <I, A, E> withParsed(
    input: I,
