@@ -21,12 +21,13 @@ fun main(args: Array<String>) {
 
 @RestController
 @RequestMapping("/rest/book")
-class BookRestController() {
+class BookRestController {
 
    @RequestMapping(value = ["/books"], method = [RequestMethod.POST])
    fun createUser(@RequestBody bookInput: BookInput): ResponseEntity<out ResponseType<out ParsedBook>> =
-      withParsed(bookInput, bookParser, ::jsonResponseHandler) { parsedBook ->
+      withParsed(bookInput, bookParser, ::jsonResponseHandler) {
          // so here we'd usually do some serious stuff with services downstream...
-         ResponseEntity.ok(ResponseType.SuccessResponse(parsedBook))
+         // as an example this is just the identity function
+         it
       }
 }
