@@ -22,17 +22,17 @@ fun main(args: Array<String>) {
 @RequestMapping("/rest/book")
 class BookRestController {
 
-   @RequestMapping(value = ["/books"], method = [RequestMethod.POST])
-   fun createBook(@RequestBody bookInput: BookInput): ResponseEntity<out ResponseType<out ParsedBook>> =
-      withParsed(bookInput, bookParser, ::errorResponseHandler, ::successResponseHandler, HttpStatus.CREATED) {
+   @RequestMapping(value = ["/books/explicit"], method = [RequestMethod.POST])
+   fun createBook(@RequestBody bookInput: BookInput): ResponseEntity<out ExplicitResponse<out ParsedBook>> =
+      withParsedExplicit(bookInput, bookParser, ::errorResponseHandlerExplicit, ::successResponseHandlerExplicit, HttpStatus.CREATED) {
          // so here we'd usually do some real-world stuff with services downstream
          // as an example this is just the identity function, so we are returning the parsed book
          it
       }
 
-   @RequestMapping(value = ["/books/safe"], method = [RequestMethod.POST])
+   @RequestMapping(value = ["/books"], method = [RequestMethod.POST])
    fun createBookSafe(@RequestBody bookInput: BookInput): ResponseEntity<out ParsedBook> =
-      withParsedSafe(bookInput, bookParser, ::errorResponseHandlerSafe, ::successResponseHandlerSafe, HttpStatus.CREATED) {
+      withParsedDefault(bookInput, bookParser, ::errorResponseHandlerDefault, ::successResponseHandlerDefault, HttpStatus.CREATED) {
          // so here we'd usually do some real-world stuff with services downstream
          // as an example this is just the identity function, so we are returning the parsed book
          it
