@@ -29,8 +29,28 @@ fun <I, A, E, R> withParsed(
    code: HttpStatus,
    service: (A) -> R
 ): ResponseEntity<out ResponseType<out R>> =
-   // TODO fold statt nullables
    parser.parse(input).fold(
       { errorHandler(it) },
       { successHandler(service, it, code) }
+   )
+
+fun <R> errorResponseHandlerSafe(nel: Nel<String>): ResponseEntity<R> =
+   ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+
+fun <A, R> successResponseHandlerSafe(service: (A) -> R, parsedResult: A, code: HttpStatus): ResponseEntity<R> {
+   // TODO at least log the errors
+   return ResponseEntity.status(code).body(service(parsedResult))
+}
+
+fun <I, A, E, R> withParsedSafe(
+   input: I,
+   parser: Parser<I, A, E>,
+   errorHandlerSafe: (Nel<E>) -> ResponseEntity<R>,
+   successHandlerSafe: ((A) -> R, A, HttpStatus) -> ResponseEntity<R>,
+   code: HttpStatus,
+   service: (A) -> R
+): ResponseEntity<out R> =
+   parser.parse(input).fold(
+      { errorHandlerSafe(it) },
+      { successHandlerSafe(service, it, code) }
    )
