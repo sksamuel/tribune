@@ -2,7 +2,6 @@ plugins {
    id("java")
    kotlin("multiplatform")
    id("java-library")
-   id("org.jetbrains.kotlinx.kover")
 }
 
 repositories {
@@ -55,10 +54,5 @@ tasks.named<Test>("jvmTest") {
          org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
       )
       exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-   }
-   extensions.configure(kotlinx.kover.api.KoverTaskExtension::class) {
-      isDisabled = false
-      includes = listOf("com.sksamuel.*")
-      excludes = listOf("com.sksamuel.examples.parser.*")
    }
 }
