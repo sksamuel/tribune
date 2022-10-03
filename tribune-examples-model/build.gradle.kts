@@ -14,6 +14,7 @@ kotlin {
       jvm {
          compilations.all {
             kotlinOptions {
+               freeCompilerArgs += listOf("-Xcontext-receivers")
                jvmTarget = "11"
             }
          }

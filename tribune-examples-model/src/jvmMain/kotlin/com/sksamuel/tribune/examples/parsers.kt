@@ -18,7 +18,10 @@ import com.sksamuel.tribune.examples.opaque_valueclass.Title
 val bookAuthorParser: Parser<String?, String, String> =
    Parser.from<String?>()
       .notNullOrBlank { "Author must be provided" }
-      .filter({ it.contains(" ") }) { "Author must be at least two names" }
+      .filter({
+         val words = it.split(' ')
+         words.size > 1&& words.last().isNotBlank()
+      }) { "Author must be at least two names" }
 
 val bookTitleParser: Parser<String?, String, String> =
    Parser.nonBlankString { "Title must be provided" }
@@ -43,7 +46,10 @@ val bookParserDataclass: Parser<BookInput, Book, String> =
 val authorParser: Parser<String?, Author, String> =
    Parser.from<String?>()
       .notNullOrBlank { "Author must be provided" }
-      .filter({ it.contains(" ") }) { "Author must be at least two names" }
+      .filter({
+         val words = it.split(' ')
+         words.size > 1&& words.last().isNotBlank()
+      }) { "Author must be at least two names" }
       .map { Author(it) }
 
 val titleParser: Parser<String?, Title, String> =
