@@ -32,14 +32,12 @@ kotlin {
 
       val commonMain by getting {
          dependencies {
-            api("io.arrow-kt:arrow-core:_")
+            api(libs.arrow.core)
          }
       }
 
       val jvmMain by getting {
          dependsOn(commonMain)
-         dependencies {
-         }
       }
 
       val jvmTest by getting {

@@ -4,17 +4,13 @@ plugins {
 
 kotlin {
 
-   targets {
-      jvm()
-   }
-
    sourceSets {
 
       val jvmMain by getting {
          dependencies {
             implementation(projects.tribuneCore)
+            implementation(projects.tribuneExamplesModel)
             implementation(libs.spring.boot.starter.web)
-            implementation(project(":tribune-examples-model"))
          }
       }
 
