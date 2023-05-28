@@ -3,7 +3,7 @@ Changelog
 
 ### 1.3.0
 
-* Now requires Kotlin 1.8.x
+* Released support (and min version) for Kotlin 1.8.x
 
 ### 1.2.4
 
