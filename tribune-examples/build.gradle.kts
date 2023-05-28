@@ -29,13 +29,13 @@ kotlin {
 
       val commonMain by getting {
          dependencies {
-            api(project(":tribune-core"))
+            api(projects.tribuneCore)
          }
       }
 
       val jvmMain by getting {
          dependencies {
-            implementation(project(":tribune-ktor"))
+            api(projects.tribuneKtor)
             implementation(Ktor.server.netty)
             implementation(Ktor.client.cio)
             api("io.ktor:ktor-serialization-jackson:_")

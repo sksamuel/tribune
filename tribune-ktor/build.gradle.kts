@@ -8,7 +8,7 @@ kotlin {
 
       val jvmMain by getting {
          dependencies {
-            api(project(":tribune-core"))
+            api(projects.tribuneCore)
             api(libs.ktor.server.core)
          }
       }

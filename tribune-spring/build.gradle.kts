@@ -19,7 +19,7 @@ kotlin {
 
       val jvmMain by getting {
          dependencies {
-            implementation(project(":tribune-core"))
+            implementation(projects.tribuneCore)
             implementation("org.springframework.boot:spring-boot-starter-web")
             implementation(project(":tribune-examples-model"))
          }
