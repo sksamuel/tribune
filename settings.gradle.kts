@@ -15,18 +15,6 @@ pluginManagement {
    }
 }
 
-plugins {
-   // See https://jmfayard.github.io/refreshVersions
-   id("de.fayard.refreshVersions") version "0.40.2"
-}
-
-refreshVersions {
-   enableBuildSrcLibs()
-   rejectVersionIf {
-      candidate.stabilityLevel != de.fayard.refreshVersions.core.StabilityLevel.Stable
-   }
-}
-
 enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
