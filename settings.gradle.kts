@@ -2,7 +2,7 @@ rootProject.name = "tribune"
 
 include(
    ":tribune-core",
-//   ":tribune-datetimeRem",
+   ":tribune-datetime",
    ":tribune-examples-model",
    ":tribune-examples",
    ":tribune-ktor",
@@ -13,7 +13,6 @@ include(
 pluginManagement {
    plugins {
       id("org.springframework.boot") version ("2.7.12")
-      kotlin("multiplatform") version ("1.8.21")
    }
 }
 

@@ -23,7 +23,7 @@ fun interface Parser<in I, out A, out E> {
        *
        * Eg:
        *
-       * Parser<String>().parse("mystring")
+       * Parser<String>()...parse("mystring")
        */
       operator fun <I> invoke(): Parser<I, I, Nothing> = Parser { it.validNel() }
 
@@ -37,10 +37,6 @@ fun interface Parser<in I, out A, out E> {
 
    fun parse(input: I): Validated<NonEmptyList<E>, A>
 
-   /**
-    * Returns a [Parser] for <J> that will first apply [f] to convert <J> to <I> before being
-    * passed through this parser.
-    */
    fun <J> contramap(f: (J) -> I): Parser<J, A, E> =
       Parser { parse(f(it)) }
 

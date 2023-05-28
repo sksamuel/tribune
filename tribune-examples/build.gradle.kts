@@ -28,7 +28,7 @@ kotlin {
 
       val commonMain by getting {
          dependencies {
-            api(projects.tribuneCore)
+            api(project(":tribune-core"))
          }
       }
 
