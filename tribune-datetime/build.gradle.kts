@@ -32,6 +32,7 @@ kotlin {
       val commonMain by getting {
          dependencies {
             api(projects.tribuneCore)
+            api(libs.arrow.core)
             implementation(libs.kotlinx.datetime)
          }
       }
