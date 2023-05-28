@@ -8,18 +8,18 @@ kotlin {
 
       val jvmMain by getting {
          dependencies {
-            api(project(":tribune-core"))
-            api(Ktor.server.core)
+            api(projects.tribuneCore)
+            api(libs.ktor.server.core)
          }
       }
 
       val jvmTest by getting {
          dependencies {
-            implementation("io.ktor:ktor-server-content-negotiation:_")
-            implementation("io.ktor:ktor-serialization-jackson:_")
-            implementation(Testing.kotest.assertions.core)
-            implementation(Testing.kotest.runner.junit5)
-            implementation(Ktor.server.testHost)
+            implementation(libs.ktor.server.content.negotiation)
+            implementation(libs.ktor.serialization.jackson)
+            implementation(libs.ktor.server.test.host)
+            implementation(libs.kotest.assertions.core)
+            implementation(libs.kotest.runner.junit5)
          }
       }
    }

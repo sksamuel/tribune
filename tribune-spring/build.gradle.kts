@@ -1,6 +1,6 @@
 plugins {
    kotlin("multiplatform")
-   id("org.springframework.boot") version "2.7.3"
+   id("org.springframework.boot")
 }
 
 apply(plugin = "io.spring.dependency-management")
@@ -19,16 +19,16 @@ kotlin {
 
       val jvmMain by getting {
          dependencies {
-            implementation(project(":tribune-core"))
-            implementation("org.springframework.boot:spring-boot-starter-web")
-            implementation(project(":tribune-examples-model"))
+            implementation(projects.tribuneCore)
+            implementation(projects.tribuneExamplesModel)
+            implementation(libs.spring.boot.starter.web)
          }
       }
 
       val jvmTest by getting {
          dependencies {
-            implementation(Testing.kotest.assertions.core)
-            implementation(Testing.kotest.runner.junit5)
+            implementation(libs.kotest.assertions.core)
+            implementation(libs.kotest.runner.junit5)
          }
       }
    }

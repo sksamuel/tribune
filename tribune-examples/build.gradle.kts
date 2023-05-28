@@ -2,8 +2,8 @@ plugins {
    id("java")
    kotlin("multiplatform")
    id("java-library")
-   id("org.springframework.boot") version "2.7.3"
-   kotlin("plugin.spring") version "1.7.10"
+   id("org.springframework.boot")
+   kotlin("plugin.spring") version "1.8.21"
 }
 
 apply(plugin = "io.spring.dependency-management")
@@ -18,7 +18,6 @@ kotlin {
       jvm {
          compilations.all {
             kotlinOptions {
-               freeCompilerArgs += listOf("-Xcontext-receivers")
                jvmTarget = "11"
             }
          }
@@ -35,16 +34,18 @@ kotlin {
 
       val jvmMain by getting {
          dependencies {
-            implementation(project(":tribune-ktor"))
-            implementation(Ktor.server.netty)
-            implementation(Ktor.client.cio)
-            api("io.ktor:ktor-serialization-jackson:_")
-            api("io.ktor:ktor-server-content-negotiation:_")
-            api("io.ktor:ktor-client-content-negotiation:_")
+            implementation(projects.tribuneKtor)
+            implementation(projects.tribuneSpring)
+            implementation(projects.tribuneExamplesModel)
 
-            implementation(project(":tribune-spring"))
-            implementation("org.springframework.boot:spring-boot-starter-web")
-            implementation(project(":tribune-examples-model"))
+            api(libs.ktor.server.core)
+            api(libs.ktor.server.netty)
+            api(libs.ktor.client.cio)
+            api(libs.ktor.serialization.jackson)
+            api(libs.ktor.server.content.negotiation)
+            api(libs.ktor.client.content.negotiation)
+
+            implementation(libs.spring.boot.starter.web)
          }
       }
 

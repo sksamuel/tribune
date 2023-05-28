@@ -14,7 +14,6 @@ kotlin {
       jvm {
          compilations.all {
             kotlinOptions {
-               freeCompilerArgs += listOf("-Xcontext-receivers")
                jvmTarget = "11"
             }
          }
@@ -25,14 +24,14 @@ kotlin {
 
       val jvmMain by getting {
          dependencies {
-            api(project(":tribune-core"))
+            api(projects.tribuneCore)
          }
       }
 
       val jvmTest by getting {
          dependencies {
-            implementation(Testing.kotest.assertions.core)
-            implementation(Testing.kotest.runner.junit5)
+            implementation(libs.kotest.assertions.core)
+            implementation(libs.kotest.runner.junit5)
          }
       }
 
