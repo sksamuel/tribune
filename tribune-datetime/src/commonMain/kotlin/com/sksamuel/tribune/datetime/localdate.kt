@@ -8,6 +8,8 @@ import kotlinx.datetime.LocalDate
 
 /**
  * Maps a [Parser] that returns a [String] to return a [LocalDate] if the input is an iso-standard local date.
+ *
+ * @param ifError invoked if the parsing fails
  */
 fun <I, E> Parser<I, String, E>.toLocalDate(
    ifError: (String, Throwable) -> E

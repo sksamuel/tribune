@@ -31,9 +31,9 @@ kotlin {
 
       val commonMain by getting {
          dependencies {
-            api(projects.tribuneCore)
+            api(project(":tribune-core"))
             api(libs.arrow.core)
-            implementation(libs.kotlinx.datetime)
+            api(libs.kotlinx.datetime)
          }
       }
 

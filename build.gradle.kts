@@ -6,7 +6,7 @@ buildscript {
 }
 
 plugins {
-   kotlin("multiplatform").version("1.8.21")
+   kotlin("multiplatform")
    id("java-library")
    id("maven-publish")
    signing
