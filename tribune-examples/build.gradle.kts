@@ -1,6 +1,5 @@
 plugins {
    id("java")
-   kotlin("multiplatform")
    id("java-library")
    id("org.springframework.boot") version "2.7.3"
    kotlin("plugin.spring") version "1.7.10"
@@ -8,22 +7,7 @@ plugins {
 
 apply(plugin = "io.spring.dependency-management")
 
-repositories {
-   mavenCentral()
-}
-
 kotlin {
-
-   targets {
-      jvm {
-         compilations.all {
-            kotlinOptions {
-               freeCompilerArgs += listOf("-Xcontext-receivers")
-               jvmTarget = "11"
-            }
-         }
-      }
-   }
 
    sourceSets {
 
@@ -51,22 +35,6 @@ kotlin {
       all {
          languageSettings.optIn("kotlin.OverloadResolutionByLambdaReturnType")
       }
-   }
-}
-
-tasks.named<Test>("jvmTest") {
-   useJUnitPlatform()
-   filter {
-      isFailOnNoMatchingTests = false
-   }
-   testLogging {
-      showExceptions = true
-      showStandardStreams = true
-      events = setOf(
-         org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED,
-         org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
-      )
-      exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
    }
 }
 

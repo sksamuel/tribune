@@ -1,9 +1,5 @@
 kotlin {
 
-   targets {
-      jvm()
-   }
-
    sourceSets {
 
       val jvmMain by getting {
