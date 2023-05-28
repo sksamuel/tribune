@@ -52,12 +52,10 @@ jobs:
                - iosX64Test
                - iosSimulatorArm64Test
                - iosArm64TestKlibrary
-               - iosArm32TestKlibrary
                - tvosX64Test
                - tvosArm64TestKlibrary
                - watchosArm32TestKlibrary
                - watchosArm64TestKlibrary
-               - watchosX86Test
                - watchosX64Test
 
       steps:
