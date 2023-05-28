@@ -19,11 +19,13 @@ kotlin {
 
       watchosArm32()
       watchosArm64()
+      watchosX86()
       watchosX64()
       watchosSimulatorArm64()
 
       iosX64()
       iosArm64()
+      iosArm32()
       iosSimulatorArm64()
    }
 
@@ -31,16 +33,15 @@ kotlin {
 
       val commonMain by getting {
          dependencies {
-            api(projects.tribuneCore)
-            api(libs.arrow.core)
-            implementation(libs.kotlinx.datetime)
+            api(project(":tribune-core"))
+            implementation(KotlinX.datetime)
          }
       }
 
       val jvmTest by getting {
          dependencies {
-            implementation(libs.kotest.assertions.core)
-            implementation(libs.kotest.runner.junit5)
+            implementation(Testing.kotest.assertions.core)
+            implementation(Testing.kotest.runner.junit5)
          }
       }
 
