@@ -1,11 +1,9 @@
 plugins {
    id("java")
    id("java-library")
-   id("org.springframework.boot") version "2.7.3"
+   id("org.springframework.boot")
    kotlin("plugin.spring") version "1.7.10"
 }
-
-apply(plugin = "io.spring.dependency-management")
 
 kotlin {
 
@@ -20,15 +18,14 @@ kotlin {
       val jvmMain by getting {
          dependencies {
             api(projects.tribuneKtor)
-            implementation(Ktor.server.netty)
-            implementation(Ktor.client.cio)
-            api("io.ktor:ktor-serialization-jackson:_")
-            api("io.ktor:ktor-server-content-negotiation:_")
-            api("io.ktor:ktor-client-content-negotiation:_")
-
-            implementation(project(":tribune-spring"))
-            implementation("org.springframework.boot:spring-boot-starter-web")
-            implementation(project(":tribune-examples-model"))
+            api(projects.tribuneSpring)
+            api(projects.tribuneExamplesModel)
+            api(libs.ktor.server.netty)
+            api(libs.ktor.server.content.negotiation)
+            api(libs.ktor.serialization.jackson)
+            api(libs.ktor.client.content.negotiation)
+            api(libs.ktor.client.cio)
+            api(libs.spring.boot.starter.web)
          }
       }
 

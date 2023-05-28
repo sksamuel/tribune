@@ -38,8 +38,8 @@ kotlin {
 
       val jvmTest by getting {
          dependencies {
-            implementation(Testing.kotest.assertions.core)
-            implementation(Testing.kotest.runner.junit5)
+            implementation(libs.kotest.assertions.core)
+            implementation(libs.kotest.runner.junit5)
          }
       }
 
