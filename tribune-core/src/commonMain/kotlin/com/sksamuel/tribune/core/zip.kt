@@ -1,10 +1,12 @@
 package com.sksamuel.tribune.core
 
+import arrow.core.Tuple10
 import arrow.core.Tuple4
 import arrow.core.Tuple5
 import arrow.core.Tuple6
 import arrow.core.Tuple7
 import arrow.core.Tuple8
+import arrow.core.Tuple9
 import arrow.core.zip
 
 fun <INPUT, A, B, ERROR> Parser.Companion.zip(
@@ -103,5 +105,57 @@ fun <INPUT, A, B, C, D, E, F, G, H, ERROR> Parser.Companion.zip(
       p8.parse(input),
    ) { a, b, c, d, e, f, g, h ->
       Tuple8(a, b, c, d, e, f, g, h)
+   }
+}
+
+fun <INPUT, A, B, C, D, E, F, G, H, I, ERROR> Parser.Companion.zip(
+   p1: Parser<INPUT, A, ERROR>,
+   p2: Parser<INPUT, B, ERROR>,
+   p3: Parser<INPUT, C, ERROR>,
+   p4: Parser<INPUT, D, ERROR>,
+   p5: Parser<INPUT, E, ERROR>,
+   p6: Parser<INPUT, F, ERROR>,
+   p7: Parser<INPUT, G, ERROR>,
+   p8: Parser<INPUT, H, ERROR>,
+   p9: Parser<INPUT, I, ERROR>,
+): Parser<INPUT, Tuple9<A, B, C, D, E, F, G, H, I>, ERROR> = Parser { input ->
+   p1.parse(input).zip(
+      p2.parse(input),
+      p3.parse(input),
+      p4.parse(input),
+      p5.parse(input),
+      p6.parse(input),
+      p7.parse(input),
+      p8.parse(input),
+      p9.parse(input),
+   ) { a, b, c, d, e, f, g, h, i ->
+      Tuple9(a, b, c, d, e, f, g, h, i)
+   }
+}
+
+fun <INPUT, A, B, C, D, E, F, G, H, I, J, ERROR> Parser.Companion.zip(
+   p1: Parser<INPUT, A, ERROR>,
+   p2: Parser<INPUT, B, ERROR>,
+   p3: Parser<INPUT, C, ERROR>,
+   p4: Parser<INPUT, D, ERROR>,
+   p5: Parser<INPUT, E, ERROR>,
+   p6: Parser<INPUT, F, ERROR>,
+   p7: Parser<INPUT, G, ERROR>,
+   p8: Parser<INPUT, H, ERROR>,
+   p9: Parser<INPUT, I, ERROR>,
+   p10: Parser<INPUT, J, ERROR>,
+): Parser<INPUT, Tuple10<A, B, C, D, E, F, G, H, I, J>, ERROR> = Parser { input ->
+   p1.parse(input).zip(
+      p2.parse(input),
+      p3.parse(input),
+      p4.parse(input),
+      p5.parse(input),
+      p6.parse(input),
+      p7.parse(input),
+      p8.parse(input),
+      p9.parse(input),
+      p10.parse(input),
+   ) { a, b, c, d, e, f, g, h, i, j ->
+      Tuple10(a, b, c, d, e, f, g, h, i, j)
    }
 }
