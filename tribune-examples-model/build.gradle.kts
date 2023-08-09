@@ -1,22 +1,5 @@
-kotlin {
-
-   sourceSets {
-
-      val jvmMain by getting {
-         dependencies {
-            api(projects.tribuneCore)
-         }
-      }
-
-      val jvmTest by getting {
-         dependencies {
-            implementation(libs.kotest.assertions.core)
-            implementation(libs.kotest.runner.junit5)
-         }
-      }
-
-      all {
-         languageSettings.optIn("kotlin.OverloadResolutionByLambdaReturnType")
-      }
-   }
+dependencies {
+   api(projects.tribuneCore)
+   testImplementation(libs.kotest.assertions.core)
+   testImplementation(libs.kotest.runner.junit5)
 }

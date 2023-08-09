@@ -1,33 +1,9 @@
-kotlin {
-
-   targets {
-      jvm()
-      js(IR) {
-         browser()
-         nodejs()
-      }
-   }
-
-   sourceSets {
-
-      val commonMain by getting {
-         dependencies {
-            api(projects.tribuneCore)
-            implementation(libs.kotlinx.datetime)
-         }
-      }
-
-      val jvmTest by getting {
-         dependencies {
-            implementation(libs.kotest.assertions.core)
-            implementation(libs.kotest.runner.junit5)
-         }
-      }
-
-      all {
-         languageSettings.optIn("kotlin.OverloadResolutionByLambdaReturnType")
-      }
-   }
+dependencies {
+   api(projects.tribuneCore)
+   api(libs.arrow.core)
+   implementation(libs.kotlinx.datetime)
+   implementation(libs.kotest.assertions.core)
+   implementation(libs.kotest.runner.junit5)
 }
 
 apply(from = "../publish-mpp.gradle.kts")

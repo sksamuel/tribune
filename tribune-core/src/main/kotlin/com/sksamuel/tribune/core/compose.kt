@@ -1,6 +1,5 @@
 package com.sksamuel.tribune.core
 
-
 fun <INPUT, OUTPUT, A, B, ERROR> Parser.Companion.compose(
    p1: Parser<INPUT, A, ERROR>,
    p2: Parser<INPUT, B, ERROR>,

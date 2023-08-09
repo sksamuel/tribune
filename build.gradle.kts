@@ -6,7 +6,7 @@ buildscript {
 }
 
 plugins {
-   kotlin("multiplatform").version("1.7.21")
+   kotlin("jvm").version("1.7.21")
    id("java-library")
    id("maven-publish")
    signing
@@ -21,13 +21,7 @@ allprojects {
    group = "com.sksamuel.tribune"
    version = Ci.publishVersion
 
-   apply(plugin = "org.jetbrains.kotlin.multiplatform")
-
-   kotlin {
-      targets {
-         jvm()
-      }
-   }
+   apply(plugin = "org.jetbrains.kotlin.jvm")
 
    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
       kotlinOptions {
@@ -37,7 +31,7 @@ allprojects {
       }
    }
 
-   tasks.named<Test>("jvmTest") {
+   tasks.withType<Test> {
       useJUnitPlatform()
       filter {
          isFailOnNoMatchingTests = false

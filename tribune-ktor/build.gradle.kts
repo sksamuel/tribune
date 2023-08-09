@@ -1,24 +1,11 @@
-kotlin {
-
-   sourceSets {
-
-      val jvmMain by getting {
-         dependencies {
-            api(projects.tribuneCore)
-            api(libs.ktor.server.core)
-         }
-      }
-
-      val jvmTest by getting {
-         dependencies {
-            implementation(libs.ktor.server.content.negotiation)
-            implementation(libs.ktor.serialization.jackson)
-            implementation(libs.ktor.server.test.host)
-            implementation(libs.kotest.assertions.core)
-            implementation(libs.kotest.runner.junit5)
-         }
-      }
-   }
+dependencies {
+   api(projects.tribuneCore)
+   api(libs.ktor.server.core)
+   testImplementation(libs.ktor.server.content.negotiation)
+   testImplementation(libs.ktor.serialization.jackson)
+   testImplementation(libs.ktor.server.test.host)
+   testImplementation(libs.kotest.assertions.core)
+   testImplementation(libs.kotest.runner.junit5)
 }
 
 apply(from = "../publish-mpp.gradle.kts")
