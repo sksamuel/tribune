@@ -7,25 +7,6 @@ kotlin {
          browser()
          nodejs()
       }
-
-      linuxX64()
-
-      mingwX64()
-
-      macosX64()
-      macosArm64()
-
-      tvos()
-      tvosSimulatorArm64()
-
-      watchosArm32()
-      watchosArm64()
-      watchosX64()
-      watchosSimulatorArm64()
-
-      iosX64()
-      iosArm64()
-      iosSimulatorArm64()
    }
 
    sourceSets {
