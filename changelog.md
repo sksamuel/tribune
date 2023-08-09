@@ -4,6 +4,7 @@ Changelog
 ### 1.3.0
 
 * Released support (and min version) for Kotlin 1.8.x
+* Added arity-9 and 10 for compose.
 
 ### 1.2.4
 
