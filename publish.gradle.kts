@@ -1,3 +1,5 @@
+apply(plugin = "java")
+apply(plugin = "java-library")
 apply(plugin = "maven-publish")
 apply(plugin = "signing")
 
@@ -5,8 +7,6 @@ repositories {
    mavenCentral()
 }
 
-val ossrhUsername: String by project
-val ossrhPassword: String by project
 val signingKey: String? by project
 val signingPassword: String? by project
 
@@ -15,6 +15,10 @@ fun Project.publishing(action: PublishingExtension.() -> Unit) =
 
 fun Project.signing(configure: SigningExtension.() -> Unit): Unit =
    configure(configure)
+
+fun Project.java(configure: JavaPluginExtension.() -> Unit): Unit =
+   configure(configure)
+
 
 val publications: PublicationContainer = (extensions.getByName("publishing") as PublishingExtension).publications
 
@@ -29,6 +33,11 @@ signing {
    }
 }
 
+java {
+   withJavadocJar()
+   withSourcesJar()
+}
+
 publishing {
    repositories {
       maven {
@@ -37,14 +46,15 @@ publishing {
          name = "deploy"
          url = if (Ci.isRelease) releasesRepoUrl else snapshotsRepoUrl
          credentials {
-            username = java.lang.System.getenv("OSSRH_USERNAME") ?: ossrhUsername
-            password = java.lang.System.getenv("OSSRH_PASSWORD") ?: ossrhPassword
+            username = java.lang.System.getenv("OSSRH_USERNAME") ?: ""
+            password = java.lang.System.getenv("OSSRH_PASSWORD") ?: ""
          }
       }
    }
 
-   publications.withType<MavenPublication>().forEach {
-      it.apply {
+   publications {
+      register("mavenJava", MavenPublication::class) {
+         from(components["java"])
          pom {
             name.set("tribune")
             description.set("Multiplatform Kotlin Validation")

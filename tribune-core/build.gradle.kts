@@ -4,4 +4,4 @@ dependencies {
    testImplementation(libs.kotest.runner.junit5)
 }
 
-apply(from = "../publish-mpp.gradle.kts")
+apply(from = "../publish.gradle.kts")
