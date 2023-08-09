@@ -32,7 +32,8 @@ fun interface Parser<in I, out A, out E> {
        */
       fun <I> from() = invoke<I>()
 
-      fun fromNullableString() = from<String?>()
+      @Deprecated("use Parsers.nullableString", ReplaceWith("Parsers.nullableString"))
+      fun fromNullableString(): Parser<String?, String?, Nothing> = Parsers.nullableString
    }
 
    fun parse(input: I): Validated<NonEmptyList<E>, A>

@@ -3,12 +3,13 @@ package com.sksamuel.tribune.core.strings
 import arrow.core.invalidNel
 import arrow.core.validNel
 import com.sksamuel.tribune.core.Parser
+import com.sksamuel.tribune.core.Parsers
 import com.sksamuel.tribune.core.filter
 import com.sksamuel.tribune.core.flatMap
 import com.sksamuel.tribune.core.map
 
-fun <E> Parser.Companion.nonBlankString(ifError: () -> E): Parser<String?, String, E> =
-   from<String?>().notNullOrBlank(ifError)
+@Deprecated("use Parsers.nonBlankString(ifError)", ReplaceWith("Parsers.nonBlankString(ifError)", "com.sksamuel.tribune.core.Parsers"))
+fun <E> Parser.Companion.nonBlankString(ifError: () -> E): Parser<String?, String, E> = Parsers.nonBlankString(ifError)
 
 /**
  * Modifies the output of a String producing [Parser] by trimming the output string
