@@ -1,6 +1,5 @@
 package com.sksamuel.tribune.core.collections
 
-import arrow.core.right
 import com.sksamuel.tribune.core.Parser
 import com.sksamuel.tribune.core.map
 import com.sksamuel.tribune.core.strings.minlen
