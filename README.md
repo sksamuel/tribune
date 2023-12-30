@@ -4,8 +4,7 @@ Tribune
 _parse don't validate_ for Kotlin.
 
 Inspired by [this blog post by Alexis King](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/),
-Tribune is a multiplatform Kotlin
-library that builds on [Arrow](https://arrow-kt.io/) to provide a toolset for creating simple parsers from raw _input_ types, to properly
+Tribune is a Kotlin library for the JVM that builds on [Arrow](https://arrow-kt.io/) to provide a toolset for creating simple parsers from raw _input_ types, to properly
 validated _parsed_ types.
 
 [![master](https://github.com/sksamuel/tribune/actions/workflows/master.yml/badge.svg)](https://github.com/sksamuel/tribune/actions/workflows/master.yml)
