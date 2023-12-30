@@ -42,7 +42,7 @@ fun <I, A, E> Parser<I, A?, E>.notNull(ifNull: () -> E): Parser<I, A, E> =
    Parser { input: I -> this@notNull.parse(input).flatMap { it?.right() ?: ifNull().leftNel() } }
 
 /**
- * Maps a [Parser] to never fail, by replacing any failing values with null.
+ * Transforms a [Parser] to never fail, by replacing any failing values with null.
  */
 fun <I, A, E> Parser<I, A, E>.failAsNull(): Parser<I, A?, Nothing> =
    Parser { input: I -> this@failAsNull.parse(input).fold({ Either.Right(null) }, { it.right() }) }
