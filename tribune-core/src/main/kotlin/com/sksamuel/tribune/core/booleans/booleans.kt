@@ -10,7 +10,7 @@ import com.sksamuel.tribune.core.map
  * Transforms a String producing [Parser] into a Boolean producing Parser,
  * by converting the String to a Boolean using the library function [toBoolean].
  */
-fun <I, E> Parser<I, String, E>.toBoolean(): Parser<I, Boolean, E> =
+fun <I, E> Parser<I, String, E>.boolean(): Parser<I, Boolean, E> =
    flatMap {
       val b = it.toBoolean()
       b.right()
@@ -20,7 +20,7 @@ fun <I, E> Parser<I, String, E>.toBoolean(): Parser<I, Boolean, E> =
  * Transforms a String producing [Parser] into a Boolean producing Parser,
  * by converting the String to a Boolean using the library function [toBooleanStrict].
  */
-fun <I, E> Parser<I, String, E>.toBooleanStrict(ifError: (String) -> E): Parser<I, Boolean, E> =
+fun <I, E> Parser<I, String, E>.booleanStrict(ifError: (String) -> E): Parser<I, Boolean, E> =
    flatMap { input ->
       runCatching { input.toBooleanStrict() }.fold({ it.right() }, { ifError(input).leftNel() })
    }
@@ -29,5 +29,5 @@ fun <I, E> Parser<I, String, E>.toBooleanStrict(ifError: (String) -> E): Parser<
  * Transforms a nullable String producing [Parser] into a nullable Boolean producing Parser,
  * by converting the String to a Boolean using the library function [toBooleanStrictOrNull].
  */
-fun <I, E> Parser<I, String, E>.toBooleanStrictOrNull(): Parser<I, Boolean?, E> =
+fun <I, E> Parser<I, String, E>.booleanStrictOrNull(): Parser<I, Boolean?, E> =
    map { it.toBooleanStrictOrNull() }
