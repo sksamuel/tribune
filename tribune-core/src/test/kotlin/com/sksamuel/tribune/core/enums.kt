@@ -9,7 +9,7 @@ import io.kotest.matchers.shouldBe
 class EnumTest : FunSpec() {
 
    enum class EnumUnderTest {
-      A, B, C
+      A
    }
 
    init {
