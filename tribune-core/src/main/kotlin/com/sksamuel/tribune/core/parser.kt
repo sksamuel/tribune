@@ -39,6 +39,11 @@ fun interface Parser<in I, out O, out E> {
    fun parse(input: I): EitherNel<E, O>
 
    /**
+    * Parses the given [input], returning a successful result, or null in the case of an error.
+    */
+   fun parseOrNull(input: I): O? = parse(input).getOrNull()
+
+   /**
     * Returns a new Parser<J> that wraps this parser, by using the supplied function [f]
     * to convert a given [J] into an [I].
     */
