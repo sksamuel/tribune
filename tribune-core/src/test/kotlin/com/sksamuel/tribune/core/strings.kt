@@ -1,5 +1,6 @@
 package com.sksamuel.tribune.core
 
+import arrow.core.Either
 import arrow.core.leftNel
 import arrow.core.right
 import com.sksamuel.tribune.core.strings.length
@@ -35,11 +36,26 @@ class StringTest : FunSpec() {
          p.parse("abcd") shouldBe Foo("abcd").right()
       }
 
+      test("min length or null") {
+         val p = Parser<String?>().minlen(4) { "too short" }.mapIfNotNull { Foo(it) }
+         p.parse("abc") shouldBe "too short".leftNel()
+         p.parse("abcd") shouldBe Foo("abcd").right()
+         p.parse(null) shouldBe Either.Right(null)
+      }
+
       test("max length") {
-         val p = Parser<String>().maxlen(4) { "too long" }.map { Foo(it) }
+         val p = Parser<String>().maxlen(4) { "too long" }.notNull { "not null" }.map { Foo(it) }
          p.parse("abcde") shouldBe "too long".leftNel()
          p.parse("abcd") shouldBe Foo("abcd").right()
          p.parse("abc") shouldBe Foo("abc").right()
+      }
+
+      test("max length on nullable string") {
+         val p = Parser<String?>().maxlen(4) { "too long" }.mapIfNotNull { Foo(it) }
+         p.parse("abcde") shouldBe "too long".leftNel()
+         p.parse("abcd") shouldBe Foo("abcd").right()
+         p.parse("abc") shouldBe Foo("abc").right()
+         p.parse(null) shouldBe Either.Right(null)
       }
 
       test("length") {
