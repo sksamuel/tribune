@@ -5,14 +5,29 @@ import arrow.core.leftNel
 import arrow.core.right
 import com.sksamuel.tribune.core.Parser
 import com.sksamuel.tribune.core.flatMap
+import kotlin.reflect.KClass
 
 /**
  * Wraps a [Parser] that produces Strings to one that produces a value of a given enum.
  * If the String is not a valid enum value, then an error is produced using [ifError].
  */
-inline fun <I, E, reified ENUM : Enum<ENUM>> Parser<I, String, E>.enum(crossinline ifError: (String) -> E): Parser<I, ENUM, E> {
+inline fun <I, reified ENUM : Enum<ENUM>, E> Parser<I, String, E>.enum(noinline ifError: (String) -> E): Parser<I, ENUM, E> {
+   val kclass: KClass<ENUM> = ENUM::class
+   return enum(kclass, ifError)
+}
+
+/**
+ * Wraps a [Parser] that produces Strings to one that produces a value of a given enum.
+ * If the String is not a valid enum value, then an error is produced using [ifError].
+ *
+ * @param enumClass the KClass corresponding to the enum type.
+ */
+fun <I, T : Enum<T>, E> Parser<I, String, E>.enum(
+   enumClass: KClass<T>,
+   ifError: (String) -> E,
+): Parser<I, T, E> {
    return flatMap { symbol ->
-      runCatching { enumValueOf<ENUM>(symbol) }
+      runCatching { enumClass.java.enumConstants.first { it.name == symbol } }
          .fold({ it.right() }, { ifError(symbol).leftNel() })
    }
 }
@@ -22,10 +37,25 @@ inline fun <I, E, reified ENUM : Enum<ENUM>> Parser<I, String, E>.enum(crossinli
  * If the String is not a valid enum value, then an error is produced using [ifError].
  * If the String is null, then null is produced.
  */
-inline fun <I, E, reified ENUM : Enum<ENUM>> Parser<I, String?, E>.enum(crossinline ifError: (String) -> E): Parser<I, ENUM?, E> {
+@JvmName("enumOrNull")
+inline fun <I, reified ENUM : Enum<ENUM>, E> Parser<I, String?, E>.enum(noinline ifError: (String) -> E): Parser<I, ENUM?, E> {
+   val kclass: KClass<ENUM> = ENUM::class
+   return enum(kclass, ifError)
+}
+
+/**
+ * Wraps a [Parser] that produces nullable Strings to one that produces nullable enums.
+ * If the String is not a valid enum value, then an error is produced using [ifError].
+ * If the String is null, then null is produced.
+ */
+@JvmName("enumOrNull")
+fun <I, T : Enum<T>, E> Parser<I, String?, E>.enum(
+   enumClass: KClass<T>,
+   ifError: (String) -> E
+): Parser<I, T?, E> {
    return flatMap { symbol ->
       if (symbol == null) Either.Right(null)
-      else runCatching { enumValueOf<ENUM>(symbol) }
+      else runCatching { enumClass.java.enumConstants.first { it.name == symbol } }
          .fold({ it.right() }, { ifError(symbol).leftNel() })
    }
 }
