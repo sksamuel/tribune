@@ -5,6 +5,7 @@ import arrow.core.leftNel
 import arrow.core.right
 import com.sksamuel.tribune.core.strings.minlen
 import com.sksamuel.tribune.core.strings.notBlank
+import com.sksamuel.tribune.core.strings.notNullOrBlank
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
@@ -82,7 +83,7 @@ class ValidatedTest : FunSpec() {
 
          val nameParser: Parser<UpdateRequest, ValidName, String> = Parser<UpdateRequest>()
             .map { it.name }
-            .notBlank { "Name cannot be blank" }
+            .notNullOrBlank { "Name cannot be blank" }
             .minlen(6) { "Name must have 6 characters" }
             .map { ValidName(it) }
 
