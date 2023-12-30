@@ -9,6 +9,16 @@ Changelog
 * Moved some parsers to new packages.
 * Removed all previously deprecated functions.
 * Added variants of string parsers to work on nullable strings.
+* Added variants of int parsers to work on nullable ints.
+* Added variants of long parsers to work on nullable longs.
+* Added `nullIf` to convert a value to a null using a supplied predicate.
+* Added `filterNulls()` on `Set` and `List` parsers to remove any elements that are null.
+* Added improved enum syntax.
+* Improved boolean parsers.
+* Added `map` parsers for keys and values.
+* Added `nullable()` to convert Parser of `I -> A` to `I? -> A?`
+* Added more convenience builders to `Parsers`.
+* Added `parseOrNull` as a convenience to return a success or null in the case of failure for any given input.
 
 ### 1.3.0
 
