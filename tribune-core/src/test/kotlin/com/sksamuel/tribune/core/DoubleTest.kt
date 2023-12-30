@@ -28,7 +28,7 @@ class DoubleTest : FunSpec() {
       }
 
       test("parser should support doubles with nullable pass through") {
-         val p = Parser<String>().double { "not a double" }.allowNulls()
+         val p = Parser<String>().double { "not a double" }.nullable()
          p.parse("123.45").getOrNull() shouldBe 123.45
          p.parse(null).getOrNull() shouldBe null
       }
