@@ -76,9 +76,21 @@ class StringTest : FunSpec() {
          p.parse("abcd") shouldBe Foo("ABCD").right()
       }
 
+      test("uppercaseOrNull") {
+         val p = Parser<String?>().toUppercase().mapIfNotNull { Foo(it) }
+         p.parse("abcd") shouldBe Foo("ABCD").right()
+         p.parse(null) shouldBe Either.Right(null)
+      }
+
       test("lowercase") {
          val p = Parser<String>().toLowercase().map { Foo(it) }
          p.parse("ABCD") shouldBe Foo("abcd").right()
+      }
+
+      test("lowercase or null") {
+         val p = Parser<String?>().toLowercase().mapIfNotNull { Foo(it) }
+         p.parse("ABCD") shouldBe Foo("abcd").right()
+         p.parse(null) shouldBe Either.Right(null)
       }
 
       test("strip") {
