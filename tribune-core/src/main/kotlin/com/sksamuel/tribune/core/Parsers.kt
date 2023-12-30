@@ -25,12 +25,14 @@ object Parsers {
    /**
     * An identity [Parser] for nullable doubles.
     */
-   val nullableDouble : Parser<Double?, Double?, Nothing> = Parser()
+   val nullableDouble: Parser<Double?, Double?, Nothing> = Parser()
 
    /**
     * An identity [Parser] for nullable floats.
     */
-   val nullableFloat : Parser<Double?, Double?, Nothing> = Parser()
+   val nullableFloat: Parser<Double?, Double?, Nothing> = Parser()
+
+   fun <K, V> mapOf() = Parser<Map<K, V>>()
 
    /**
     * A [Parser] for nullable types, which returns the input if not null, or an error if null.
