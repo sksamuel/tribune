@@ -6,7 +6,6 @@ import arrow.core.right
 import com.sksamuel.tribune.core.Parser
 import com.sksamuel.tribune.core.filter
 import com.sksamuel.tribune.core.flatMap
-import com.sksamuel.tribune.core.map
 
 /**
  * Chains a [Parser] to convert String -> Int.
@@ -61,10 +60,3 @@ fun <I, E> Parser<I, Int?, E>.max(min: Int, ifError: (Int) -> E): Parser<I, Int?
    flatMap {
       if (it == null) Either.Right(null) else if (it >= min) it.right() else ifError(it).leftNel()
    }
-
-fun <I, E> Parser<I, Int, E>.nullIf(fn: (Int) -> Boolean): Parser<I, Int?, E> =
-   this.map { if (fn(it)) null else it }
-
-@JvmName("nullIfNullable")
-fun <I, E> Parser<I, Int?, E>.nullIf(fn: (Int) -> Boolean): Parser<I, Int?, E> =
-   this.map { if (it == null || fn(it)) null else it }

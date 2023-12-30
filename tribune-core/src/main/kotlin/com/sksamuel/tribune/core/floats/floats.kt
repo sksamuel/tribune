@@ -4,7 +4,6 @@ import arrow.core.leftNel
 import arrow.core.right
 import com.sksamuel.tribune.core.Parser
 import com.sksamuel.tribune.core.flatMap
-import com.sksamuel.tribune.core.map
 
 /**
  * Extends a [Parser] of output type string to parse that string into a double.
@@ -19,10 +18,3 @@ fun <I, E> Parser<I, String, E>.float(ifError: (String) -> E): Parser<I, Float, 
       val f = it.toFloatOrNull()
       f?.right() ?: ifError(it).leftNel()
    }
-
-fun <I, E> Parser<I, Float, E>.nullIf(fn: (Float) -> Boolean): Parser<I, Float?, E> =
-   this.map { if (fn(it)) null else it }
-
-@JvmName("nullIfNullable")
-fun <I, E> Parser<I, Float?, E>.nullIf(fn: (Float) -> Boolean): Parser<I, Float?, E> =
-   this.map { if (it == null || fn(it)) null else it }

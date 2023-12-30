@@ -3,7 +3,6 @@ package com.sksamuel.tribune.core
 import arrow.core.Either
 import arrow.core.leftNel
 import arrow.core.right
-import com.sksamuel.tribune.core.strings.nullIf
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
@@ -13,6 +12,19 @@ class NullTest : FunSpec() {
       test("withDefault on I -> A?") {
          val p = Parser<String>().nullIf { true }.withDefault { "wibble" }
          p.parse("abc") shouldBe "wibble".right()
+      }
+
+      test("nullIf on O -> A?") {
+         val p = Parser<String>().nullIf { "foo" == it }
+         p.parse("foo") shouldBe null.right()
+         p.parse("bar") shouldBe "bar".right()
+      }
+
+      test("nullIf on O? -> A?") {
+         val p = Parser<String?>().nullIf { "foo" == it }
+         p.parse(null) shouldBe null.right()
+         p.parse("foo") shouldBe null.right()
+         p.parse("bar") shouldBe "bar".right()
       }
 
       test("withDefault on I? -> A?") {

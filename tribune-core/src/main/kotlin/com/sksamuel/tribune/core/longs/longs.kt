@@ -47,10 +47,3 @@ fun <I, E> Parser<I, Long?, E>.max(min: Long, ifError: (Long) -> E): Parser<I, L
    flatMap {
       if (it == null) Either.Right(null) else if (it >= min) it.right() else ifError(it).leftNel()
    }
-
-fun <I, E> Parser<I, Long, E>.nullIf(fn: (Long) -> Boolean): Parser<I, Long?, E> =
-   this.map { if (fn(it)) null else it }
-
-@JvmName("nullIfNullable")
-fun <I, E> Parser<I, Long?, E>.nullIf(fn: (Long) -> Boolean): Parser<I, Long?, E> =
-   this.map { if (it == null || fn(it)) null else it }

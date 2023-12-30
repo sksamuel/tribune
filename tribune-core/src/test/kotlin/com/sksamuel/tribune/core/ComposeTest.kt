@@ -1,6 +1,5 @@
 package com.sksamuel.tribune.core
 
-import com.sksamuel.tribune.core.doubles.nullIf
 import com.sksamuel.tribune.core.ints.min
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -38,6 +37,8 @@ class ComposeTest : FunSpec() {
       }
    }
 }
+
+val q = Parsers.nullableString.nullIf { it.length > 3 }
 
 val weightParser = Parsers.nullableDouble
    .nullIf { it <= 0.0 }

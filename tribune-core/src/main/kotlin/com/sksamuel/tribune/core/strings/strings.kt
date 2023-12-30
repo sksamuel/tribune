@@ -77,10 +77,3 @@ fun <I, E> Parser<I, String?, E>.nullOrNotBlank(ifBlank: () -> E): Parser<I, Str
       if (it == null) null.right() else if (it.isBlank()) ifBlank().leftNel() else it.right()
    }
 }
-
-fun <I, E> Parser<I, String, E>.nullIf(fn: (String) -> Boolean): Parser<I, String?, E> =
-   this.map { if (fn(it)) null else it }
-
-@JvmName("nullIfNullable")
-fun <I, E> Parser<I, String?, E>.nullIf(fn: (String) -> Boolean): Parser<I, String?, E> =
-   this.map { if (it == null || fn(it)) null else it }
