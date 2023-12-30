@@ -6,7 +6,7 @@ import arrow.core.leftNel
 import arrow.core.right
 
 /**
- * Maps a [Parser] that produces a nullable output, to one that produces a non-nullable
+ * Maps a nullable producing [Parser] to one that produces a non-nullable
  * output, by replacing any nulls with the result of the given function [ifNull].
  *
  * @param ifNull the default generating function
@@ -19,13 +19,13 @@ fun <I, A, E> Parser<I, A?, E>.withDefault(ifNull: () -> A): Parser<I, A, E> =
    }
 
 /**
- * Widens an existing non-nullable [Parser] I => A to accept null inputs, I? => A?
+ * Maps an existing non-nullable [Parser] I => A to accept null inputs I? => A?
  */
 fun <I, A, E> Parser<I, A, E>.allowNulls(): Parser<I?, A?, E> =
    Parser { input -> if (input == null) Either.Right(null) else this@allowNulls.parse(input) }
 
 /**
- * Composes an existing nullable producing [Parser] to return an error if the output is null, or
+ * Maps a nullable producing [Parser] to return an error if the output is null, or
  * a success otherwise.
  *
  * @param ifNull the error generating function
@@ -36,7 +36,7 @@ fun <I, A, E> Parser<I, A?, E>.notNull(ifNull: () -> E): Parser<I, A, E> =
    Parser { input: I -> this@notNull.parse(input).flatMap { it?.right() ?: ifNull().leftNel() } }
 
 /**
- * Composes this [Parser] to never fail, by replacing any failing values with null.
+ * Maps a [Parser] to never fail, by replacing any failing values with null.
  */
 fun <I, A, E> Parser<I, A, E>.failAsNull(): Parser<I, A?, Nothing> =
    Parser { input: I -> this@failAsNull.parse(input).fold({ Either.Right(null) }, { it.right() }) }

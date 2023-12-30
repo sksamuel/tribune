@@ -18,7 +18,7 @@ class DoubleTest : FunSpec() {
 
       test("parser should support converting to doubles from strings") {
          val p = Parser<String>().double { "not a double" }.map { Width(it) }
-         p.parse("foo").getOrNull() shouldBe listOf("not a double")
+         p.parse("foo").leftOrNull() shouldBe listOf("not a double")
          p.parse("123.45").getOrNull() shouldBe Width(123.45)
       }
 
@@ -31,7 +31,7 @@ class DoubleTest : FunSpec() {
       test("parser should support doubles with nullable failure message") {
          val p = Parser<String?>().notNull { "cannot be null" }.double { "not a double" }
          p.parse("123.45").getOrNull() shouldBe 123.45
-         p.parse(null).getOrNull() shouldBe listOf("cannot be null")
+         p.parse(null).leftOrNull() shouldBe listOf("cannot be null")
       }
 
       test("non neg") {

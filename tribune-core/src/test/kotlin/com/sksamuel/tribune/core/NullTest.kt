@@ -3,7 +3,6 @@ package com.sksamuel.tribune.core
 import arrow.core.Either
 import arrow.core.leftNel
 import arrow.core.right
-import arrow.core.validNel
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
@@ -24,7 +23,7 @@ class NullTest : FunSpec() {
 
       test("not null") {
          val p = Parser<String?>().notNull { "null not allowed" }
-         p.parse("abc") shouldBe "abc".validNel()
+         p.parse("abc") shouldBe "abc".right()
          p.parse(null) shouldBe "null not allowed".leftNel()
       }
 

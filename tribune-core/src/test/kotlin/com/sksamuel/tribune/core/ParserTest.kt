@@ -1,9 +1,8 @@
 package com.sksamuel.tribune.core
 
 import arrow.core.EitherNel
-import arrow.core.Validated
-import arrow.core.invalidNel
-import arrow.core.validNel
+import arrow.core.leftNel
+import arrow.core.right
 import com.sksamuel.tribune.core.strings.minlen
 import com.sksamuel.tribune.core.strings.notBlank
 import io.kotest.core.spec.style.FunSpec
@@ -19,14 +18,14 @@ class ValidatedTest : FunSpec() {
    init {
 
       test("parsing strings to domain object") {
-         Parser<String>().parse("input").map { Foo("input") } shouldBe Foo("input").validNel()
+         Parser<String>().parse("input").map { Foo("input") } shouldBe Foo("input").right()
       }
 
       test("parsing non blank strings to domain object") {
          Parser<String>()
             .notBlank { "cannot be blank" }
             .map { Foo("input") }
-            .parse("    ") shouldBe "cannot be blank".invalidNel()
+            .parse("    ") shouldBe "cannot be blank".leftNel()
       }
 
       test("parser should support default") {
@@ -45,35 +44,35 @@ class ValidatedTest : FunSpec() {
 
       test("parser should support booleans") {
          val p = Parser<String>().boolean { "not a boolean" }
-         p.parse("foo").getOrNull() shouldBe listOf("not a boolean")
+         p.parse("foo").leftOrNull() shouldBe listOf("not a boolean")
          p.parse("true").getOrNull() shouldBe true
          p.parse("false").getOrNull() shouldBe false
       }
 
       test("parser should support longs") {
          val p = Parser<String>().long { "not a long" }
-         p.parse("foo").getOrNull() shouldBe listOf("not a long")
+         p.parse("foo").leftOrNull() shouldBe listOf("not a long")
          p.parse("12345").getOrNull() shouldBe 12345L
       }
 
       test("parser should support floats") {
          val p = Parser<String>().float { "not a float" }
-         p.parse("foo").getOrNull() shouldBe listOf("not a float")
+         p.parse("foo").leftOrNull() shouldBe listOf("not a float")
          p.parse("123.45").getOrNull() shouldBe 123.45F
       }
 
       test("filter") {
          val p = Parser<String>().filter(String::isNotEmpty) { "boom" }.map { Foo(it) }
-         p.parse("") shouldBe "boom".invalidNel()
-         p.parse("abc") shouldBe Foo("abc").validNel()
+         p.parse("") shouldBe "boom".leftNel()
+         p.parse("abc") shouldBe Foo("abc").right()
       }
 
       test("contains") {
          val p = Parser<String>().oneOf(listOf("a", "b")) { "boom" }.map { Foo(it) }
-         p.parse("") shouldBe "boom".invalidNel()
-         p.parse("c") shouldBe "boom".invalidNel()
-         p.parse("a") shouldBe Foo("a").validNel()
-         p.parse("b") shouldBe Foo("b").validNel()
+         p.parse("") shouldBe "boom".leftNel()
+         p.parse("c") shouldBe "boom".leftNel()
+         p.parse("a") shouldBe Foo("a").right()
+         p.parse("b") shouldBe Foo("b").right()
       }
 
       test("composite parser") {

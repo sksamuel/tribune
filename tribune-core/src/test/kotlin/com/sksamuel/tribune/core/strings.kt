@@ -1,9 +1,9 @@
 package com.sksamuel.tribune.core
 
-import arrow.core.invalidNel
-import arrow.core.validNel
-import com.sksamuel.tribune.core.strings.match
+import arrow.core.leftNel
+import arrow.core.right
 import com.sksamuel.tribune.core.strings.length
+import com.sksamuel.tribune.core.strings.match
 import com.sksamuel.tribune.core.strings.maxlen
 import com.sksamuel.tribune.core.strings.minlen
 import com.sksamuel.tribune.core.strings.notNullOrBlank
@@ -19,65 +19,65 @@ class StringTest : FunSpec() {
 
       test("not null") {
          val p = Parser<String?>().notNull { "cannot be null" }.map { Foo(it) }
-         p.parse(null) shouldBe "cannot be null".invalidNel()
+         p.parse(null) shouldBe "cannot be null".leftNel()
       }
 
       test("not null or blank") {
          val p = Parser<String>().allowNulls().notNullOrBlank { "cannot be null or blank" }.map { Foo(it) }
-         p.parse("") shouldBe "cannot be null or blank".invalidNel()
-         p.parse("     ") shouldBe "cannot be null or blank".invalidNel()
-         p.parse(null) shouldBe "cannot be null or blank".invalidNel()
+         p.parse("") shouldBe "cannot be null or blank".leftNel()
+         p.parse("     ") shouldBe "cannot be null or blank".leftNel()
+         p.parse(null) shouldBe "cannot be null or blank".leftNel()
       }
 
       test("min length") {
          val p = Parser<String>().minlen(4) { "too short" }.map { Foo(it) }
-         p.parse("abc") shouldBe "too short".invalidNel()
-         p.parse("abcd") shouldBe Foo("abcd").validNel()
+         p.parse("abc") shouldBe "too short".leftNel()
+         p.parse("abcd") shouldBe Foo("abcd").right()
       }
 
       test("max length") {
          val p = Parser<String>().maxlen(4) { "too long" }.map { Foo(it) }
-         p.parse("abcde") shouldBe "too long".invalidNel()
-         p.parse("abcd") shouldBe Foo("abcd").validNel()
-         p.parse("abc") shouldBe Foo("abc").validNel()
+         p.parse("abcde") shouldBe "too long".leftNel()
+         p.parse("abcd") shouldBe Foo("abcd").right()
+         p.parse("abc") shouldBe Foo("abc").right()
       }
 
       test("length") {
          val p = Parser<String>().length(4) { "must be 4 chars" }.map { Foo(it) }
-         p.parse("abcde") shouldBe "must be 4 chars".invalidNel()
-         p.parse("abcd") shouldBe Foo("abcd").validNel()
-         p.parse("abc") shouldBe "must be 4 chars".invalidNel()
+         p.parse("abcde") shouldBe "must be 4 chars".leftNel()
+         p.parse("abcd") shouldBe Foo("abcd").right()
+         p.parse("abc") shouldBe "must be 4 chars".leftNel()
       }
 
       test("trim") {
          val p = Parser<String>().trim().map { Foo(it) }
-         p.parse(" abcd ") shouldBe Foo("abcd").validNel()
-         p.parse("abc    ") shouldBe Foo("abc").validNel()
+         p.parse(" abcd ") shouldBe Foo("abcd").right()
+         p.parse("abc    ") shouldBe Foo("abc").right()
       }
 
       test("uppercase") {
          val p = Parser<String>().toUppercase().map { Foo(it) }
-         p.parse("abcd") shouldBe Foo("ABCD").validNel()
+         p.parse("abcd") shouldBe Foo("ABCD").right()
       }
 
       test("lowercase") {
          val p = Parser<String>().toLowercase().map { Foo(it) }
-         p.parse("ABCD") shouldBe Foo("abcd").validNel()
+         p.parse("ABCD") shouldBe Foo("abcd").right()
       }
 
       test("strip") {
          val p = Parser<String>().strip(charArrayOf('a', 'b'))
-         p.parse("aaccbb") shouldBe "cc".validNel()
-         p.parse("aa") shouldBe "".validNel()
-         p.parse("ddd") shouldBe "ddd".validNel()
+         p.parse("aaccbb") shouldBe "cc".right()
+         p.parse("aa") shouldBe "".right()
+         p.parse("ddd") shouldBe "ddd".right()
       }
 
       test("match") {
          val p = Parser<String>().match("aa.".toRegex()) { "$it is whack!" }
-         p.parse("aab") shouldBe "aab".validNel()
-         p.parse("aac") shouldBe "aac".validNel()
-         p.parse("aa") shouldBe "aa is whack!".invalidNel()
-         p.parse("baa") shouldBe "baa is whack!".invalidNel()
+         p.parse("aab") shouldBe "aab".right()
+         p.parse("aac") shouldBe "aac".right()
+         p.parse("aa") shouldBe "aa is whack!".leftNel()
+         p.parse("baa") shouldBe "baa is whack!".leftNel()
       }
    }
 }
