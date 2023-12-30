@@ -2,6 +2,7 @@ package com.sksamuel.tribune.core
 
 import arrow.core.leftNel
 import arrow.core.right
+import com.sksamuel.tribune.core.enums.enum
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 

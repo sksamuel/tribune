@@ -1,7 +1,11 @@
-package com.sksamuel.tribune.core
+package com.sksamuel.tribune.core.longs
 
+import arrow.core.Either
 import arrow.core.leftNel
 import arrow.core.right
+import com.sksamuel.tribune.core.Parser
+import com.sksamuel.tribune.core.flatMap
+import com.sksamuel.tribune.core.map
 
 /**
  * Extends a [Parser] of output type string to parse that string into a long.
@@ -32,3 +36,21 @@ fun <I, E> Parser<I, Long, E>.max(min: Long, ifError: (Long) -> E): Parser<I, Lo
       if (it >= min) it.right() else ifError(it).leftNel()
    }
 
+@JvmName("minOrNull")
+fun <I, E> Parser<I, Long?, E>.min(min: Long, ifError: (Long) -> E): Parser<I, Long?, E> =
+   flatMap {
+      if (it == null) Either.Right(null) else if (it >= min) it.right() else ifError(it).leftNel()
+   }
+
+@JvmName("maxOrNull")
+fun <I, E> Parser<I, Long?, E>.max(min: Long, ifError: (Long) -> E): Parser<I, Long?, E> =
+   flatMap {
+      if (it == null) Either.Right(null) else if (it >= min) it.right() else ifError(it).leftNel()
+   }
+
+fun <I, E> Parser<I, Long, E>.nullIf(fn: (Long) -> Boolean): Parser<I, Long?, E> =
+   this.map { if (fn(it)) null else it }
+
+@JvmName("nullIfNullable")
+fun <I, E> Parser<I, Long?, E>.nullIf(fn: (Long) -> Boolean): Parser<I, Long?, E> =
+   this.map { if (it == null || fn(it)) null else it }

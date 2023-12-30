@@ -3,6 +3,10 @@ package com.sksamuel.tribune.core
 import arrow.core.EitherNel
 import arrow.core.leftNel
 import arrow.core.right
+import com.sksamuel.tribune.core.booleans.boolean
+import com.sksamuel.tribune.core.floats.float
+import com.sksamuel.tribune.core.ints.int
+import com.sksamuel.tribune.core.longs.long
 import com.sksamuel.tribune.core.strings.minlen
 import com.sksamuel.tribune.core.strings.notBlank
 import com.sksamuel.tribune.core.strings.notNullOrBlank

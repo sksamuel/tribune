@@ -1,7 +1,11 @@
-package com.sksamuel.tribune.core
+package com.sksamuel.tribune.core.doubles
 
 import arrow.core.leftNel
 import arrow.core.right
+import com.sksamuel.tribune.core.Parser
+import com.sksamuel.tribune.core.filter
+import com.sksamuel.tribune.core.flatMap
+import com.sksamuel.tribune.core.map
 
 /**
  * Extends a [Parser] of output type string to parse that string into a double.
@@ -40,3 +44,6 @@ fun <I, E> Parser<I, Double, E>.inrange(
    flatMap {
       if (it in range) it.right() else ifError(it).leftNel()
    }
+
+fun <I, E> Parser<I, Double, E>.nullIf(fn: (Double) -> Boolean): Parser<I, Double?, E> =
+   this.map { if (fn(it)) null else it }

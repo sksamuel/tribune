@@ -2,6 +2,12 @@ package com.sksamuel.tribune.core
 
 import arrow.core.leftNel
 import arrow.core.right
+import com.sksamuel.tribune.core.ints.inrange
+import com.sksamuel.tribune.core.ints.int
+import com.sksamuel.tribune.core.ints.negative
+import com.sksamuel.tribune.core.ints.nonNegative
+import com.sksamuel.tribune.core.ints.positive
+import com.sksamuel.tribune.core.longs.long
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
