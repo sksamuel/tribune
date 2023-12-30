@@ -71,6 +71,13 @@ class StringTest : FunSpec() {
          p.parse("abc    ") shouldBe Foo("abc").right()
       }
 
+      test("trim on nullable") {
+         val p = Parser<String?>().trim()
+         p.parse(" abcd ") shouldBe "abcd".right()
+         p.parse("abc    ") shouldBe "abc".right()
+         p.parse(null) shouldBe null.right()
+      }
+
       test("uppercase") {
          val p = Parser<String>().toUppercase().map { Foo(it) }
          p.parse("abcd") shouldBe Foo("ABCD").right()

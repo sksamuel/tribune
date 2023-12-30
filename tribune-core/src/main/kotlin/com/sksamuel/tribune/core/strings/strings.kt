@@ -7,6 +7,7 @@ import com.sksamuel.tribune.core.Parser
 import com.sksamuel.tribune.core.filter
 import com.sksamuel.tribune.core.flatMap
 import com.sksamuel.tribune.core.map
+import com.sksamuel.tribune.core.mapIfNotNull
 
 /**
  * Modifies the output of a String producing [Parser] by trimming the output string
@@ -15,6 +16,15 @@ import com.sksamuel.tribune.core.map
  * @return the output of the underlying parser with whitespace trimmed.
  */
 fun <I, E> Parser<I, String, E>.trim(): Parser<I, String, E> = map { it.trim() }
+
+/**
+ * Modifies the output of a nullable String producing [Parser] by trimming the output string
+ * to remove prefix and suffix whitespace.
+ *
+ * @return the output of the underlying parser with whitespace trimmed.
+ */
+@JvmName("trimOnNullableString")
+fun <I, E> Parser<I, String?, E>.trim(): Parser<I, String?, E> = mapIfNotNull { it.trim() }
 
 /**
  * Modifies the output of a String producing [Parser] to strip the given [chars].
