@@ -21,8 +21,14 @@ fun <I, A, E> Parser<I, A?, E>.withDefault(ifNull: () -> A): Parser<I, A, E> =
 /**
  * Maps an existing non-nullable [Parser] I => A to accept null inputs I? => A?
  */
-fun <I, A, E> Parser<I, A, E>.allowNulls(): Parser<I?, A?, E> =
-   Parser { input -> if (input == null) Either.Right(null) else this@allowNulls.parse(input) }
+@Deprecated("use nullable()", ReplaceWith("nullable()"))
+fun <I, A, E> Parser<I, A, E>.allowNulls(): Parser<I?, A?, E> = nullable()
+
+/**
+ * Maps an existing non-nullable [Parser] I => A to accept null inputs I? => A?
+ */
+fun <I, A, E> Parser<I, A, E>.nullable(): Parser<I?, A?, E> =
+   Parser { input -> if (input == null) Either.Right(null) else this@nullable.parse(input) }
 
 /**
  * Maps a nullable producing [Parser] to return an error if the output is null, or

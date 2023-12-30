@@ -4,12 +4,12 @@ import arrow.core.sequence
 import com.sksamuel.tribune.core.Parser
 
 /**
- * Lifts an existing [Parser] to support lists of the input types supported by
+ * Lifts an existing [Parser] to support sets of the input types supported by
  * the underlying parser.
  *
- * In other words, given a parser from I to A, returns a parser from List<I> to List<A>.
+ * In other words, given a parser from I to A, returns a parser from Set<I> to Set<A>.
  *
- * @return a parser that accepts lists
+ * @return a [Parser]  that produces sets
  */
 fun <I, A, E> Parser<I, A, E>.asSet(): Parser<Collection<I>, Set<A>, E> {
    return Parser { input ->
