@@ -9,7 +9,7 @@ import arrow.core.right
  *
  * It is implemented as an interface to allow for variance on the type parameters.
  */
-fun interface Parser<in I, out A, out E> {
+fun interface Parser<in I, out O, out E> {
 
    companion object {
 
@@ -36,13 +36,13 @@ fun interface Parser<in I, out A, out E> {
     * Parses the given [input] returning an either that contains the successfully parsed result
     * as a right, or a failure as a left.
     */
-   fun parse(input: I): EitherNel<E, A>
+   fun parse(input: I): EitherNel<E, O>
 
    /**
     * Returns a new Parser<J> that wraps this parser, by using the supplied function [f]
     * to convert a given [J] into an [I].
     */
-   fun <J> contramap(f: (J) -> I): Parser<J, A, E> =
+   fun <J> contramap(f: (J) -> I): Parser<J, O, E> =
       Parser { parse(f(it)) }
 
 }

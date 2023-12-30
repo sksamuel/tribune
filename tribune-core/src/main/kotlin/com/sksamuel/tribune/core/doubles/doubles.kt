@@ -47,3 +47,7 @@ fun <I, E> Parser<I, Double, E>.inrange(
 
 fun <I, E> Parser<I, Double, E>.nullIf(fn: (Double) -> Boolean): Parser<I, Double?, E> =
    this.map { if (fn(it)) null else it }
+
+@JvmName("nullIfNullable")
+fun <I, E> Parser<I, Double?, E>.nullIf(fn: (Double) -> Boolean): Parser<I, Double?, E> =
+   this.map { if (it == null || fn(it)) null else it }

@@ -45,6 +45,7 @@ fun <I, E> Parser<I, Int, E>.min(min: Int, ifError: (Int) -> E): Parser<I, Int, 
       if (it >= min) it.right() else ifError(it).leftNel()
    }
 
+@JvmName("minOrNull")
 fun <I, E> Parser<I, Int?, E>.min(min: Int, ifError: (Int) -> E): Parser<I, Int?, E> =
    flatMap {
       if (it == null) Either.Right(null) else if (it >= min) it.right() else ifError(it).leftNel()
@@ -55,6 +56,7 @@ fun <I, E> Parser<I, Int, E>.max(min: Int, ifError: (Int) -> E): Parser<I, Int, 
       if (it >= min) it.right() else ifError(it).leftNel()
    }
 
+@JvmName("maxOrNull")
 fun <I, E> Parser<I, Int?, E>.max(min: Int, ifError: (Int) -> E): Parser<I, Int?, E> =
    flatMap {
       if (it == null) Either.Right(null) else if (it >= min) it.right() else ifError(it).leftNel()
@@ -64,5 +66,5 @@ fun <I, E> Parser<I, Int, E>.nullIf(fn: (Int) -> Boolean): Parser<I, Int?, E> =
    this.map { if (fn(it)) null else it }
 
 @JvmName("nullIfNullable")
-fun <I, E> Parser<I, Long?, E>.nullIf(fn: (Long) -> Boolean): Parser<I, Long?, E> =
+fun <I, E> Parser<I, Int?, E>.nullIf(fn: (Int) -> Boolean): Parser<I, Int?, E> =
    this.map { if (it == null || fn(it)) null else it }

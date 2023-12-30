@@ -97,7 +97,7 @@ class ValidatedTest : FunSpec() {
             .int { "Age must be a number" }
             .map { ValidAge(it) }
 
-         val parser = Parser.zip(nameParser, ageParser)
+         val parser: Parser<UpdateRequest, Pair<ValidName, ValidAge>, String> = Parser.zip(nameParser, ageParser)
          val result = parser.parse(UpdateRequest("a", "b"))
       }
    }
