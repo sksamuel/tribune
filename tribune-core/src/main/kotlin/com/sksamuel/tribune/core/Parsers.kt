@@ -23,6 +23,16 @@ object Parsers {
    val nullableLong: Parser<Long?, Long?, Nothing> = Parser()
 
    /**
+    * An identity [Parser] for nullable doubles.
+    */
+   val nullableDouble : Parser<Double?, Double?, Nothing> = Parser()
+
+   /**
+    * An identity [Parser] for nullable floats.
+    */
+   val nullableFloat : Parser<Double?, Double?, Nothing> = Parser()
+
+   /**
     * A [Parser] for nullable types, which returns the input if not null, or an error if null.
     * The error is derived from the given [errorFn] function.
     */
