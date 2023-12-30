@@ -1,25 +1,33 @@
 package com.sksamuel.tribune.core.collections
 
-import arrow.core.leftNel
 import arrow.core.right
-import com.sksamuel.tribune.core.Foo
 import com.sksamuel.tribune.core.Parser
 import com.sksamuel.tribune.core.map
+import com.sksamuel.tribune.core.strings.minlen
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
 class ListTest : FunSpec() {
    init {
 
+      data class ParsedString(val str: String)
+
       test("asList") {
-         val ps: Parser<List<String>, List<Foo>, Nothing> = Parser<String>().map { Foo(it) }.asList()
-         ps.parse(listOf("a", "b")) shouldBe listOf(Foo("a"), Foo("b")).right()
+         val p = Parser<String>().map { ParsedString(it) }
+         val plist: Parser<Collection<String>, List<ParsedString>, Nothing> = p.asList()
+         plist.parse(listOf("a", "b")).getOrNull() shouldBe listOf(ParsedString("a"), ParsedString("b"))
       }
 
-      test("asList with min length") {
-         val ps = Parser<String>().map { Foo(it) }.asList(min = 2) { "Must have at least two elements" }
-         ps.parse(listOf("a", "b")) shouldBe listOf(Foo("a"), Foo("b")).right()
-         ps.parse(listOf("a")) shouldBe "Must have at least two elements".leftNel()
+      test("asList should accumulate errors") {
+         val p = Parser<String>().minlen(2) { "whack $it" }.map { ParsedString(it) }
+         val plist: Parser<Collection<String>, List<ParsedString>, String> = p.asList()
+         plist.parse(listOf("a", "b")).leftOrNull() shouldBe listOf("whack a", "whack b")
+      }
+
+      test("filterNulls") {
+         val p = Parser<String>().map { if (it == "a") null else ParsedString(it) }
+         val plist: Parser<Collection<String>, List<ParsedString>, String> = p.asList().filterNulls()
+         plist.parse(listOf("a", "b")).getOrNull() shouldBe listOf(ParsedString("b"))
       }
    }
 }

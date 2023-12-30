@@ -5,7 +5,7 @@ import arrow.core.right
 
 /**
  * A [Parser] is a function I => [EitherNel] that parses the input I, returing either
- * an output O or an error E.
+ * an output O or error E.
  *
  * It is implemented as an interface to allow for variance on the type parameters.
  */

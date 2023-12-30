@@ -1,45 +1,34 @@
 package com.sksamuel.tribune.core.collections
 
-import arrow.core.leftNel
-import arrow.core.sequence
+import arrow.core.flatten
+import arrow.core.left
+import arrow.core.right
+import arrow.core.toNonEmptyListOrNull
 import com.sksamuel.tribune.core.Parser
+import com.sksamuel.tribune.core.map
 
 /**
  * Lifts an existing [Parser] to support lists of the input types supported by
  * the underlying parser.
  *
- * In other words, given a parser from I to A, returns a parser from List<I> to List<A>.
+ * In other words, given a parser from I to A, returns a parser from Collection<I> to List<A>.
  *
- * @return a parser that accepts lists
+ * @return a [Parser]  that produces sets
  */
-fun <I, A, E> Parser<I, A, E>.asList(): Parser<Collection<I>, List<A>, E> {
+fun <I, O, E> Parser<I, O, E>.asList(): Parser<Collection<I>, List<O>, E> {
+   val self = this
    return Parser { input ->
-      input.map { this@asList.parse(it) }.sequence()
+      val results = input.map { self.parse(it) }
+      val lefts: List<E> = results.mapNotNull { it.leftOrNull() }.flatten()
+      val rights: List<O> = results.mapNotNull { it.getOrNull() }
+      if (lefts.isNotEmpty())
+         lefts.toNonEmptyListOrNull()?.left() ?: error("unknown")
+      else
+         rights.right()
    }
 }
 
-fun <I, A, E> Parser.Companion.list(elementParser: Parser<I, A, E>): Parser<Collection<I>, List<A>, E> =
+fun <I, O, E> Parser.Companion.list(elementParser: Parser<I, O, E>): Parser<Collection<I>, List<O>, E> =
    elementParser.asList()
 
-/**
- * Lifts an existing [Parser] to support lists of the input types supported by
- * the underlying parser. This version of repeated supports upper and lower bounds
- * on the list size.
- *
- * In other words, given a parser, this will return a parser that handles lists of the inputs.
- *
- * @param min the minimum number of elements in the list
- * @param max the maximum number of elements in the list
- *
- * @return a parser that accepts lists
- */
-fun <I, A, E> Parser<I, A, E>.asList(
-   min: Int = 0,
-   max: Int = Int.MAX_VALUE,
-   ifInvalidSize: (Int) -> E
-): Parser<List<I>, List<A>, E> {
-   return Parser { input ->
-      if ((min..max).contains(input.size)) input.map { this@asList.parse(it) }.sequence()
-      else ifInvalidSize(input.size).leftNel()
-   }
-}
+fun <I, O, E> Parser<I, List<O?>, E>.filterNulls(): Parser<I, List<O>, E> = map { it.filterNotNull() }
