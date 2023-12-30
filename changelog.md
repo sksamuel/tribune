@@ -5,6 +5,7 @@ Changelog
 ### 2.0.0
 
 * Updated to Arrow 1.2.x - Note: Arrow has deprecated `Validated`. In this release, `Parser` has been updated to use `EitherNel`.
+* Updated to Kotlin 1.9.x
 * Moved some parsers to new packages.
 * Removed all previously deprecated functions.
 * Added variants of string parsers to work on nullable strings.
