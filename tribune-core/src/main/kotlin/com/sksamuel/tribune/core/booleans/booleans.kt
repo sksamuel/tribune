@@ -4,30 +4,30 @@ import arrow.core.leftNel
 import arrow.core.right
 import com.sksamuel.tribune.core.Parser
 import com.sksamuel.tribune.core.flatMap
+import com.sksamuel.tribune.core.map
 
 /**
- * Transforms a [Parser] that produces Strings by converting the string to a Boolean using [toBoolean].
+ * Transforms a String producing [Parser] into a Boolean producing Parser,
+ * by converting the String to a Boolean using the library function [toBoolean].
  */
-fun <I, E> Parser<I, String, E>.boolean(ifError: (String) -> E): Parser<I, Boolean, E> =
+fun <I, E> Parser<I, String, E>.toBoolean(): Parser<I, Boolean, E> =
    flatMap {
       val b = it.toBoolean()
       b.right()
    }
 
 /**
- * Transforms a [Parser] that produces Strings by converting the string to a Boolean using [toBooleanStrict].
+ * Transforms a String producing [Parser] into a Boolean producing Parser,
+ * by converting the String to a Boolean using the library function [toBooleanStrict].
  */
-fun <I, E> Parser<I, String, E>.booleanStrict(ifError: (String) -> E): Parser<I, Boolean, E> =
-   flatMap {
-      val b = it.toBooleanStrict()
-      b.right()
+fun <I, E> Parser<I, String, E>.toBooleanStrict(ifError: (String) -> E): Parser<I, Boolean, E> =
+   flatMap { input ->
+      runCatching { input.toBooleanStrict() }.fold({ it.right() }, { ifError(input).leftNel() })
    }
 
 /**
- * Transforms a [Parser] that produces Strings by converting the string to a Boolean using [toBooleanStrictOrNull].
+ * Transforms a nullable String producing [Parser] into a nullable Boolean producing Parser,
+ * by converting the String to a Boolean using the library function [toBooleanStrictOrNull].
  */
-fun <I, E> Parser<I, String, E>.booleanStrictOrNull(ifError: (String) -> E): Parser<I, Boolean?, E> =
-   flatMap {
-      val b = it.toBooleanStrictOrNull()
-      b?.right() ?: ifError(it).leftNel()
-   }
+fun <I, E> Parser<I, String, E>.toBooleanStrictOrNull(): Parser<I, Boolean?, E> =
+   map { it.toBooleanStrictOrNull() }

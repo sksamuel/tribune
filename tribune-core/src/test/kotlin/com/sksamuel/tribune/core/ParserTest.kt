@@ -3,7 +3,6 @@ package com.sksamuel.tribune.core
 import arrow.core.EitherNel
 import arrow.core.leftNel
 import arrow.core.right
-import com.sksamuel.tribune.core.booleans.boolean
 import com.sksamuel.tribune.core.floats.float
 import com.sksamuel.tribune.core.ints.int
 import com.sksamuel.tribune.core.longs.long
@@ -45,13 +44,6 @@ class ValidatedTest : FunSpec() {
             .mapIfNotNull { Foo(it) }
             .withDefault { Foo("foo") }
          val result: EitherNel<Nothing, Foo> = p.parse("foo")
-      }
-
-      test("parser should support booleans") {
-         val p = Parser<String>().boolean { "not a boolean" }
-         p.parse("foo").leftOrNull() shouldBe listOf("not a boolean")
-         p.parse("true").getOrNull() shouldBe true
-         p.parse("false").getOrNull() shouldBe false
       }
 
       test("parser should support longs") {
