@@ -78,20 +78,19 @@ In Tribune, a parser is a function
 from an input type to a valid or invalid result. A valid result contains the _parsed_ type and should be a wrapper type
 that indicates the extra validation that has been performed.
 An invalid result
-contains one or more errors in the form of a `NonEmptyList`. Note that _Validated_ and _NonEmptyList_
-are [Arrow](https://arrow-kt.io/) types.
+contains one or more errors in the form of a `NonEmptyList`. The actual type returned is an [Arrow](https://arrow-kt.io/) `EitherNel<E, O>.
 
-A parser has three type parameters, the first being the input type, the second being the parsed type, and the third
+A parser has three type parameters, the first being the input type, the second being the parsed type (or output type), and the third
 being the error type. The error type can be your own ADT or just plain strings. In this example we will use strings.
 The ADT approach is powerful when you want fine control over error handling, but if we are more interested in the
 robustness factor than how errors are reported, strings will suffice.
 
 We create a `Parser` from our input type - in this case a nullable `String`. Our initial parser is always
 a pass-through parser that just returns the input as-is and which allows us to add further constraints.
-Note that the error type is `Nothing` because on the pass through parser, we don't yet report errors.
+Note that the error type is `Nothing` because on the pass through parser, there are no errors to report.
 
 ```kotlin
-val parser: Parser<String?, String?, Nothing> = Parser.fromNullableString()
+val parser: Parser<String?, String?, Nothing> = Parsers.nullableString
 ```
 
 Next we can add more constraints with appropriate error messages. Each additional
@@ -102,7 +101,7 @@ this case a string also.
 
 ```kotlin
 val parser: Parser<String?, String, String> =
-   Parser.fromNullableString()
+   Parsers.nullableString
       .notNullOrBlank { "Must be provided" }
 ```
 
@@ -110,7 +109,7 @@ We could further constrain this input to be an int:
 
 ```kotlin
 val parser: Parser<String?, Int, String> =
-   Parser.fromNullableString()
+   Parsers.nullableString
       .notNullOrBlank { "Must be provided" }
       .int { "must be int" }
 ```
@@ -123,8 +122,8 @@ Explore in your IDE to see the full set.
 Once we're finished with validation, we want to then wrap in a parsed type. We can do this with `map`:
 
 ```kotlin
-val parser: Parser<String?, Int, String> =
-   Parser.fromNullableString()
+val parser: Parser<String?, MyParsedType, String> =
+   Parsers.nullableString
       .notNullOrBlank { "Must be provided" }
       .int { "must be int" }
       .map { MyParsedType(it) }
@@ -137,6 +136,12 @@ parser.parse("abc") // must be int
 parser.parser("123") // success!
 ```
 
+Or if you want a null instead of errors, you can use `parseOrNull`. Eg:
+
+```kotlin
+parser.parseOrNull("abc") // must be an int, so null is returned
+parser.parser("123") // success!
+```
 
 #### Full Example
 
@@ -157,7 +162,7 @@ Next our parser will include the validation logic, ultimately wrapping in the `I
 
 ```kotlin
 val isbnParser =
-   Parser.fromNullableString()
+   Parsers.nullableString
       .notNullOrBlank { "ISBN must be provided" }
       .map { it.replace("-", "") } // remove dashes
       .length({ it == 10 || it == 13 }) { "Valid ISBNs have length 10 or 13" }
@@ -213,16 +218,16 @@ data class CountryCode(val value: String)
 Next we create a parser for each field:
 
 ```kotlin
-val cityParser = Parser
+val cityParser = Parsers
    .nonBlankString { "City must be provided" }
    .map { City(it) }
 
-val zipcodeParser = Parser
+val zipcodeParser = Parsers
    .nonBlankString { "Zipcode must be provided" }
    .length(5) { "Zipcode should be 5 digits" }
    .map { Zipcode(it) }
 
-val countryCodeParser = Parser
+val countryCodeParser = Parsers
    .nonBlankString { "CountryCode must be provided" }
    .length(2) { "CountryCode should be 2 digits" }
    .map { CountryCode(it) }
