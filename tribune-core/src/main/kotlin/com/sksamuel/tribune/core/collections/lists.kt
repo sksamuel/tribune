@@ -31,4 +31,8 @@ fun <I, O, E> Parser<I, O, E>.asList(): Parser<Collection<I>, List<O>, E> {
 fun <I, O, E> Parser.Companion.list(elementParser: Parser<I, O, E>): Parser<Collection<I>, List<O>, E> =
    elementParser.asList()
 
+/**
+ * Wraps a [Parser] that produces lists with nullable items, to filter any null entries in the outputted list.
+ * In other words, transforms a Parser I -> List<O?> to I -> List<O>.
+ */
 fun <I, O, E> Parser<I, List<O?>, E>.filterNulls(): Parser<I, List<O>, E> = map { it.filterNotNull() }

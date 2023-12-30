@@ -30,5 +30,9 @@ fun <I, O, E> Parser<I, O, E>.asSet(): Parser<Collection<I>, Set<O>, E> {
 
 fun <I, O, E> Parser<I, Set<O?>, E>.filterNulls(): Parser<I, Set<O>, E> = map { it.filterNotNull().toSet() }
 
+/**
+ * Wraps a [Parser] that produces sets with nullable items, to filter any null entries in the outputted set.
+ * In other words, transforms a Parser I -> Set<O?> to I -> Set<O>.
+ */
 fun <I, O, E> Parser.Companion.set(elementParser: Parser<I, O, E>): Parser<Collection<I>, Set<O>, E> =
    elementParser.asSet()
