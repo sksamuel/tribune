@@ -1,6 +1,7 @@
 package com.sksamuel.tribune.core
 
-import arrow.core.Validated
+import arrow.core.leftNel
+import arrow.core.right
 
 /**
  * Returns a [Parser] that rejects the output of this parser if the output fails to pass
@@ -17,5 +18,5 @@ import arrow.core.Validated
  * @return a parser which rejects input based on the result of predicate [p]
  */
 fun <I, A, E> Parser<I, A, E>.filter(p: (A) -> Boolean, ifFalse: (A) -> E): Parser<I, A, E> {
-   return flatMap { if (p(it)) Validated.validNel(it) else Validated.invalidNel(ifFalse(it)) }
+   return flatMap { if (p(it)) it.right() else ifFalse(it).leftNel() }
 }

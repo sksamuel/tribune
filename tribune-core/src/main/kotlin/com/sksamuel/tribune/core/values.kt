@@ -1,7 +1,7 @@
 package com.sksamuel.tribune.core
 
-import arrow.core.invalidNel
-import arrow.core.validNel
+import arrow.core.leftNel
+import arrow.core.right
 
 /**
  * Returns a [Parser] that rejects the output of this parser if the output is not one
@@ -14,6 +14,6 @@ import arrow.core.validNel
  * @return a parser which rejects input if not in the allowed list.
  */
 fun <I, A, E> Parser<I, A, E>.oneOf(values: List<A>, ifFalse: (A) -> E): Parser<I, A, E> {
-   return flatMap { if (values.contains(it)) it.validNel() else ifFalse(it).invalidNel() }
+   return flatMap { if (values.contains(it)) it.right() else ifFalse(it).leftNel() }
 }
 

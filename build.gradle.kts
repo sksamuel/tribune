@@ -6,7 +6,7 @@ buildscript {
 }
 
 plugins {
-   kotlin("jvm").version("1.7.21")
+   kotlin("jvm").version("1.9.21")
    id("java-library")
    id("maven-publish")
    signing
@@ -26,8 +26,8 @@ allprojects {
    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
       kotlinOptions {
          jvmTarget = "11"
-         apiVersion = "1.7"
-         languageVersion = "1.7"
+         apiVersion = "1.9"
+         languageVersion = "1.9"
       }
    }
 

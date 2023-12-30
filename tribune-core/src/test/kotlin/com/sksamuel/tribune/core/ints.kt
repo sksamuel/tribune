@@ -18,20 +18,20 @@ class IntTest : FunSpec() {
 
       test("parser should support ints") {
          val p = Parser<String>().int { "not an int" }
-         p.parse("foo").getErrorsOrThrow() shouldBe listOf("not an int")
-         p.parse("12345").getOrThrow() shouldBe 12345
+         p.parse("foo").getOrNull() shouldBe listOf("not an int")
+         p.parse("12345").getOrNull() shouldBe 12345
       }
 
       test("parser should support ints with nullable pass through") {
          val p = Parser<String>().int { "not an int" }.allowNulls()
-         p.parse("12345").getOrThrow() shouldBe 12345
-         p.parse(null).getOrThrow() shouldBe null
+         p.parse("12345").getOrNull() shouldBe 12345
+         p.parse(null).getOrNull() shouldBe null
       }
 
       test("parser should support ints with nullable failure message") {
          val p = Parser<String?>().notNull { "cannot be null" }.long { "not an int" }
-         p.parse("12345").getOrThrow() shouldBe 12345
-         p.parse(null).getErrorsOrThrow() shouldBe listOf("cannot be null")
+         p.parse("12345").getOrNull() shouldBe 12345
+         p.parse(null).getOrNull() shouldBe listOf("cannot be null")
       }
 
       test("non neg") {

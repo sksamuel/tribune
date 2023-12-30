@@ -1,7 +1,7 @@
 package com.sksamuel.tribune.datetime
 
-import arrow.core.invalidNel
-import arrow.core.validNel
+import arrow.core.leftNel
+import arrow.core.right
 import com.sksamuel.tribune.core.Parser
 import com.sksamuel.tribune.core.flatMap
 import kotlinx.datetime.LocalDate
@@ -13,8 +13,8 @@ fun <I, E> Parser<I, String, E>.toLocalDate(
    ifError: (String, Throwable) -> E
 ): Parser<I, LocalDate, E> = flatMap {
    try {
-      LocalDate.parse(it).validNel()
+      LocalDate.parse(it).right()
    } catch (t: Throwable) {
-      ifError(it, t).invalidNel()
+      ifError(it, t).leftNel()
    }
 }

@@ -1,7 +1,7 @@
 package com.sksamuel.tribune.core
 
-import arrow.core.invalidNel
-import arrow.core.validNel
+import arrow.core.leftNel
+import arrow.core.right
 
 /**
  * Extends a [Parser] of output type string to parse that string into a double.
@@ -14,5 +14,5 @@ import arrow.core.validNel
 fun <I, E> Parser<I, String, E>.float(ifError: (String) -> E): Parser<I, Float, E> =
    flatMap {
       val f = it.toFloatOrNull()
-      f?.validNel() ?: ifError(it).invalidNel()
+      f?.right() ?: ifError(it).leftNel()
    }

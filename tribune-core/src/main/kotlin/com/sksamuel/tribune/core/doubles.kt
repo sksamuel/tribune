@@ -1,7 +1,7 @@
 package com.sksamuel.tribune.core
 
-import arrow.core.invalidNel
-import arrow.core.validNel
+import arrow.core.leftNel
+import arrow.core.right
 
 /**
  * Extends a [Parser] of output type string to parse that string into a double.
@@ -14,17 +14,17 @@ import arrow.core.validNel
 fun <I, E> Parser<I, String, E>.double(ifError: (String) -> E): Parser<I, Double, E> =
    flatMap {
       val d = it.toDoubleOrNull()
-      d?.validNel() ?: ifError(it).invalidNel()
+      d?.right() ?: ifError(it).leftNel()
    }
 
 fun <I, E> Parser<I, Double, E>.positive(ifError: (Double) -> E): Parser<I, Double, E> =
    flatMap {
-      if (it > 0.0) it.validNel() else ifError(it).invalidNel()
+      if (it > 0.0) it.right() else ifError(it).leftNel()
    }
 
 fun <I, E> Parser<I, Double, E>.negative(ifError: (Double) -> E): Parser<I, Double, E> =
    flatMap {
-      if (it < 0.0) it.validNel() else ifError(it).invalidNel()
+      if (it < 0.0) it.right() else ifError(it).leftNel()
    }
 
 /**
@@ -38,5 +38,5 @@ fun <I, E> Parser<I, Double, E>.inrange(
    ifError: (Double) -> E,
 ): Parser<I, Double, E> =
    flatMap {
-      if (it in range) it.validNel() else ifError(it).invalidNel()
+      if (it in range) it.right() else ifError(it).leftNel()
    }

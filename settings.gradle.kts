@@ -33,10 +33,10 @@ dependencyResolutionManagement {
          library("ktor-client-content-negotiation", "io.ktor:ktor-client-content-negotiation:$ktor")
          library("ktor-serialization-jackson", "io.ktor:ktor-serialization-jackson:$ktor")
 
-         library("arrow-core", "io.arrow-kt:arrow-core:1.1.3")
+         library("arrow-core", "io.arrow-kt:arrow-core:1.2.1")
          library("spring-boot-starter-web", "org.springframework.boot:spring-boot-starter-web:2.7.12")
 
-         val kotest = "5.6.2"
+         val kotest = "5.8.0"
          library("kotest-assertions-core", "io.kotest:kotest-assertions-core:$kotest")
          library("kotest-runner-junit5", "io.kotest:kotest-runner-junit5:$kotest")
       }

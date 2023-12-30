@@ -1,12 +1,11 @@
 package com.sksamuel.tribune.core
 
-import arrow.core.NonEmptyList
-import arrow.core.Validated
-import arrow.core.ValidatedNel
-import arrow.core.validNel
+import arrow.core.EitherNel
+import arrow.core.right
 
 /**
- * A [Parser] is a function I => [ValidatedNel] that parses the input I.
+ * A [Parser] is a function I => [EitherNel] that parses the input I, returing either
+ * an output O or an error E.
  *
  * It is implemented as an interface to allow for variance on the type parameters.
  */
@@ -18,26 +17,31 @@ fun interface Parser<in I, out A, out E> {
        * Returns an identity [Parser] for a type I.
        *
        * This can be used as the entry point to building a parser. Specify the source input type as
-       * the input type parameter to this function, and a parser (I) -> ValidatedNel<Nothing, I> will
+       * the input type parameter to this function, and a parser (I) -> EitherNel<Nothing, I> will
        * be returned.
        *
        * Eg:
        *
-       * Parser<String>()...parse("mystring")
+       * Parser<String>() will return an identity parser that simply returns any intput string.
        */
-      operator fun <I> invoke(): Parser<I, I, Nothing> = Parser { it.validNel() }
+      operator fun <I> invoke(): Parser<I, I, Nothing> = Parser { it.right() }
 
       /**
        * Synonym for invoke.
        */
       fun <I> from() = invoke<I>()
-
-      @Deprecated("use Parsers.nullableString", ReplaceWith("Parsers.nullableString"))
-      fun fromNullableString(): Parser<String?, String?, Nothing> = Parsers.nullableString
    }
 
-   fun parse(input: I): Validated<NonEmptyList<E>, A>
+   /**
+    * Parses the given [input] returning an either that contains the successfully parsed result
+    * as a right, or a failure as a left.
+    */
+   fun parse(input: I): EitherNel<E, A>
 
+   /**
+    * Returns a new Parser<J> that wraps this parser, by using the supplied function [f]
+    * to convert a given [J] into an [I].
+    */
    fun <J> contramap(f: (J) -> I): Parser<J, A, E> =
       Parser { parse(f(it)) }
 

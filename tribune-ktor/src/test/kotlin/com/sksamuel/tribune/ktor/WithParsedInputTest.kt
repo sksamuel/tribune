@@ -1,11 +1,11 @@
 package com.sksamuel.tribune.ktor
 
 import com.sksamuel.tribune.core.Parser
+import com.sksamuel.tribune.core.Parsers
 import com.sksamuel.tribune.core.compose
 import com.sksamuel.tribune.core.filter
 import com.sksamuel.tribune.core.map
 import com.sksamuel.tribune.core.strings.length
-import com.sksamuel.tribune.core.strings.nonBlankString
 import com.sksamuel.tribune.core.strings.notNullOrBlank
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -120,7 +120,7 @@ val authorParser: Parser<String?, Author, String> =
       .map { Author(it) }
 
 val titleParser: Parser<String?, Title, String> =
-   Parser.nonBlankString { "Title must be provided" }
+   Parsers.nonBlankString { "Title must be provided" }
       .map { Title(it) }
 
 // must be 10 or 13 characters

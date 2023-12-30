@@ -1,8 +1,7 @@
 package com.sksamuel.tribune.core.strings
 
-import arrow.core.invalidNel
-import arrow.core.valid
-import arrow.core.validNel
+import arrow.core.leftNel
+import arrow.core.right
 import com.sksamuel.tribune.core.Parser
 import com.sksamuel.tribune.core.flatMap
 
@@ -20,8 +19,8 @@ import com.sksamuel.tribune.core.flatMap
 fun <I, E> Parser<I, String, E>.length(len: Int, ifError: (String) -> E): Parser<I, String, E> =
    flatMap {
       when (it.length) {
-         len -> it.validNel()
-         else -> ifError(it).invalidNel()
+         len -> it.right()
+         else -> ifError(it).leftNel()
       }
    }
 
@@ -37,7 +36,7 @@ fun <I, E> Parser<I, String, E>.length(len: Int, ifError: (String) -> E): Parser
  * @return valid if the input string has acceptable length or an invalid otherwise.
  */
 fun <I, E> Parser<I, String, E>.length(f: (Int) -> Boolean, ifError: (String) -> E): Parser<I, String, E> =
-   flatMap { if (f(it.length)) it.validNel() else ifError(it).invalidNel() }
+   flatMap { if (f(it.length)) it.right() else ifError(it).leftNel() }
 
 /**
  * Narrows an existing String -> String [Parser] by enforcing a max length on the input string.
@@ -53,8 +52,8 @@ fun <I, E> Parser<I, String, E>.length(f: (Int) -> Boolean, ifError: (String) ->
 fun <I, E> Parser<I, String, E>.maxlen(len: Int, ifError: (String) -> E): Parser<I, String, E> =
    flatMap {
       when {
-         it.length > len -> ifError(it).invalidNel()
-         else -> it.valid()
+         it.length > len -> ifError(it).leftNel()
+         else -> it.right()
       }
    }
 
@@ -73,7 +72,7 @@ fun <I, E> Parser<I, String, E>.maxlen(len: Int, ifError: (String) -> E): Parser
 fun <I, E> Parser<I, String, E>.minlen(len: Int, ifError: (String) -> E): Parser<I, String, E> =
    flatMap {
       when {
-         it.length < len -> ifError(it).invalidNel()
-         else -> it.valid()
+         it.length < len -> ifError(it).leftNel()
+         else -> it.right()
       }
    }

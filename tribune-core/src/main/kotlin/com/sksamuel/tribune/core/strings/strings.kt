@@ -1,15 +1,11 @@
 package com.sksamuel.tribune.core.strings
 
-import arrow.core.invalidNel
-import arrow.core.validNel
+import arrow.core.leftNel
+import arrow.core.right
 import com.sksamuel.tribune.core.Parser
-import com.sksamuel.tribune.core.Parsers
 import com.sksamuel.tribune.core.filter
 import com.sksamuel.tribune.core.flatMap
 import com.sksamuel.tribune.core.map
-
-@Deprecated("use Parsers.nonBlankString(ifError)", ReplaceWith("Parsers.nonBlankString(ifError)", "com.sksamuel.tribune.core.Parsers"))
-fun <E> Parser.Companion.nonBlankString(ifError: () -> E): Parser<String?, String, E> = Parsers.nonBlankString(ifError)
 
 /**
  * Modifies the output of a String producing [Parser] by trimming the output string
@@ -41,7 +37,7 @@ fun <I, E> Parser<I, String, E>.match(regex: Regex, ifError: (String) -> E): Par
  * @return valid if the input string is not null and not blank, otherwise invalid
  */
 fun <I, E> Parser<I, String?, E>.notNullOrBlank(ifError: () -> E): Parser<I, String, E> {
-   return flatMap { if (it.isNullOrBlank()) ifError().invalidNel() else it.validNel() }
+   return flatMap { if (it.isNullOrBlank()) ifError().leftNel() else it.right() }
 }
 
 /**
@@ -54,7 +50,7 @@ fun <I, E> Parser<I, String?, E>.notNullOrBlank(ifError: () -> E): Parser<I, Str
  */
 fun <I, E> Parser<I, String, E>.notBlank(ifBlank: () -> E): Parser<I, String, E> {
    return flatMap {
-      if (it.isBlank()) ifBlank().invalidNel() else it.validNel()
+      if (it.isBlank()) ifBlank().leftNel() else it.right()
    }
 }
 
@@ -70,6 +66,6 @@ fun <I, E> Parser<I, String, E>.notBlank(ifBlank: () -> E): Parser<I, String, E>
  */
 fun <I, E> Parser<I, String?, E>.nullOrNotBlank(ifBlank: () -> E): Parser<I, String?, E> {
    return flatMap {
-      if (it == null) null.validNel() else if (it.isBlank()) ifBlank().invalidNel() else it.validNel()
+      if (it == null) null.right() else if (it.isBlank()) ifBlank().leftNel() else it.right()
    }
 }

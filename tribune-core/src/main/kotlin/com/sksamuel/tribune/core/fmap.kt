@@ -1,7 +1,7 @@
 package com.sksamuel.tribune.core
 
-import arrow.core.ValidatedNel
-import arrow.core.andThen
+import arrow.core.EitherNel
+import arrow.core.flatMap
 
 /**
  * Returns a [Parser] that maps the result of this parser by invoking the given function [f]
@@ -36,5 +36,5 @@ fun <I, A, B, E> Parser<I, A?, E>.mapIfNotNull(f: (A) -> B): Parser<I, B?, E> =
  *
  * @return a parser which returns the modified and flattened result of this parser.
  */
-fun <I, A, B, E> Parser<I, A, E>.flatMap(f: (A) -> ValidatedNel<E, B>): Parser<I, B, E> =
-   Parser { this@flatMap.parse(it).andThen(f) }
+fun <I, A, B, E> Parser<I, A, E>.flatMap(f: (A) -> EitherNel<E, B>): Parser<I, B, E> =
+   Parser { this@flatMap.parse(it).flatMap(f) }

@@ -1,5 +1,6 @@
 package com.sksamuel.tribune.core
 
+import arrow.core.EitherNel
 import arrow.core.Validated
 import arrow.core.invalidNel
 import arrow.core.validNel
@@ -25,40 +26,40 @@ class ValidatedTest : FunSpec() {
          Parser<String>()
             .notBlank { "cannot be blank" }
             .map { Foo("input") }
-            .parse("    ") shouldBe Validated.invalidNel("cannot be blank")
+            .parse("    ") shouldBe "cannot be blank".invalidNel()
       }
 
       test("parser should support default") {
          val p = Parser<String>()
             .mapIfNotNull { Foo(it) }
             .withDefault { Foo("foo") }
-         val result: Foo = p.parse("foo").getOrThrow()
+         val result: EitherNel<Nothing, Foo> = p.parse("foo")
       }
 
       test("parser should support default on nullable inputs") {
          val p = Parser<String?>()
             .mapIfNotNull { Foo(it) }
             .withDefault { Foo("foo") }
-         val result: Foo = p.parse("foo").getOrThrow()
+         val result: EitherNel<Nothing, Foo> = p.parse("foo")
       }
 
       test("parser should support booleans") {
          val p = Parser<String>().boolean { "not a boolean" }
-         p.parse("foo").getErrorsOrThrow() shouldBe listOf("not a boolean")
-         p.parse("true").getOrThrow() shouldBe true
-         p.parse("false").getOrThrow() shouldBe false
+         p.parse("foo").getOrNull() shouldBe listOf("not a boolean")
+         p.parse("true").getOrNull() shouldBe true
+         p.parse("false").getOrNull() shouldBe false
       }
 
       test("parser should support longs") {
          val p = Parser<String>().long { "not a long" }
-         p.parse("foo").getErrorsOrThrow() shouldBe listOf("not a long")
-         p.parse("12345").getOrThrow() shouldBe 12345L
+         p.parse("foo").getOrNull() shouldBe listOf("not a long")
+         p.parse("12345").getOrNull() shouldBe 12345L
       }
 
       test("parser should support floats") {
          val p = Parser<String>().float { "not a float" }
-         p.parse("foo").getErrorsOrThrow() shouldBe listOf("not a float")
-         p.parse("123.45").getOrThrow() shouldBe 123.45F
+         p.parse("foo").getOrNull() shouldBe listOf("not a float")
+         p.parse("123.45").getOrNull() shouldBe 123.45F
       }
 
       test("filter") {
