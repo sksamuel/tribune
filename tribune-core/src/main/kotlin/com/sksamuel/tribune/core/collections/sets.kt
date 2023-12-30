@@ -7,7 +7,7 @@ import com.sksamuel.tribune.core.Parser
  * Lifts an existing [Parser] to support sets of the input types supported by
  * the underlying parser.
  *
- * In other words, given a parser from I to A, returns a parser from Set<I> to Set<A>.
+ * In other words, given a parser from I to A, returns a parser from Collection<I> to Set<A>.
  *
  * @return a [Parser]  that produces sets
  */
@@ -18,11 +18,11 @@ fun <I, A, E> Parser<I, A, E>.asSet(): Parser<Collection<I>, Set<A>, E> {
 }
 
 /**
- * Lifts an existing [Parser] to support sets of the input types supported by
+ * Lifts an existing [Parser] I => A? to support sets of the input types supported by
  * the underlying parser. Any nulls produced by the underlying parser will be filtered out
  * without erroring.
  *
- * In other words, given a parser from I to A?, returns a parser from Set<I> to Set<A>.
+ * In other words, given a parser from I to A?, returns a parser from Collection<I> to Set<A>.
  *
  * @return a [Parser]  that produces sets
  */
