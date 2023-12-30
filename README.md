@@ -8,7 +8,7 @@ Tribune is a multiplatform Kotlin
 library that builds on [Arrow](https://arrow-kt.io/) to provide a toolset for creating simple parsers from raw _input_ types, to properly
 validated _parsed_ types.
 
-![master](https://github.com/sksamuel/tribune/workflows/master/badge.svg)
+[![master](https://github.com/sksamuel/tribune/actions/workflows/master.yml/badge.svg)](https://github.com/sksamuel/tribune/actions/workflows/master.yml)
 [<img src="https://img.shields.io/maven-central/v/com.sksamuel.tribune/tribune-core.svg?label=latest%20release"/>](http://search.maven.org/#search%7Cga%7C1%7Ctribune)
 [<img src="https://img.shields.io/nexus/s/https/s01.oss.sonatype.org/com.sksamuel.tribune/tribune-core.svg?label=latest%20snapshot&style=plastic"/>](https://oss.sonatype.org/content/repositories/snapshots/com/sksamuel/tribune/tribune-core/)
 
