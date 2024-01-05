@@ -14,6 +14,6 @@ import arrow.core.right
  * @return a parser which rejects input if not in the allowed list.
  */
 fun <I, A, E> Parser<I, A, E>.oneOf(values: List<A>, ifFalse: (A) -> E): Parser<I, A, E> {
-   return flatMap { if (values.contains(it)) it.right() else ifFalse(it).leftNel() }
+    return transformEither { if (values.contains(it)) it.right() else ifFalse(it).leftNel() }
 }
 

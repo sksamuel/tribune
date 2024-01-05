@@ -18,7 +18,7 @@ import arrow.core.right
  * @return a parser which rejects input based on the result of predicate [p]
  */
 fun <I, O, E> Parser<I, O, E>.filter(p: (O) -> Boolean, ifFalse: (O) -> E): Parser<I, O, E> {
-   return flatMap { if (p(it)) it.right() else ifFalse(it).leftNel() }
+    return transformEither { if (p(it)) it.right() else ifFalse(it).leftNel() }
 }
 
 /**
@@ -31,8 +31,8 @@ fun <I, O, E> Parser<I, O, E>.filter(p: (O) -> Boolean, ifFalse: (O) -> E): Pars
  *
  * @return a parser which rejects input based on the result of predicate [p]
  */
-fun <I, O : Any, E> Parser<I, O, E>.nullIf(fn: (O) -> Boolean): Parser<I, O?, E> =
-   this.map { if (fn(it)) null else it }
+fun <I, O : Any, E> Parser<I, O, E>.nullIf(p: (O) -> Boolean): Parser<I, O?, E> =
+   this.map { if (p(it)) null else it }
 
 /**
  * Returns a [Parser] that produces a null if the input value fails to pass the predicate [p].
@@ -47,6 +47,6 @@ fun <I, O : Any, E> Parser<I, O, E>.nullIf(fn: (O) -> Boolean): Parser<I, O?, E>
  * @return a parser which rejects input based on the result of predicate [p]
  */
 @JvmName("nullIfNullable")
-fun <I, O, E> Parser<I, O?, E>.nullIf(fn: (O) -> Boolean): Parser<I, O?, E> =
-   this.map { if (it == null || fn(it)) null else it }
+fun <I, O, E> Parser<I, O?, E>.nullIf(p: (O) -> Boolean): Parser<I, O?, E> =
+   this.map { if (it == null || p(it)) null else it }
 

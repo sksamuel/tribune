@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.leftNel
 import arrow.core.right
 import com.sksamuel.tribune.core.Parser
-import com.sksamuel.tribune.core.flatMap
+import com.sksamuel.tribune.core.transformEither
 
 /**
  * Narrows an existing String -> String [Parser] by enforcing an exact length on the input string.
@@ -18,7 +18,7 @@ import com.sksamuel.tribune.core.flatMap
  * @return valid if the input string is less than or equal to [len] or an invalid otherwise.
  */
 fun <I, E> Parser<I, String, E>.length(len: Int, ifError: (String) -> E): Parser<I, String, E> =
-   flatMap {
+   transformEither {
       when (it.length) {
          len -> it.right()
          else -> ifError(it).leftNel()
@@ -38,7 +38,7 @@ fun <I, E> Parser<I, String, E>.length(len: Int, ifError: (String) -> E): Parser
  */
 @JvmName("lengthOrNull")
 fun <I, E> Parser<I, String?, E>.length(len: Int, ifError: (String) -> E): Parser<I, String?, E> =
-   flatMap {
+   transformEither {
       when {
          it == null -> Either.Right(null)
          it.length == len -> it.right()
@@ -58,7 +58,7 @@ fun <I, E> Parser<I, String?, E>.length(len: Int, ifError: (String) -> E): Parse
  * @return valid if the input string has acceptable length or an invalid otherwise.
  */
 fun <I, E> Parser<I, String, E>.length(f: (Int) -> Boolean, ifError: (String) -> E): Parser<I, String, E> =
-   flatMap { if (f(it.length)) it.right() else ifError(it).leftNel() }
+   transformEither { if (f(it.length)) it.right() else ifError(it).leftNel() }
 
 /**
  * Narrows an existing I -> String? [Parser] by enforcing a max length on the input string.
@@ -73,7 +73,7 @@ fun <I, E> Parser<I, String, E>.length(f: (Int) -> Boolean, ifError: (String) ->
  */
 @JvmName("maxlenOrNull")
 fun <I, E> Parser<I, String?, E>.maxlen(len: Int, ifError: (String) -> E): Parser<I, String?, E> =
-   flatMap {
+   transformEither {
       when {
          it == null -> Either.Right(null)
          it.length > len -> ifError(it).leftNel()
@@ -93,7 +93,7 @@ fun <I, E> Parser<I, String?, E>.maxlen(len: Int, ifError: (String) -> E): Parse
  * @return valid if the input string is less than or equal to [len] or an invalid otherwise.
  */
 fun <I, E> Parser<I, String, E>.maxlen(len: Int, ifError: (String) -> E): Parser<I, String, E> =
-   flatMap {
+   transformEither {
       when {
          it.length > len -> ifError(it).leftNel()
          else -> it.right()
@@ -113,7 +113,7 @@ fun <I, E> Parser<I, String, E>.maxlen(len: Int, ifError: (String) -> E): Parser
  * @return valid if the input string is greater than or equal to [len] or an invalid otherwise.
  */
 fun <I, E> Parser<I, String, E>.minlen(len: Int, ifError: (String) -> E): Parser<I, String, E> =
-   flatMap {
+   transformEither {
       when {
          it.length < len -> ifError(it).leftNel()
          else -> it.right()
@@ -133,7 +133,7 @@ fun <I, E> Parser<I, String, E>.minlen(len: Int, ifError: (String) -> E): Parser
  */
 @JvmName("minlenOrNull")
 fun <I, E> Parser<I, String?, E>.minlen(len: Int, ifError: (String) -> E): Parser<I, String?, E> =
-   flatMap {
+   transformEither {
       when {
          it == null -> Either.Right(null)
          it.length < len -> ifError(it).leftNel()

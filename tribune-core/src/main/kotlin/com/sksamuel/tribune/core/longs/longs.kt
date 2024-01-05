@@ -4,8 +4,8 @@ import arrow.core.Either
 import arrow.core.leftNel
 import arrow.core.right
 import com.sksamuel.tribune.core.Parser
-import com.sksamuel.tribune.core.flatMap
 import com.sksamuel.tribune.core.map
+import com.sksamuel.tribune.core.transformEither
 
 /**
  * Extends a [Parser] of output type string to parse that string into a long.
@@ -16,34 +16,34 @@ import com.sksamuel.tribune.core.map
  * and a null is considered a failing case.
  */
 fun <I, E> Parser<I, String, E>.long(ifError: (String) -> E): Parser<I, Long, E> =
-   flatMap {
+   transformEither {
       val l = it.toLongOrNull()
       l?.right() ?: ifError(it).leftNel()
    }
 
 fun <I, E> Parser<I, Long, E>.inrange(range: LongRange, ifError: (Long) -> E): Parser<I, Long, E> =
-   flatMap {
+   transformEither {
       if (it in range) it.right() else ifError(it).leftNel()
    }
 
 fun <I, E> Parser<I, Long, E>.min(min: Long, ifError: (Long) -> E): Parser<I, Long, E> =
-   flatMap {
+   transformEither {
       if (it >= min) it.right() else ifError(it).leftNel()
    }
 
 fun <I, E> Parser<I, Long, E>.max(min: Long, ifError: (Long) -> E): Parser<I, Long, E> =
-   flatMap {
+   transformEither {
       if (it >= min) it.right() else ifError(it).leftNel()
    }
 
 @JvmName("minOrNull")
 fun <I, E> Parser<I, Long?, E>.min(min: Long, ifError: (Long) -> E): Parser<I, Long?, E> =
-   flatMap {
+   transformEither {
       if (it == null) Either.Right(null) else if (it >= min) it.right() else ifError(it).leftNel()
    }
 
 @JvmName("maxOrNull")
 fun <I, E> Parser<I, Long?, E>.max(min: Long, ifError: (Long) -> E): Parser<I, Long?, E> =
-   flatMap {
+   transformEither {
       if (it == null) Either.Right(null) else if (it >= min) it.right() else ifError(it).leftNel()
    }

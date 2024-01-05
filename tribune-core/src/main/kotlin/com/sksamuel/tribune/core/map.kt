@@ -36,5 +36,18 @@ fun <I, A, B, E> Parser<I, A?, E>.mapIfNotNull(f: (A) -> B): Parser<I, B?, E> =
  *
  * @return a parser which returns the modified and flattened result of this parser.
  */
+@Deprecated(message = "Deprecated. Use transformEither()", replaceWith = ReplaceWith("transformEither(f)"))
 fun <I, A, B, E> Parser<I, A, E>.flatMap(f: (A) -> EitherNel<E, B>): Parser<I, B, E> =
    Parser { this@flatMap.parse(it).flatMap(f) }
+
+/**
+ * Returns a [Parser] that maps the result of this parser by invoking the given function [f]
+ * and flattening the output of that function.
+ *
+ * @param f the function invoked to map the output of the underlying parser.
+ *
+ * @return a parser which returns the modified and flattened result of this parser.
+ */
+fun <I, A, B, E:E2, E2> Parser<I, A, E>.transformEither(f: (A) -> EitherNel<E2, B>): Parser<I, B, E2> =
+   Parser { this@transformEither.parse(it).flatMap(f) }
+

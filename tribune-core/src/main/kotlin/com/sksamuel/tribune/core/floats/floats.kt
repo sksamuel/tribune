@@ -3,7 +3,7 @@ package com.sksamuel.tribune.core.floats
 import arrow.core.leftNel
 import arrow.core.right
 import com.sksamuel.tribune.core.Parser
-import com.sksamuel.tribune.core.flatMap
+import com.sksamuel.tribune.core.transformEither
 
 /**
  * Extends a [Parser] of output type string to parse that string into a double.
@@ -14,7 +14,7 @@ import com.sksamuel.tribune.core.flatMap
  * and a null is considered a failing case.
  */
 fun <I, E> Parser<I, String, E>.float(ifError: (String) -> E): Parser<I, Float, E> =
-   flatMap {
+   transformEither {
       val f = it.toFloatOrNull()
       f?.right() ?: ifError(it).leftNel()
    }

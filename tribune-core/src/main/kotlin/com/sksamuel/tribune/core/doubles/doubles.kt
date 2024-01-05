@@ -4,7 +4,7 @@ import arrow.core.leftNel
 import arrow.core.right
 import com.sksamuel.tribune.core.Parser
 import com.sksamuel.tribune.core.filter
-import com.sksamuel.tribune.core.flatMap
+import com.sksamuel.tribune.core.transformEither
 
 /**
  * Extends a [Parser] of output type string to parse that string into a double.
@@ -15,18 +15,18 @@ import com.sksamuel.tribune.core.flatMap
  * and a null is considered a failing case.
  */
 fun <I, E> Parser<I, String, E>.double(ifError: (String) -> E): Parser<I, Double, E> =
-   flatMap {
+   transformEither {
       val d = it.toDoubleOrNull()
       d?.right() ?: ifError(it).leftNel()
    }
 
 fun <I, E> Parser<I, Double, E>.positive(ifError: (Double) -> E): Parser<I, Double, E> =
-   flatMap {
+   transformEither {
       if (it > 0.0) it.right() else ifError(it).leftNel()
    }
 
 fun <I, E> Parser<I, Double, E>.negative(ifError: (Double) -> E): Parser<I, Double, E> =
-   flatMap {
+   transformEither {
       if (it < 0.0) it.right() else ifError(it).leftNel()
    }
 
@@ -40,6 +40,6 @@ fun <I, E> Parser<I, Double, E>.inrange(
    range: ClosedFloatingPointRange<Double>,
    ifError: (Double) -> E,
 ): Parser<I, Double, E> =
-   flatMap {
+   transformEither {
       if (it in range) it.right() else ifError(it).leftNel()
    }
