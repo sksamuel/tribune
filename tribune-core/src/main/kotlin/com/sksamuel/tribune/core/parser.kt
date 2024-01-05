@@ -3,7 +3,7 @@ package com.sksamuel.tribune.core
 import arrow.core.*
 
 /**
- * A [Parser] is a function I => [EitherNel] that parses the input I, returing either
+ * A [Parser] is a function I => [EitherNel] that parses the input I, returning either
  * an output O or error E.
  *
  * It is implemented as an interface to allow for variance on the type parameters.
@@ -21,7 +21,7 @@ fun interface Parser<in I, out O, out E> {
        *
        * Eg:
        *
-       * Parser<String>() will return an identity parser that simply returns any intput string.
+       * Parser<String>() will return an identity parser that simply returns any input string.
        */
       operator fun <I> invoke(): Parser<I, I, Nothing> = Parser { it.right() }
 
