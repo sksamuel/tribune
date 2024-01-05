@@ -1,6 +1,7 @@
 package com.sksamuel.tribune.core
 
 import arrow.core.EitherNel
+import arrow.core.NonEmptyList
 import arrow.core.right
 
 /**
@@ -50,4 +51,18 @@ fun interface Parser<in I, out O, out E> {
    fun <J> contramap(f: (J) -> I): Parser<J, O, E> =
       Parser { parse(f(it)) }
 
+
 }
+
+/**
+ * Returns a new parser that first tries to parse the input with [this] and if it fails tries the [other].
+ * If both parsers fail, errors are being accumulated
+ */
+fun <I, E : E2, R : R2, I2 : I, E2, R2> Parser<I, R, E>.orElse(other: Parser<I2, R2, E2>): Parser<I2, R2, E2> =
+   Parser { i ->
+      parse(i).fold(
+         ifRight = { it.right() },
+         ifLeft = { es -> other.parse(i).mapLeft { es2 -> (es as NonEmptyList<E2>) + es2 }}
+      )
+   }
+
