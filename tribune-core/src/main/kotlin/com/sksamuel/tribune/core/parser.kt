@@ -1,8 +1,6 @@
 package com.sksamuel.tribune.core
 
-import arrow.core.EitherNel
-import arrow.core.NonEmptyList
-import arrow.core.right
+import arrow.core.*
 
 /**
  * A [Parser] is a function I => [EitherNel] that parses the input I, returing either
@@ -57,8 +55,9 @@ fun interface Parser<in I, out O, out E> {
 /**
  * Returns a new parser that first tries to parse the input with [this] and if it fails tries the [other].
  * If both parsers fail, errors are being accumulated
+ * The two parsers have outputs [O] and [O2] that are related. In particalur, [O2] is supertype of [O]
  */
-fun <I, E : E2, R : R2, I2 : I, E2, R2> Parser<I, R, E>.orElse(other: Parser<I2, R2, E2>): Parser<I2, R2, E2> =
+fun <I, E : E2, O : O2, I2 : I, E2, O2> Parser<I, O, E>.orElse(other: Parser<I2, O2, E2>): Parser<I2, O2, E2> =
    Parser { i ->
       parse(i).fold(
          ifRight = { it.right() },
@@ -66,3 +65,12 @@ fun <I, E : E2, R : R2, I2 : I, E2, R2> Parser<I, R, E>.orElse(other: Parser<I2,
       )
    }
 
+/**
+ * Returns a new parser that first tries to parse the input with [this] and if it fails tries the [other].
+ * The outputs of the two parsers, ([O] and [O2]) don't have to be related.
+ * In case the first parser succeeds a left [O] is being returned
+ * In case the second parser succeeds a ritht [O2] is being returned
+ * If both parsers fail, errors are being accumulated
+ */
+fun <I, E : E2, O , I2 : I, E2, O2> Parser<I,O,E>.orElseEither(other: Parser<I2,O2, E2>): Parser<I2, Either<O,O2>, E2> =
+   this.map { it.left() }.orElse( other.map { it.right() })
