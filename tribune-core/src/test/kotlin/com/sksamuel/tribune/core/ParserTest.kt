@@ -1,8 +1,6 @@
 package com.sksamuel.tribune.core
 
-import arrow.core.EitherNel
-import arrow.core.leftNel
-import arrow.core.right
+import arrow.core.*
 import com.sksamuel.tribune.core.floats.float
 import com.sksamuel.tribune.core.ints.int
 import com.sksamuel.tribune.core.longs.long
@@ -91,6 +89,26 @@ class ValidatedTest : FunSpec() {
 
          val parser: Parser<UpdateRequest, Pair<ValidName, ValidAge>, String> = Parser.zip(nameParser, ageParser)
          val result = parser.parse(UpdateRequest("a", "b"))
+      }
+
+      test("orElseEither Parser") {
+         data class ValidName(val name: String)
+         data class ValidAge(val age: Int)
+         val nameParser: Parser<String, ValidName, String> = Parser<String>()
+            .notNull { "Name cannot be blank" }
+            .minlen(6) { "Name must have 6 characters" }
+               .map { ValidName(it) }
+
+         val ageParser: Parser<String, ValidAge, String> = Parser<String>()
+            .notNull { "Age cannot be null" }
+            .int { "Age must be a number" }
+            .map { ValidAge(it) }
+
+         val parser = nameParser.orElseEither(ageParser)
+
+         parser.parse("Just a name") shouldBe ValidName("Just a name").left().right()
+         parser.parse("18") shouldBe ValidAge(18).right().right()
+         parser.parse("a") shouldBe nonEmptyListOf("Name must have 6 characters", "Age must be a number").left()
       }
    }
 }
