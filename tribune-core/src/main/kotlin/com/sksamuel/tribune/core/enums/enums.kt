@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.leftNel
 import arrow.core.right
 import com.sksamuel.tribune.core.Parser
-import com.sksamuel.tribune.core.flatMap
+import com.sksamuel.tribune.core.transformEither
 import kotlin.reflect.KClass
 
 /**
@@ -23,13 +23,13 @@ inline fun <I, reified ENUM : Enum<ENUM>, E> Parser<I, String, E>.enum(noinline 
  * @param enumClass the KClass corresponding to the enum type.
  */
 fun <I, T : Enum<T>, E> Parser<I, String, E>.enum(
-   enumClass: KClass<T>,
-   ifError: (String) -> E,
+    enumClass: KClass<T>,
+    ifError: (String) -> E,
 ): Parser<I, T, E> {
-   return flatMap { symbol ->
-      runCatching { enumClass.java.enumConstants.first { it.name == symbol } }
-         .fold({ it.right() }, { ifError(symbol).leftNel() })
-   }
+    return transformEither { symbol ->
+        runCatching { enumClass.java.enumConstants.first { it.name == symbol } }
+            .fold({ it.right() }, { ifError(symbol).leftNel() })
+    }
 }
 
 /**
@@ -50,12 +50,12 @@ inline fun <I, reified ENUM : Enum<ENUM>, E> Parser<I, String?, E>.enum(noinline
  */
 @JvmName("enumOrNull")
 fun <I, T : Enum<T>, E> Parser<I, String?, E>.enum(
-   enumClass: KClass<T>,
-   ifError: (String) -> E
+    enumClass: KClass<T>,
+    ifError: (String) -> E
 ): Parser<I, T?, E> {
-   return flatMap { symbol ->
-      if (symbol == null) Either.Right(null)
-      else runCatching { enumClass.java.enumConstants.first { it.name == symbol } }
-         .fold({ it.right() }, { ifError(symbol).leftNel() })
-   }
+    return transformEither { symbol ->
+        if (symbol == null) Either.Right(null)
+        else runCatching { enumClass.java.enumConstants.first { it.name == symbol } }
+            .fold({ it.right() }, { ifError(symbol).leftNel() })
+    }
 }

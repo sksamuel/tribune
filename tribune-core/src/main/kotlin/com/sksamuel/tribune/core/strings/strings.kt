@@ -3,11 +3,7 @@ package com.sksamuel.tribune.core.strings
 import arrow.core.Either
 import arrow.core.leftNel
 import arrow.core.right
-import com.sksamuel.tribune.core.Parser
-import com.sksamuel.tribune.core.filter
-import com.sksamuel.tribune.core.flatMap
-import com.sksamuel.tribune.core.map
-import com.sksamuel.tribune.core.mapIfNotNull
+import com.sksamuel.tribune.core.*
 
 /**
  * Modifies the output of a String producing [Parser] by trimming the output string
@@ -48,7 +44,7 @@ fun <I, E> Parser<I, String, E>.match(regex: Regex, ifError: (String) -> E): Par
  * @return valid if the input string is not null and not blank, otherwise invalid
  */
 fun <I, E> Parser<I, String?, E>.notNullOrBlank(ifError: () -> E): Parser<I, String, E> {
-   return flatMap { if (it.isNullOrBlank()) ifError().leftNel() else it.right() }
+   return transformEither { if (it.isNullOrBlank()) ifError().leftNel() else it.right() }
 }
 
 /**
@@ -63,7 +59,7 @@ fun <I, E> Parser<I, String?, E>.notNullOrBlank(ifError: () -> E): Parser<I, Str
  * @return invalid if the input string contains only whitespace, otherwise valid
  */
 fun <I, E> Parser<I, String?, E>.notBlank(ifBlank: () -> E): Parser<I, String?, E> {
-   return flatMap {
+   return transformEither {
       when {
          it == null -> Either.Right(null)
          it.isBlank() -> ifBlank().leftNel()
@@ -83,7 +79,7 @@ fun <I, E> Parser<I, String?, E>.notBlank(ifBlank: () -> E): Parser<I, String?, 
  * @return invalid if the input string contains only whitespace, otherwise valid
  */
 fun <I, E> Parser<I, String?, E>.nullOrNotBlank(ifBlank: () -> E): Parser<I, String?, E> {
-   return flatMap {
+   return transformEither {
       if (it == null) null.right() else if (it.isBlank()) ifBlank().leftNel() else it.right()
    }
 }

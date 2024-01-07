@@ -3,7 +3,7 @@ package com.sksamuel.tribune.datetime
 import arrow.core.leftNel
 import arrow.core.right
 import com.sksamuel.tribune.core.Parser
-import com.sksamuel.tribune.core.flatMap
+import com.sksamuel.tribune.core.transformEither
 import kotlinx.datetime.LocalDateTime
 
 /**
@@ -12,7 +12,7 @@ import kotlinx.datetime.LocalDateTime
  */
 fun <I, E> Parser<I, String, E>.toLocalTime(
    ifError: (String, Throwable) -> E
-): Parser<I, LocalDateTime, E> = flatMap {
+): Parser<I, LocalDateTime, E> = transformEither {
    try {
       LocalDateTime.parse(it).right()
    } catch (t: Throwable) {
