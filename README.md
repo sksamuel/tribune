@@ -274,7 +274,7 @@ handler is used (returns 400 Bad Request with a JSON body of errors).
 ```kotlin
 routing {
    post("/isbn") {
-      withParsedInput(isbnParser) { isbn ->
+      withParsedBody(isbnParser) { isbn ->
          println("Parsed ISBN $isbn")
          call.respond(HttpStatusCode.Created)
       }
@@ -295,7 +295,7 @@ Handlers can be composed together using the `compose` extension function on a ha
 Eg, to use the logging handler with the json handler, we can do:
 
 ```kotlin
-withParsedInput(parser, loggingHandler.compose(jsonHandler)) { parsed ->
+withParsedBody(parser, loggingHandler.compose(jsonHandler)) { parsed ->
    println("Parsed input $parsed")
    call.respond(HttpStatusCode.OK)
 }
