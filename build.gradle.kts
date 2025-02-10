@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 buildscript {
    repositories {
       mavenCentral()
@@ -6,7 +8,7 @@ buildscript {
 }
 
 plugins {
-   kotlin("jvm").version("1.9.21")
+   kotlin("jvm").version("2.1.0")
    id("java-library")
    id("maven-publish")
    signing
@@ -26,19 +28,20 @@ allprojects {
    java {
       sourceCompatibility = JavaVersion.VERSION_11
    }
+
    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-      kotlinOptions {
-         jvmTarget = "11"
-         apiVersion = "1.9"
-         languageVersion = "1.9"
+      compilerOptions {
+         jvmTarget = JvmTarget.JVM_11
       }
    }
 
    tasks.withType<Test> {
       useJUnitPlatform()
+
       filter {
          isFailOnNoMatchingTests = false
       }
+
       testLogging {
          showExceptions = true
          showStandardStreams = true
