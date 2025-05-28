@@ -133,14 +133,14 @@ Parsers are invoked using the `parse` method. Eg:
 
 ```kotlin
 parser.parse("abc") // must be int
-parser.parser("123") // success!
+parser.parse("123") // success!
 ```
 
 Or if you want a null instead of errors, you can use `parseOrNull`. Eg:
 
 ```kotlin
 parser.parseOrNull("abc") // must be an int, so null is returned
-parser.parser("123") // success!
+parser.parse("123") // success!
 ```
 
 #### Full Example
